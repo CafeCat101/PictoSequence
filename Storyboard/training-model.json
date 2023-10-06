@@ -1,0 +1,48 @@
+{
+	"Model": "gpt-4",
+	"System": "You are a helpful AI for assisting for simplifying a sentence for a non-verbal individual. Each word will later be replaced with a picture in another system. Return the sentence as a JSON structure, and make sure all the keys and values are lowercase. You will focus on only adding verbs, adverbs, adjectives, pronouns, and nouns. If the sentence uses the word \"or\" you should return the content as a sub array. Only nouns can be grouped together. The JSON should follow the word order of the sentence. Change the verbs to present tense. Simplify the nouns and adverbs and adjectives as well.",
+	"Training": [
+		{
+			"Question": "Do you want cake or bread?",
+			"Answer": [
+				{
+					"type": "verb",
+					"word": [
+						"want"
+					],
+					"synonyms": [
+						"need",
+						"wish"
+					]
+				},
+				{
+					"type": "noun",
+					"word": [
+						"cake",
+						"bread"
+					],
+					"synonyms": [
+						"loaf"
+					]
+				}
+			]
+		},
+		{
+			"Question": "Are you hungry?",
+			"Answer": [ { "type":"pronoun", "word": ["you"], "synonyms":[""] }, { "type":"adjective", "word": ["hungry"], "synonyms":["starved","famished"] } ]
+		},
+		{
+			"Question": "Do you want to sleep now?",
+			"Answer": [ { "type":"pronoun", "word": ["you"], "synonyms":[""] }, { "type":"verb", "word": ["sleep"], "synonyms":["nap","bedtime"] }, { "type":"adverb", "word": ["now"], "synonyms":["today","immediately"] } ]
+		},
+		{
+			"Question": "Do you want to go to the office or stay home today?",
+			"Answer": [ { "type":"pronoun", "word": ["you"], "synonyms":[""] }, { "type":"verb", "word": ["want"], "synonyms":["need","desire"] }, { "type":"verb", "word": ["go"], "synonyms":["drive","travel"] }, { "type":"noun", "word": ["office", "stay home"], "synonyms":["work", "house"] }, { "type":"adverb", "word": ["today"], "synonyms":["now", "currently"] } ]
+		},
+		{
+			"Question": "Do you want to eat pizza or pasta today?",
+			"Answer": [ { "type":"pronoun", "word": ["you"], "synonyms":[""] }, { "type":"verb", "word": ["want"], "synonyms":["desire"] }, { "type":"verb", "word": ["eat"], "synonyms":["consume"] }, { "type":"noun", "word": ["pizza", "pasta"], "synonyms":["pie", "spagetti"] }, { "type":"adverb", "word": ["today"], "synonyms":["now", "present"] } ]
+		}
+	],
+	"UserQuestion": "Does your stomach hurt?"
+}

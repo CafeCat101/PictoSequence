@@ -8,10 +8,13 @@
 import SwiftUI
 
 struct NewSequenceView: View {
+	@EnvironmentObject var sequencer:Sequencer
 	@State private var text = ""
 	@Binding var showAddNewSequence:Bool
 	@State private var previewSequence = false
 	@Environment(\.colorScheme) var colorScheme
+	@State private var showProgressSpinner = false
+	@State private var newStory:Story? = Story()
 	
     var body: some View {
 			
@@ -64,30 +67,40 @@ struct NewSequenceView: View {
 								text = ""
 							}, label: {
 								Label(
-									title: { Text("Clear") },
+									title: { Text("Clear").bold() },
 									icon: { Image(systemName: "eraser.fill") }
 								)
 							})
-							.padding(EdgeInsets(top: 8, leading: 15, bottom: 8, trailing: 15))
+							.padding(EdgeInsets(top: 10, leading: 20, bottom: 10, trailing: 20))
 							.background {
-								RoundedRectangle(cornerRadius: 26)
+								RoundedRectangle(cornerRadius: 10)
 									.foregroundColor(.gray)
 									.opacity(0.5)
 							}
 						}
 						
 						Button(action: {
-							previewSequence = true
+							Task {
+								await generate()
+							}
 						}, label: {
-							Label(
-								title: { Text("Generate Sequence") },
-								icon: { Image(systemName: "bolt.circle.fill") }
-							)
+							HStack {
+								if showProgressSpinner == false {
+									Label(
+										title: { Text("Generate Sequence").bold() },
+										icon: { Image(systemName: "bolt.circle.fill") }
+									).labelStyle(.iconOnly)
+								} else {
+									SpinnerView(iconColor: .black, spinnerColor: .green, iconSystemImage: "stop.fill")
+								}
+								Text("Generate Sequence").bold()
+							}
+							
 						})
 						.disabled(text.isEmpty ? true : false)
-						.padding(EdgeInsets(top: 8, leading: 15, bottom: 8, trailing: 15))
+						.padding(EdgeInsets(top: 10, leading: 20, bottom: 10, trailing: 20))
 						.background {
-							RoundedRectangle(cornerRadius: 26)
+							RoundedRectangle(cornerRadius: 10)
 								.foregroundColor(.brown)
 								.opacity(0.5)
 						}
@@ -118,13 +131,13 @@ struct NewSequenceView: View {
 							
 						}, label: {
 							Label(
-								title: { Text("Save It") },
+								title: { Text("Save It").bold() },
 								icon: { Image(systemName: "checkmark.circle.fill") }
 							)
 						})
-						.padding(EdgeInsets(top: 8, leading: 15, bottom: 8, trailing: 15))
+						.padding(EdgeInsets(top: 10, leading: 20, bottom: 10, trailing: 20))
 						.background {
-							RoundedRectangle(cornerRadius: 26)
+							RoundedRectangle(cornerRadius: 10)
 								.foregroundColor(.green)
 								.opacity(0.5)
 						}
@@ -132,13 +145,13 @@ struct NewSequenceView: View {
 							
 						}, label: {
 							Label(
-								title: { Text("Show Now") },
+								title: { Text("Show Now").bold() },
 								icon: { Image(systemName: "eyeglasses") }
 							)
 						})
-						.padding(EdgeInsets(top: 8, leading: 15, bottom: 8, trailing: 15))
+						.padding(EdgeInsets(top: 10, leading: 20, bottom: 10, trailing: 20))
 						.background {
-							RoundedRectangle(cornerRadius: 26)
+							RoundedRectangle(cornerRadius: 10)
 								.foregroundColor(.blue)
 								.opacity(0.5)
 						}
@@ -156,6 +169,20 @@ struct NewSequenceView: View {
 				.aspectRatio(contentMode: .fill)
 			 .edgesIgnoringSafeArea(.all))
     }
+	
+	private func generate() async {
+		showProgressSpinner = true
+		do {
+			try await newStory = sequencer.generateNewSequence(sentence:text)
+			if newStory != nil {
+				showProgressSpinner = false
+				previewSequence = true
+			}
+		} catch {
+			print("[debug] NewSequenceView, failed to generate new sequence")
+			showProgressSpinner = false
+		}
+	}
 }
 
 #Preview {

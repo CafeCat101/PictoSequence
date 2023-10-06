@@ -9,9 +9,15 @@ import SwiftUI
 
 @main
 struct StoryboardApp: App {
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
-        }
-    }
+	@StateObject var sequencer = Sequencer()
+	
+	var body: some Scene {
+		WindowGroup {
+			ContentView()
+				.onAppear(perform: {
+					sequencer.setupTrainingModel()
+				})
+				.environmentObject(sequencer)
+		}
+	}
 }

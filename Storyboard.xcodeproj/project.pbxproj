@@ -15,6 +15,17 @@
 		C85268012AC445F700047B27 /* ShowStoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C85268002AC445F700047B27 /* ShowStoryView.swift */; };
 		C8680B322AC6BA1100198CCA /* SequenceListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8680B312AC6BA1100198CCA /* SequenceListView.swift */; };
 		C8680B342AC6BF6300198CCA /* NewSequenceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8680B332AC6BF6300198CCA /* NewSequenceView.swift */; };
+		C8680B362AC94BE100198CCA /* Sequencer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8680B352AC94BE100198CCA /* Sequencer.swift */; };
+		C8680B3A2AC968F600198CCA /* training-model.json in Resources */ = {isa = PBXBuildFile; fileRef = C8680B392AC968F600198CCA /* training-model.json */; };
+		C8680B3C2AC9692600198CCA /* TrainingModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8680B3B2AC9692600198CCA /* TrainingModel.swift */; };
+		C8680B3E2AC9742700198CCA /* TrainingData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8680B3D2AC9742700198CCA /* TrainingData.swift */; };
+		C8680B412AC9C0D500198CCA /* WordType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8680B402AC9C0D500198CCA /* WordType.swift */; };
+		C8680B432AC9C27E00198CCA /* SequencerSendJson.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8680B422AC9C27E00198CCA /* SequencerSendJson.swift */; };
+		C8680B452ACA5C6000198CCA /* SequencerResponseSuccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8680B442ACA5C6000198CCA /* SequencerResponseSuccess.swift */; };
+		C8680B472ACA5CCF00198CCA /* SequencerResponseError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8680B462ACA5CCF00198CCA /* SequencerResponseError.swift */; };
+		C8680B642ACFD98000198CCA /* SpinnerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8680B632ACFD98000198CCA /* SpinnerView.swift */; };
+		C8680B662ACFFF3500198CCA /* PreviewStoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8680B652ACFFF3500198CCA /* PreviewStoryView.swift */; };
+		C8680B682AD0007400198CCA /* Story.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8680B672AD0007400198CCA /* Story.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +38,17 @@
 		C85268002AC445F700047B27 /* ShowStoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowStoryView.swift; sourceTree = "<group>"; };
 		C8680B312AC6BA1100198CCA /* SequenceListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SequenceListView.swift; sourceTree = "<group>"; };
 		C8680B332AC6BF6300198CCA /* NewSequenceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewSequenceView.swift; sourceTree = "<group>"; };
+		C8680B352AC94BE100198CCA /* Sequencer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sequencer.swift; sourceTree = "<group>"; };
+		C8680B392AC968F600198CCA /* training-model.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "training-model.json"; sourceTree = "<group>"; };
+		C8680B3B2AC9692600198CCA /* TrainingModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingModel.swift; sourceTree = "<group>"; };
+		C8680B3D2AC9742700198CCA /* TrainingData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingData.swift; sourceTree = "<group>"; };
+		C8680B402AC9C0D500198CCA /* WordType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordType.swift; sourceTree = "<group>"; };
+		C8680B422AC9C27E00198CCA /* SequencerSendJson.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SequencerSendJson.swift; sourceTree = "<group>"; };
+		C8680B442ACA5C6000198CCA /* SequencerResponseSuccess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SequencerResponseSuccess.swift; sourceTree = "<group>"; };
+		C8680B462ACA5CCF00198CCA /* SequencerResponseError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SequencerResponseError.swift; sourceTree = "<group>"; };
+		C8680B632ACFD98000198CCA /* SpinnerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinnerView.swift; sourceTree = "<group>"; };
+		C8680B652ACFFF3500198CCA /* PreviewStoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewStoryView.swift; sourceTree = "<group>"; };
+		C8680B672AD0007400198CCA /* Story.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Story.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,14 +81,20 @@
 		C85267EF2AC4316F00047B27 /* Storyboard */ = {
 			isa = PBXGroup;
 			children = (
+				C8680B392AC968F600198CCA /* training-model.json */,
 				C85267F22AC4316F00047B27 /* ContentView.swift */,
 				C85267FE2AC433A300047B27 /* ListItemView.swift */,
+				C8680B332AC6BF6300198CCA /* NewSequenceView.swift */,
 				C8680B312AC6BA1100198CCA /* SequenceListView.swift */,
 				C85268002AC445F700047B27 /* ShowStoryView.swift */,
 				C85267F02AC4316F00047B27 /* StoryboardApp.swift */,
 				C85267F42AC4317000047B27 /* Assets.xcassets */,
+				C8680B382AC95D5700198CCA /* DataModels */,
+				C8680B372AC95D0400198CCA /* Models */,
 				C85267F62AC4317000047B27 /* Preview Content */,
-				C8680B332AC6BF6300198CCA /* NewSequenceView.swift */,
+				C8680B3F2AC9C0BD00198CCA /* Types */,
+				C8680B632ACFD98000198CCA /* SpinnerView.swift */,
+				C8680B652ACFFF3500198CCA /* PreviewStoryView.swift */,
 			);
 			path = Storyboard;
 			sourceTree = "<group>";
@@ -77,6 +105,35 @@
 				C85267F72AC4317000047B27 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		C8680B372AC95D0400198CCA /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				C8680B352AC94BE100198CCA /* Sequencer.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		C8680B382AC95D5700198CCA /* DataModels */ = {
+			isa = PBXGroup;
+			children = (
+				C8680B3B2AC9692600198CCA /* TrainingModel.swift */,
+				C8680B3D2AC9742700198CCA /* TrainingData.swift */,
+				C8680B422AC9C27E00198CCA /* SequencerSendJson.swift */,
+				C8680B442ACA5C6000198CCA /* SequencerResponseSuccess.swift */,
+				C8680B462ACA5CCF00198CCA /* SequencerResponseError.swift */,
+				C8680B672AD0007400198CCA /* Story.swift */,
+			);
+			path = DataModels;
+			sourceTree = "<group>";
+		};
+		C8680B3F2AC9C0BD00198CCA /* Types */ = {
+			isa = PBXGroup;
+			children = (
+				C8680B402AC9C0D500198CCA /* WordType.swift */,
+			);
+			path = Types;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -137,6 +194,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C8680B3A2AC968F600198CCA /* training-model.json in Resources */,
 				C85267F82AC4317000047B27 /* Preview Assets.xcassets in Resources */,
 				C85267F52AC4317000047B27 /* Assets.xcassets in Resources */,
 			);
@@ -149,12 +207,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C8680B452ACA5C6000198CCA /* SequencerResponseSuccess.swift in Sources */,
 				C85267FF2AC433A300047B27 /* ListItemView.swift in Sources */,
+				C8680B412AC9C0D500198CCA /* WordType.swift in Sources */,
 				C8680B322AC6BA1100198CCA /* SequenceListView.swift in Sources */,
+				C8680B362AC94BE100198CCA /* Sequencer.swift in Sources */,
+				C8680B3C2AC9692600198CCA /* TrainingModel.swift in Sources */,
+				C8680B642ACFD98000198CCA /* SpinnerView.swift in Sources */,
+				C8680B682AD0007400198CCA /* Story.swift in Sources */,
+				C8680B662ACFFF3500198CCA /* PreviewStoryView.swift in Sources */,
 				C8680B342AC6BF6300198CCA /* NewSequenceView.swift in Sources */,
+				C8680B472ACA5CCF00198CCA /* SequencerResponseError.swift in Sources */,
 				C85267F32AC4316F00047B27 /* ContentView.swift in Sources */,
+				C8680B3E2AC9742700198CCA /* TrainingData.swift in Sources */,
 				C85267F12AC4316F00047B27 /* StoryboardApp.swift in Sources */,
 				C85268012AC445F700047B27 /* ShowStoryView.swift in Sources */,
+				C8680B432AC9C27E00198CCA /* SequencerSendJson.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

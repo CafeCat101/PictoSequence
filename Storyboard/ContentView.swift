@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
+	@EnvironmentObject var sequencer:Sequencer
 	@State private var showStoryboard = false
 	
 	var body: some View {
