@@ -14,9 +14,6 @@ struct StoryboardApp: App {
 	var body: some Scene {
 		WindowGroup {
 			ContentView()
-				.onAppear(perform: {
-					sequencer.setupTrainingModel()
-				})
 				.environmentObject(sequencer)
 		}
 	}

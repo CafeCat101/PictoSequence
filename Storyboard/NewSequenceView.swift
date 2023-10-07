@@ -168,8 +168,8 @@ struct NewSequenceView: View {
 		showProgressSpinner = true
 		do {
 			try await sequencer.currentStory = sequencer.generateNewSequence(sentence:text) ?? Story()
+			showProgressSpinner = false
 			if sequencer.currentStory.sequence.count > 0 {
-				showProgressSpinner = false
 				previewSequence = true
 			}
 		} catch {

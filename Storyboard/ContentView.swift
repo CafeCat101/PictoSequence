@@ -14,6 +14,9 @@ struct ContentView: View {
 	var body: some View {
 		if showStoryboard == false {
 			SequenceListView(showStoryboard: $showStoryboard)
+				.onAppear(perform: {
+					print(Date.now)
+				})
 		} else {
 			ShowStoryView(showStoryboard: $showStoryboard)
 		}

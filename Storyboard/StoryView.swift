@@ -22,9 +22,9 @@ struct StoryView: View {
 			 Text("preview your story")
 			 Spacer()
 			 }*/
-			if sequencer.currentStory.sequence.count ?? 0 > 0 {
+			if sequencer.currentStory.sequence.count > 0 {
 				LazyVGrid(columns: columns) {
-					ForEach(sequencer.currentStory.sequence ?? [], id: \.self) { item in
+					ForEach(sequencer.currentStory.sequence , id: \.self) { item in
 						VStack {
 							Text(item.word[0])
 								.font(.headline)
