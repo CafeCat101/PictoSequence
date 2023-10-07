@@ -14,7 +14,7 @@ struct NewSequenceView: View {
 	@State private var previewSequence = false
 	@Environment(\.colorScheme) var colorScheme
 	@State private var showProgressSpinner = false
-	@State private var newStory:Story? = Story()
+	@Binding var showStoryboard:Bool
 	
     var body: some View {
 			
@@ -110,14 +110,7 @@ struct NewSequenceView: View {
 						.font(.title2)
 						.bold()
 					
-					VStack {
-						HStack {
-							Spacer()
-							Text("preview the story")
-							Spacer()
-						}
-						Spacer()
-					}
+					StoryView()
 					.background {
 						RoundedRectangle(cornerRadius: 10)
 							.foregroundColor(.brown)
@@ -128,7 +121,7 @@ struct NewSequenceView: View {
 					HStack {
 						Spacer()
 						Button(action: {
-							
+							showAddNewSequence = false
 						}, label: {
 							Label(
 								title: { Text("Save It").bold() },
@@ -142,7 +135,8 @@ struct NewSequenceView: View {
 								.opacity(0.5)
 						}
 						Button(action: {
-							
+							showAddNewSequence = false
+							showStoryboard = true
 						}, label: {
 							Label(
 								title: { Text("Show Now").bold() },
@@ -173,8 +167,8 @@ struct NewSequenceView: View {
 	private func generate() async {
 		showProgressSpinner = true
 		do {
-			try await newStory = sequencer.generateNewSequence(sentence:text)
-			if newStory != nil {
+			try await sequencer.currentStory = sequencer.generateNewSequence(sentence:text) ?? Story()
+			if sequencer.currentStory.sequence.count > 0 {
 				showProgressSpinner = false
 				previewSequence = true
 			}
@@ -186,5 +180,5 @@ struct NewSequenceView: View {
 }
 
 #Preview {
-	NewSequenceView(showAddNewSequence: .constant(true))
+	NewSequenceView(showAddNewSequence: .constant(true), showStoryboard: .constant(false))
 }

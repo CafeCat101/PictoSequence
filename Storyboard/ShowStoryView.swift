@@ -25,12 +25,7 @@ struct ShowStoryView: View {
 			}
 			.padding([.trailing,.leading], 15)
 			Spacer()
-			HStack {
-				Spacer()
-				Text("Show story pictures")
-				Spacer()
-			}
-			
+			StoryView()
 			Spacer()
 		}
 		.background(

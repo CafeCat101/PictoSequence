@@ -7,5 +7,5 @@
 
 import Foundation
 struct Story {
-	var sequence:[SequencerResponseSuccess]? = []
+	var sequence:[SequencerResponseSuccess] = []
 }

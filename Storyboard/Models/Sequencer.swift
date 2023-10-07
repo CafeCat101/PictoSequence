@@ -10,6 +10,7 @@ import Foundation
 class Sequencer: ObservableObject {
 	var ourTrainingModel: TrainingModel =  TrainingModel()
 	let trainingModelURL = URL(fileURLWithPath: "training-model", relativeTo: Bundle.main.bundleURL).appendingPathExtension("json")
+	var currentStory:Story = Story()
 	
 	func generateNewSequence(sentence: String) async throws -> Story? {
 		//Task {
@@ -43,7 +44,7 @@ class Sequencer: ObservableObject {
 				print("[debug] generateNewSequence, payload \(payload)")
 				let (data, response) = try await URLSession.shared.upload(for: urlRequest, from: payload)
 				
-				guard (response as? HTTPURLResponse)?.statusCode == 200 else { fatalError("Error while fetching data \((response as? HTTPURLResponse)?.statusCode)") }
+				guard (response as? HTTPURLResponse)?.statusCode == 200 else { fatalError("Error while fetching data \(String(describing: (response as? HTTPURLResponse)?.statusCode))") }
 
 				let successInfo = try JSONDecoder().decode([SequencerResponseSuccess].self, from: data)
 				

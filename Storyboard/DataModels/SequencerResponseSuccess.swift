@@ -7,8 +7,8 @@
 
 import Foundation
 
-struct SequencerResponseSuccess: Decodable {
-		let type: String
-		let word: [String]
-		let synonyms: [String]
+struct SequencerResponseSuccess: Decodable, Hashable {
+	let type: String
+	let word: [String]
+	let synonyms: [String]
 }

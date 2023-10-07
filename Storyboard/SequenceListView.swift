@@ -50,7 +50,7 @@ struct SequenceListView: View {
 			.edgesIgnoringSafeArea(.all))
 		//.background(Color("testColor"))
 		.sheet(isPresented: $showAddNewSequence, content: {
-			NewSequenceView(showAddNewSequence: $showAddNewSequence)
+			NewSequenceView(showAddNewSequence: $showAddNewSequence, showStoryboard: $showStoryboard)
 		})
 	}
 	
