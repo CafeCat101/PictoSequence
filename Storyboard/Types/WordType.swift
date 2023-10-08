@@ -17,4 +17,5 @@ enum WordType: String, Codable {
 		case conjunction = "conjunction"
 		case determiner = "determiner"
 		case modalVerb = "modal verb"
+		case unknown = ""
 }

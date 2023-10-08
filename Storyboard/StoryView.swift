@@ -9,6 +9,8 @@ import SwiftUI
 
 struct StoryView: View {
 	@EnvironmentObject var sequencer:Sequencer
+	@State private var gridHeight:CGFloat = 100
+	
 	let columns = [
 		GridItem(.flexible()),
 		//GridItem(.flexible()),
@@ -23,38 +25,107 @@ struct StoryView: View {
 			 Spacer()
 			 }*/
 			if sequencer.currentStory.sequence.count > 0 {
-				LazyVGrid(columns: columns) {
-					ForEach(sequencer.currentStory.sequence , id: \.self) { item in
+				GeometryReader { reader1 in
+					ScrollView(.vertical){
 						VStack {
-							Text(item.word[0])
-								.font(.headline)
-								.padding()
+							HStack {
+								Spacer()
+								Grid {
+									ForEach( allWords() , id: \.self) { item in
+										GridRow {
+											
+											VStack {
+												APictureView(word: item.word,urlStr: item.picture, picWidth: reader1.size.width/3, picHeight: reader1.size.width/3)
+											}
+											.background {
+												RoundedRectangle(cornerRadius: 10)
+													.foregroundColor(.green)
+													.opacity(0.3)
+											}
+											.padding([.bottom,.trailing],5)
+											
+						
+										}
+									}
+								}
+								Spacer()
+							}
+							
+							.padding()
+				
+							
+							/*LazyVGrid(columns: columns) {
+								ForEach( allWords() , id: \.self) { item in
+									VStack {
+										/*Text(item.word)
+										 .font(.headline)
+										 .padding()*/
+										APictureView(word: item.word,urlStr: item.picture, picWidth: reader.size.width/3, picHeight: reader.size.width/3)
+									}
+									.background {
+										RoundedRectangle(cornerRadius: 10)
+											.foregroundColor(.green)
+											.opacity(0.3)
+									}
+									.padding([.bottom,.trailing],5)
+									/*VStack {
+									 Text(item.words[0].word)
+									 .font(.headline)
+									 .padding()
+									 }
+									 .background {
+									 RoundedRectangle(cornerRadius: 10)
+									 .foregroundColor(.green)
+									 .opacity(0.3)
+									 }
+									 .padding([.bottom,.trailing],5)*/
+									/*VStack {
+									 if index % 2 == 0 {
+									 Text("story card \(index + 1)")
+									 .font(.headline)
+									 .padding()
+									 .background(Color.green)
+									 .cornerRadius(10)
+									 } else {
+									 EmptyView()
+									 }
+									 }.padding([.bottom,.trailing],5)*/
+								}
+							}
+							.padding()*/
 						}
-						.background {
-							RoundedRectangle(cornerRadius: 10)
-								.foregroundColor(.green)
-								.opacity(0.3)
-						}
-						.padding([.bottom,.trailing],5)
-						/*VStack {
-						 if index % 2 == 0 {
-						 Text("story card \(index + 1)")
-						 .font(.headline)
-						 .padding()
-						 .background(Color.green)
-						 .cornerRadius(10)
-						 } else {
-						 EmptyView()
-						 }
-						 }.padding([.bottom,.trailing],5)*/
+						.onAppear(perform: {
+							let picSize = reader1.size.width/3
+							let rowCount = CGFloat(allWords().count)
+							gridHeight = picSize*rowCount + 5*rowCount + 100
+						})
+						.frame(height: gridHeight)
 					}
 				}
-				.padding()
+				
+				
+				
 			}
+			
 			
 			
 			Spacer()
 		}
+	}
+	
+	private func allWords() -> [AWordPic] {
+		var words:[AWordPic] = []
+		for part in sequencer.currentStory.sequence {
+			for wordData in part.words {
+				words.append(AWordPic(word: wordData.word, picture: wordData.pictures[0].thumbnail_url))
+			}
+		}
+		return words
+	}
+	
+	struct AWordPic: Hashable {
+		var word:String
+		var picture:String
 	}
 }
 

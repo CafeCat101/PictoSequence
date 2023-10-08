@@ -109,8 +109,8 @@ struct NewSequenceView: View {
 					Text(text)
 						.font(.title2)
 						.bold()
-					
 					StoryView()
+					
 					.background {
 						RoundedRectangle(cornerRadius: 10)
 							.foregroundColor(.brown)
