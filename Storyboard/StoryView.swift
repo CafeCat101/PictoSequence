@@ -10,6 +10,8 @@ import SwiftUI
 struct StoryView: View {
 	@EnvironmentObject var sequencer:Sequencer
 	@State private var gridHeight:CGFloat = 100
+	//@StateObject var viewModel = PictureModel()
+	//@State private var showPhotoPicker = false
 	
 	let columns = [
 		GridItem(.flexible()),
@@ -111,6 +113,7 @@ struct StoryView: View {
 			
 			Spacer()
 		}
+		//.photosPicker(isPresented: $showPhotoPicker, selection: $viewModel.imageSelection, matching: .any(of: [.images, .livePhotos]))
 	}
 	
 	private func allWords() -> [AWordPic] {
