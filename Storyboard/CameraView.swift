@@ -11,6 +11,7 @@ struct CameraView: View {
 		@StateObject private var model = DataModel()
  
 		private static let barHeightFactor = 0.15
+	@Binding var showCaptureView:Bool
 		
 		
 		var body: some View {
@@ -19,9 +20,37 @@ struct CameraView: View {
 						GeometryReader { geometry in
 								ViewFinderView(image:  $model.viewfinderImage )
 										.overlay(alignment: .top) {
-												Color.black
+												/*Color.black
 														.opacity(0.75)
-														.frame(height: geometry.size.height * Self.barHeightFactor)
+														.frame(height: geometry.size.height * Self.barHeightFactor)*/
+											VStack {
+												Spacer()
+												HStack {
+													Button(action: {
+														model.camera.isPreviewPaused = true
+														showCaptureView = false
+													}, label: {
+														Label(
+															title: { Text("Cancel") },
+															icon: { Image(systemName: "xmark") }
+														).labelStyle(.titleOnly).bold()
+													})
+													Spacer()
+													Button(action: {
+														showCaptureView = false
+													}, label: {
+														Label(
+															title: { Text("Use") },
+															icon: { Image(systemName: "checkmark") }
+														).labelStyle(.titleOnly).bold()
+													}).disabled(true)
+												}
+												.padding([.leading,.trailing], 15)
+												Spacer()
+											}
+											.frame(height: geometry.size.height * Self.barHeightFactor)
+											.background(Rectangle().foregroundColor(.black).opacity(0.75))
+											
 										}
 										.overlay(alignment: .bottom) {
 												buttonsView()
@@ -55,7 +84,7 @@ struct CameraView: View {
 						
 						Spacer()
 						
-						NavigationLink {
+						/*NavigationLink {
 								PhotoCollectionView(photoCollection: model.photoCollection)
 										.onAppear {
 												model.camera.isPreviewPaused = true
@@ -69,7 +98,19 @@ struct CameraView: View {
 								} icon: {
 										ThumbnailView(image: model.thumbnailImage)
 								}
-						}
+						}*/
+					
+					Button(action: {
+						
+					}, label: {
+						Label {
+								Text("Photo Library")
+						} icon: {
+								Image(systemName: "photo")
+						}.font(.system(size: 36, weight: .bold))
+					})
+						
+						
 						
 						Button {
 								model.camera.takePhoto()

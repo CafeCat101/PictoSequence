@@ -130,7 +130,7 @@ struct APictureView: View {
 		})
 		.photosPicker(isPresented: $showPhotoPicker ,selection: $viewModel.imageSelection, matching: .any(of: [.images, .livePhotos]))
 		.fullScreenCover(isPresented: $showCaptureView, content: {
-			CameraView()
+			CameraView(showCaptureView: $showCaptureView, showCameraPhotoPicker: $showCameraPhotoPicker)
 		})
 		
 		
