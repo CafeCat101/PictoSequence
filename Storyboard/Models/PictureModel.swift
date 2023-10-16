@@ -9,9 +9,11 @@ import Foundation
 import SwiftUI
 import PhotosUI
 import CoreTransferable
+import Combine
 
 @MainActor
 class PictureModel: ObservableObject {
+	var transferableDone = PassthroughSubject<Bool, Never>()
 	
 	// MARK: - Profile Details
 		
@@ -63,6 +65,7 @@ class PictureModel: ObservableObject {
 						if let imageSelection {
 								let progress = loadTransferable(from: imageSelection)
 								imageState = .loading(progress)
+							self.transferableDone.send(true)
 						} else {
 								imageState = .empty
 						}
@@ -81,10 +84,12 @@ class PictureModel: ObservableObject {
 								switch result {
 								case .success(let profileImage?):
 										self.imageState = .success(profileImage.image)
+									self.transferableDone.send(true)
 								case .success(nil):
 										self.imageState = .empty
 								case .failure(let error):
 										self.imageState = .failure(error)
+									self.transferableDone.send(true)
 								}
 						}
 				}

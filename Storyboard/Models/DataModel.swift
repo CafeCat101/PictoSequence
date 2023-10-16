@@ -47,7 +47,7 @@ final class DataModel: ObservableObject {
 						Task { @MainActor in
 								thumbnailImage = photoData.thumbnailImage
 						}
-						savePhoto(imageData: photoData.imageData)
+						//savePhoto(imageData: photoData.imageData) //::after capture image, don't save into photo library
 				}
 		}
 		

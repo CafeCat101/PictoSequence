@@ -16,7 +16,8 @@ struct APictureView: View {
 	@State private var showPic = true
 	//@ObservedObject var viewModel: PictureModel
 	//@Binding var showPhotoPicker:Bool
-	@State private var useIcon = true
+	//@State private var useIcon = true
+	@State private var sourceType:PictureSource = .icon
 	
 	@StateObject var viewModel = PictureModel()
 	@State private var showPhotoPicker = false
@@ -25,7 +26,7 @@ struct APictureView: View {
 	
 	var body: some View {
 		VStack {
-			if useIcon {
+			if sourceType == .icon {
 				AsyncImage(url: URL(string: urlStr)) { phase in
 					if let image = phase.image {
 						image
@@ -44,67 +45,89 @@ struct APictureView: View {
 				}
 				.opacity(showPic ? 1 : 0)
 				.disabled(showPic ? false : true)
-				.overlay(content: {
-					if showPic == false {
-						VStack(spacing:0) {
-							Spacer()
-							HStack(spacing:0){
-								Spacer()
-								Text(word)
-									.font(.headline)
-									.padding()
-									.foregroundColor(.white)
-								Spacer()
-							}
-							Spacer()
-						}
-						.frame(minWidth: picWidth, minHeight: picHeight)
-						.background {
-							RoundedRectangle(cornerRadius: 10)
-								.foregroundColor(.black)
-						}
-						.onTapGesture {
-							showPic = true
-						}
-						.opacity(showPic ? 0 : 1)
-						.disabled(showPic ? true : false)
-					}
-				})
-				.contextMenu(ContextMenu(menuItems: {
-					Button(action: {
-						showPhotoPicker.toggle()
-						useIcon = false
-					}, label: {
-						Text("Select a photo")
-					})
-					
-					Button(action: {
-						showCaptureView = true
-					}, label: {
-						Text("Take a new photo")
-					})
-					
-				}))
-			} else {
+			} else if sourceType == .photoPicker {
 				switch viewModel.imageState {
 				case .success(let image):
 					image.resizable()
 						.scaledToFit()
 						 .padding()
+						 .opacity(showPic ? 1 : 0)
+						 .disabled(showPic ? false : true)
 				case .loading:
 					ProgressView()
+						.opacity(showPic ? 1 : 0)
+						.disabled(showPic ? false : true)
 				case .empty:
 					Image(systemName: "circle.badge.questionmark.fill")
 						.scaledToFit()
 						.padding()
 						.foregroundColor(.white)
+						.opacity(showPic ? 1 : 0)
+						.disabled(showPic ? false : true)
 				case .failure:
 					Image(systemName: "exclamationmark.triangle.fill")
 						.font(.system(size: 40))
 						.foregroundColor(.white)
+						.opacity(showPic ? 1 : 0)
+						.disabled(showPic ? false : true)
 				}
+			} else {
+				Image(systemName: "circle.badge.questionmark")
 			}
 		}
+		.overlay(content: {
+			if showPic == false {
+				VStack(spacing:0) {
+					Spacer()
+					HStack(spacing:0){
+						Spacer()
+						Text(word)
+							.font(.headline)
+							.padding()
+							.foregroundColor(.white)
+						Spacer()
+					}
+					Spacer()
+				}
+				.frame(minWidth: picWidth, minHeight: picHeight)
+				.background {
+					RoundedRectangle(cornerRadius: 10)
+						.foregroundColor(.black)
+				}
+				.onTapGesture {
+					showPic = true
+				}
+				.opacity(showPic ? 0 : 1)
+				.disabled(showPic ? true : false)
+			}
+		})
+		.contextMenu(ContextMenu(menuItems: {
+			if sourceType != .icon {
+				Button(action: {
+					sourceType = .icon
+				}, label: {
+					Text("Use icon")
+				})
+			}
+			
+			Button(action: {
+				showPhotoPicker.toggle()
+				//sourceType = .photoPicker
+			}, label: {
+				Text("Select a photo")
+			})
+			
+			Button(action: {
+				showCaptureView = true
+			}, label: {
+				Text("Take a new photo")
+			})
+		}))
+		.onReceive(viewModel.transferableDone, perform: { result in
+			if result == true {
+				sourceType = .photoPicker
+			}
+		})
 		.photosPicker(isPresented: $showPhotoPicker ,selection: $viewModel.imageSelection, matching: .any(of: [.images, .livePhotos]))
 		.fullScreenCover(isPresented: $showCaptureView, content: {
 			CameraView()
