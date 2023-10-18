@@ -6,143 +6,197 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 struct CameraView: View {
-		@StateObject private var model = DataModel()
- 
-		private static let barHeightFactor = 0.15
+	@StateObject private var model = DataModel()
+	
+	private static let barHeightFactor = 0.15
 	@Binding var showCaptureView:Bool
+	@StateObject var viewModel = PictureModel()
+	
+	
+	var body: some View {
 		
 		
-		var body: some View {
-				
-				NavigationStack {
-						GeometryReader { geometry in
-								ViewFinderView(image:  $model.viewfinderImage )
-										.overlay(alignment: .top) {
-												/*Color.black
-														.opacity(0.75)
-														.frame(height: geometry.size.height * Self.barHeightFactor)*/
-											VStack {
-												Spacer()
-												HStack {
-													Button(action: {
-														model.camera.isPreviewPaused = true
-														showCaptureView = false
-													}, label: {
-														Label(
-															title: { Text("Cancel") },
-															icon: { Image(systemName: "xmark") }
-														).labelStyle(.titleOnly).bold()
-													})
-													Spacer()
-													Button(action: {
-														showCaptureView = false
-													}, label: {
-														Label(
-															title: { Text("Use") },
-															icon: { Image(systemName: "checkmark") }
-														).labelStyle(.titleOnly).bold()
-													}).disabled(true)
-												}
-												.padding([.leading,.trailing], 15)
-												Spacer()
-											}
-											.frame(height: geometry.size.height * Self.barHeightFactor)
-											.background(Rectangle().foregroundColor(.black).opacity(0.75))
-											
-										}
-										.overlay(alignment: .bottom) {
-												buttonsView()
-														.frame(height: geometry.size.height * Self.barHeightFactor)
-														.background(.black.opacity(0.75))
-										}
-										.overlay(alignment: .center)  {
-												Color.clear
-														.frame(height: geometry.size.height * (1 - (Self.barHeightFactor * 2)))
-														.accessibilityElement()
-														.accessibilityLabel("View Finder")
-														.accessibilityAddTraits([.isImage])
-										}
-										.background(.black)
-						}
-						.task {
-								await model.camera.start()
-								await model.loadPhotos()
-								await model.loadThumbnail()
-						}
-						.navigationTitle("Camera")
-						.navigationBarTitleDisplayMode(.inline)
-						.navigationBarHidden(true)
-						.ignoresSafeArea()
-						.statusBar(hidden: true)
-				}
-		}
-		
-		private func buttonsView() -> some View {
-				HStack(spacing: 60) {
-						
+		GeometryReader { geometry in
+			ViewFinderView(image:  $model.viewfinderImage )
+				.overlay(alignment: .top) {
+					/*Color.black
+					 .opacity(0.75)
+					 .frame(height: geometry.size.height * Self.barHeightFactor)*/
+					VStack {
 						Spacer()
-						
-						/*NavigationLink {
-								PhotoCollectionView(photoCollection: model.photoCollection)
-										.onAppear {
-												model.camera.isPreviewPaused = true
-										}
-										.onDisappear {
-												model.camera.isPreviewPaused = false
-										}
-						} label: {
-								Label {
-										Text("Gallery")
-								} icon: {
-										ThumbnailView(image: model.thumbnailImage)
-								}
-						}*/
+						HStack {
+							Button(action: {
+								model.camera.isPreviewPaused = true
+								showCaptureView = false
+							}, label: {
+								Label(
+									title: { Text("Cancel") },
+									icon: { Image(systemName: "xmark") }
+								)
+								.labelStyle(.titleOnly)
+								.bold()
+								.foregroundStyle(.white)
+							})
+							Spacer()
+							Button(action: {
+								showCaptureView = false
+							}, label: {
+								Label(
+									title: { Text("Use") },
+									icon: { Image(systemName: "checkmark") }
+								).labelStyle(.titleOnly).bold()
+							})
+							.foregroundStyle(model.thumbnailImage == nil ? .gray : .white)
+							.disabled(model.thumbnailImage == nil ? true : false)
+						}
+						.padding([.leading,.trailing], 15)
+						Spacer()
+					}
+					.frame(height: geometry.size.height * Self.barHeightFactor)
+					.background(
+						Rectangle()
+							.foregroundColor(.black)
+							.opacity(model.thumbnailImage == nil ? 0.75 : 0.85)
+					)
 					
-					Button(action: {
-						
-					}, label: {
-						Label {
-								Text("Photo Library")
-						} icon: {
-								Image(systemName: "photo")
-						}.font(.system(size: 36, weight: .bold))
-					})
-						
-						
-						
-						Button {
-								model.camera.takePhoto()
-						} label: {
-								Label {
-										Text("Take Photo")
-								} icon: {
-										ZStack {
-												Circle()
-														.strokeBorder(.white, lineWidth: 3)
-														.frame(width: 62, height: 62)
-												Circle()
-														.fill(.white)
-														.frame(width: 50, height: 50)
-										}
-								}
-						}
-						
-						Button {
-								model.camera.switchCaptureDevice()
-						} label: {
-								Label("Switch Camera", systemImage: "arrow.triangle.2.circlepath")
-										.font(.system(size: 36, weight: .bold))
-										.foregroundColor(.white)
-						}
-						
-						Spacer()
-				
 				}
-				.buttonStyle(.plain)
-				.labelStyle(.iconOnly)
-				.padding()
+				.overlay(alignment: .bottom) {
+					buttonsView()
+						.frame(height: geometry.size.height * Self.barHeightFactor)
+						.background(.black.opacity(model.thumbnailImage == nil ? 0.75 : 0.85))
+				}
+				.overlay(alignment: .center)  {
+					if model.thumbnailImage == nil {
+						Color.clear
+							.frame(height: geometry.size.height * (1 - (Self.barHeightFactor * 2)))
+							.accessibilityElement()
+							.accessibilityLabel("View Finder")
+							.accessibilityAddTraits([.isImage])
+					} else {
+						VStack {
+							HStack {
+								Spacer()
+								model.thumbnailImage?
+									.resizable()
+									.scaledToFill()
+									.frame(width: geometry.size.width-50, height: geometry.size.width-50)
+									.clipShape(RoundedRectangle(cornerSize: CGSize(width: 15, height: 15)))
+									.shadow(color: .black, radius: 20)
+								Spacer()
+							}
+						}.frame(height: geometry.size.height * (1 - (Self.barHeightFactor * 2)))
+							.background(Rectangle().foregroundStyle(.black).opacity(0.85))
+					}
+				}
+				.background(.black)
 		}
+		.task {
+			await model.camera.start()
+			//await model.loadPhotos()
+			//await model.loadThumbnail()
+		}
+		.navigationTitle("Camera")
+		.navigationBarTitleDisplayMode(.inline)
+		.navigationBarHidden(true)
+		.ignoresSafeArea()
+		.statusBar(hidden: true)
 		
+	}
+	
+	private func buttonsView() -> some View {
+		VStack {
+			HStack {
+				
+				Spacer()
+				
+				/*NavigationLink {
+				 PhotoCollectionView(photoCollection: model.photoCollection)
+				 .onAppear {
+				 model.camera.isPreviewPaused = true
+				 }
+				 .onDisappear {
+				 model.camera.isPreviewPaused = false
+				 }
+				 } label: {
+				 Label {
+				 Text("Gallery")
+				 } icon: {
+				 ThumbnailView(image: model.thumbnailImage)
+				 }
+				 }*/
+				PhotosPicker(selection: $viewModel.imageSelection,
+										 matching: .images,
+										 photoLibrary: .shared()) {
+					Label {
+						Text("Photo Library")
+					} icon: {
+						Image(systemName: "photo.circle")
+					}
+					.foregroundStyle(.white)
+					.font(.system(size: 36, weight: .bold))
+					.labelStyle(.iconOnly)
+				}.onDisappear(perform: {
+					switch viewModel.imageState {
+					case .success(let image):
+						model.setThumbnail(target: image)
+					case .loading:
+						model.thumbnailImage = nil
+					case .empty:
+						model.thumbnailImage = nil
+					case .failure:
+						model.thumbnailImage = nil
+					}
+				})
+				Spacer()
+				
+				if model.thumbnailImage == nil {
+					Button {
+						model.camera.takePhoto()
+						model.camera.isPreviewPaused = true
+					} label: {
+						Label {
+							Text("Take Photo")
+						} icon: {
+							ZStack {
+								Circle()
+									.strokeBorder(.white, lineWidth: 3)
+									.frame(width: 62, height: 62)
+								Circle()
+									.fill(.white)
+									.frame(width: 50, height: 50)
+							}
+						}.labelStyle(.iconOnly)
+					}
+					.buttonStyle(.plain)
+					Spacer()
+					Button {
+						model.camera.switchCaptureDevice()
+					} label: {
+						Label("Switch Camera", systemImage: "arrow.triangle.2.circlepath")
+							.font(.system(size: 36, weight: .bold))
+							.foregroundColor(.white)
+							.labelStyle(.iconOnly)
+					}
+				} else {
+					Button(action: {
+						model.thumbnailImage = nil
+						model.camera.isPreviewPaused = false
+					}, label: {
+						Label(
+							title: { Text("Retake").bold() },
+							icon: { Image(systemName: "42.circle") }
+						).foregroundStyle(.white)
+							.labelStyle(.titleOnly)
+					})
+				}
+				
+				Spacer()
+				
+			}
+		}.padding()
+	}
+	
 }

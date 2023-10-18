@@ -22,6 +22,7 @@ struct APictureView: View {
 	@StateObject var viewModel = PictureModel()
 	@State private var showPhotoPicker = false
 	@State private var showCaptureView = false
+	@StateObject private var cameraDataModel = DataModel()
 	
 	
 	var body: some View {
@@ -71,6 +72,18 @@ struct APictureView: View {
 						.opacity(showPic ? 1 : 0)
 						.disabled(showPic ? false : true)
 				}
+			} else if sourceType == .camera {
+				/*cameraDataModel.thumbnailImage?
+					.resizable()
+					.scaledToFill()
+					.frame(width: picWidth, height: picHeight)
+					.clipShape(RoundedRectangle(cornerSize: CGSize(width: 15, height: 15)))
+					.onTapGesture {
+						showPic = false
+					}
+					.opacity(showPic ? 1 : 0)
+					.disabled(showPic ? false : true)*/
+				Image(systemName: "circle.badge.questionmark")
 			} else {
 				Image(systemName: "circle.badge.questionmark")
 			}
@@ -130,7 +143,7 @@ struct APictureView: View {
 		})
 		.photosPicker(isPresented: $showPhotoPicker ,selection: $viewModel.imageSelection, matching: .any(of: [.images, .livePhotos]))
 		.fullScreenCover(isPresented: $showCaptureView, content: {
-			CameraView(showCaptureView: $showCaptureView, showCameraPhotoPicker: $showCameraPhotoPicker)
+			CameraView(showCaptureView: $showCaptureView)
 		})
 		
 		

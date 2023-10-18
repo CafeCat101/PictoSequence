@@ -46,6 +46,7 @@ final class DataModel: ObservableObject {
 				for await photoData in unpackedPhotoStream {
 						Task { @MainActor in
 								thumbnailImage = photoData.thumbnailImage
+							camera.isPreviewPaused = true
 						}
 						//savePhoto(imageData: photoData.imageData) //::after capture image, don't save into photo library
 				}
@@ -109,6 +110,9 @@ final class DataModel: ObservableObject {
 						}
 				}
 		}
+	func setThumbnail(target: Image) {
+		self.thumbnailImage = target
+	}
 }
 
 fileprivate struct PhotoData {
