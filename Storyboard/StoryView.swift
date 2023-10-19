@@ -39,11 +39,6 @@ struct StoryView: View {
 											VStack {
 												APictureView(word: item.word,urlStr: item.picture, picWidth: reader1.size.width/3, picHeight: reader1.size.width/3)
 											}
-											.background {
-												RoundedRectangle(cornerRadius: 10)
-													.foregroundColor(.green)
-													.opacity(0.3)
-											}
 											.padding([.bottom,.trailing],5)
 											
 						

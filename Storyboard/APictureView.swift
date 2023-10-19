@@ -23,6 +23,7 @@ struct APictureView: View {
 	@State private var showPhotoPicker = false
 	@State private var showCaptureView = false
 	@StateObject private var cameraDataModel = DataModel()
+	@Environment(\.colorScheme) var colorScheme
 	
 	
 	var body: some View {
@@ -41,6 +42,12 @@ struct APictureView: View {
 					}
 				}
 				.frame(width: picWidth, height: picHeight)
+				.background {
+					RoundedRectangle(cornerRadius: 15)
+						.foregroundColor(Color("word_icon_bg"))
+						.opacity(colorScheme == .dark ? 0.5 : 0.8)
+						.shadow(color: .black, radius: 5)
+				}
 				.onTapGesture {
 					showPic = false
 				}
@@ -50,10 +57,21 @@ struct APictureView: View {
 				switch viewModel.imageState {
 				case .success(let image):
 					image.resizable()
-						.scaledToFit()
-						 .padding()
+						.resizable()
+						.scaledToFill()
+						.frame(width: picWidth, height: picHeight)
+						.clipShape(RoundedRectangle(cornerSize: CGSize(width: 15, height: 15)))
 						 .opacity(showPic ? 1 : 0)
 						 .disabled(showPic ? false : true)
+						 .onTapGesture {
+							 showPic = false
+						 }
+						 .background {
+							 RoundedRectangle(cornerRadius: 15)
+								 .foregroundColor(Color("word_icon_bg"))
+								 .opacity(colorScheme == .dark ? 0.5 : 0.8)
+								 .shadow(color: .black, radius: 5)
+						 }
 				case .loading:
 					ProgressView()
 						.opacity(showPic ? 1 : 0)
@@ -73,16 +91,22 @@ struct APictureView: View {
 						.disabled(showPic ? false : true)
 				}
 			} else if sourceType == .camera {
-				/*cameraDataModel.thumbnailImage?
+				cameraDataModel.thumbnailImage?
 					.resizable()
 					.scaledToFill()
 					.frame(width: picWidth, height: picHeight)
 					.clipShape(RoundedRectangle(cornerSize: CGSize(width: 15, height: 15)))
+					.background {
+						RoundedRectangle(cornerRadius: 15)
+							.foregroundColor(Color("word_icon_bg"))
+							.opacity(colorScheme == .dark ? 0.5 : 0.8)
+							.shadow(color: .black, radius: 5)
+					}
 					.onTapGesture {
 						showPic = false
 					}
 					.opacity(showPic ? 1 : 0)
-					.disabled(showPic ? false : true)*/
+					.disabled(showPic ? false : true)
 				Image(systemName: "circle.badge.questionmark")
 			} else {
 				Image(systemName: "circle.badge.questionmark")
@@ -143,7 +167,7 @@ struct APictureView: View {
 		})
 		.photosPicker(isPresented: $showPhotoPicker ,selection: $viewModel.imageSelection, matching: .any(of: [.images, .livePhotos]))
 		.fullScreenCover(isPresented: $showCaptureView, content: {
-			CameraView(showCaptureView: $showCaptureView, viewModel: viewModel, sourceType: $sourceType)
+			CameraView(model:cameraDataModel, showCaptureView: $showCaptureView, viewModel: viewModel, sourceType: $sourceType)
 		})
 		
 		

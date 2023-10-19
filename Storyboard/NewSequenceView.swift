@@ -159,7 +159,7 @@ struct NewSequenceView: View {
 				UITextView.appearance().backgroundColor = .clear
 			})
 			.foregroundColor(Color("testColor2"))
-			.background(Image(colorScheme == .light ? "old_paper_bg2" : "black_canvas_bg6").resizable()
+			.background(Image(colorScheme == .light ? "vellum_sketchbook_paper" : "black_canvas_bg6").resizable()
 				.aspectRatio(contentMode: .fill)
 			 .edgesIgnoringSafeArea(.all))
     }

@@ -9,8 +9,8 @@ import SwiftUI
 import PhotosUI
 
 struct CameraView: View {
-	@StateObject private var model = DataModel()
-	
+	//@StateObject private var model = DataModel()
+	@ObservedObject var model:DataModel
 	private static let barHeightFactor = 0.15
 	@Binding var showCaptureView:Bool
 	//@StateObject var viewModel = PictureModel()
@@ -57,8 +57,8 @@ struct CameraView: View {
 									icon: { Image(systemName: "checkmark") }
 								).labelStyle(.titleOnly).bold()
 							})
-							.foregroundStyle(model.thumbnailImage == nil ? .gray : .white)
-							.disabled(model.thumbnailImage == nil ? true : false)
+							.foregroundStyle(disableUseButton() == true ? .gray : .white)
+							.disabled(disableUseButton())
 						}
 						.padding([.leading,.trailing], 15)
 						Spacer()
@@ -240,6 +240,14 @@ struct CameraView: View {
 				
 			}
 		}.padding()
+	}
+	
+	private func disableUseButton() -> Bool {
+		if showPickerSelectedPhoto || (model.thumbnailImage != nil && showPickerSelectedPhoto == false) {
+			return false
+		} else {
+			return true
+		}
 	}
 	
 }

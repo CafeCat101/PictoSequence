@@ -45,7 +45,7 @@ struct SequenceListView: View {
 			//.background(.green)
 			//.scrollContentBackground(.hidden)
 		}
-		.background(Image(colorScheme == .light ? "old_papge_bg11" : "balck_canvas_bg4").resizable()
+		.background(Image(colorScheme == .light ? "vellum_sketchbook_paper" : "balck_canvas_bg4").resizable()
 			.aspectRatio(contentMode: .fill)
 			.edgesIgnoringSafeArea(.all))
 		//.background(Color("testColor"))
