@@ -14,6 +14,7 @@ import Combine
 @MainActor
 class PictureModel: ObservableObject {
 	var transferableDone = PassthroughSubject<Bool, Never>()
+	var selectedImage: Image?
 	
 	// MARK: - Profile Details
 		
@@ -65,7 +66,7 @@ class PictureModel: ObservableObject {
 						if let imageSelection {
 								let progress = loadTransferable(from: imageSelection)
 								imageState = .loading(progress)
-							self.transferableDone.send(true)
+							//self.transferableDone.send(true)
 						} else {
 								imageState = .empty
 						}
@@ -84,6 +85,7 @@ class PictureModel: ObservableObject {
 								switch result {
 								case .success(let profileImage?):
 										self.imageState = .success(profileImage.image)
+									self.selectedImage = profileImage.image
 									self.transferableDone.send(true)
 								case .success(nil):
 										self.imageState = .empty

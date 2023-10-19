@@ -13,7 +13,10 @@ struct CameraView: View {
 	
 	private static let barHeightFactor = 0.15
 	@Binding var showCaptureView:Bool
-	@StateObject var viewModel = PictureModel()
+	//@StateObject var viewModel = PictureModel()
+	@ObservedObject var viewModel:PictureModel
+	@Binding var sourceType:PictureSource
+	@State private var showPickerSelectedPhoto = false
 	
 	
 	var body: some View {
@@ -42,6 +45,11 @@ struct CameraView: View {
 							})
 							Spacer()
 							Button(action: {
+								if model.thumbnailImage != nil {
+									sourceType = .camera
+								} else if showPickerSelectedPhoto == true {
+									sourceType = .photoPicker
+								}
 								showCaptureView = false
 							}, label: {
 								Label(
@@ -69,17 +77,34 @@ struct CameraView: View {
 						.background(.black.opacity(model.thumbnailImage == nil ? 0.75 : 0.85))
 				}
 				.overlay(alignment: .center)  {
-					if model.thumbnailImage == nil {
-						Color.clear
+					if showPickerSelectedPhoto == false {
+						if model.thumbnailImage == nil {
+							Color.clear
+								.frame(height: geometry.size.height * (1 - (Self.barHeightFactor * 2)))
+								.accessibilityElement()
+								.accessibilityLabel("View Finder")
+								.accessibilityAddTraits([.isImage])
+						} else {
+							VStack {
+								HStack {
+									Spacer()
+									model.thumbnailImage?
+										.resizable()
+										.scaledToFill()
+										.frame(width: geometry.size.width-50, height: geometry.size.width-50)
+										.clipShape(RoundedRectangle(cornerSize: CGSize(width: 15, height: 15)))
+										.shadow(color: .black, radius: 20)
+									Spacer()
+								}
+							}
 							.frame(height: geometry.size.height * (1 - (Self.barHeightFactor * 2)))
-							.accessibilityElement()
-							.accessibilityLabel("View Finder")
-							.accessibilityAddTraits([.isImage])
+							.background(Rectangle().foregroundStyle(.black).opacity(0.85))
+						}
 					} else {
 						VStack {
 							HStack {
 								Spacer()
-								model.thumbnailImage?
+								viewModel.selectedImage?
 									.resizable()
 									.scaledToFill()
 									.frame(width: geometry.size.width-50, height: geometry.size.width-50)
@@ -87,12 +112,21 @@ struct CameraView: View {
 									.shadow(color: .black, radius: 20)
 								Spacer()
 							}
-						}.frame(height: geometry.size.height * (1 - (Self.barHeightFactor * 2)))
-							.background(Rectangle().foregroundStyle(.black).opacity(0.85))
+						}
+						.frame(height: geometry.size.height * (1 - (Self.barHeightFactor * 2)))
+						.background(Rectangle().foregroundStyle(.black).opacity(0.85))
 					}
+					
 				}
 				.background(.black)
 		}
+		.onReceive(viewModel.transferableDone, perform: { result in
+			if result == true {
+				showPickerSelectedPhoto = true
+				model.thumbnailImage = nil
+				model.camera.isPreviewPaused = true
+			}
+		})
 		.task {
 			await model.camera.start()
 			//await model.loadPhotos()
@@ -138,60 +172,69 @@ struct CameraView: View {
 					.foregroundStyle(.white)
 					.font(.system(size: 36, weight: .bold))
 					.labelStyle(.iconOnly)
-				}.onDisappear(perform: {
-					switch viewModel.imageState {
-					case .success(let image):
-						model.setThumbnail(target: image)
-					case .loading:
-						model.thumbnailImage = nil
-					case .empty:
-						model.thumbnailImage = nil
-					case .failure:
-						model.thumbnailImage = nil
-					}
-				})
+				}
 				Spacer()
-				
-				if model.thumbnailImage == nil {
-					Button {
-						model.camera.takePhoto()
-						model.camera.isPreviewPaused = true
-					} label: {
-						Label {
-							Text("Take Photo")
-						} icon: {
-							ZStack {
-								Circle()
-									.strokeBorder(.white, lineWidth: 3)
-									.frame(width: 62, height: 62)
-								Circle()
-									.fill(.white)
-									.frame(width: 50, height: 50)
-							}
-						}.labelStyle(.iconOnly)
-					}
-					.buttonStyle(.plain)
-					Spacer()
-					Button {
-						model.camera.switchCaptureDevice()
-					} label: {
-						Label("Switch Camera", systemImage: "arrow.triangle.2.circlepath")
-							.font(.system(size: 36, weight: .bold))
-							.foregroundColor(.white)
-							.labelStyle(.iconOnly)
+				if showPickerSelectedPhoto == false {
+					if model.thumbnailImage == nil {
+						Button {
+							model.camera.takePhoto()
+							model.camera.isPreviewPaused = true
+						} label: {
+							Label {
+								Text("Take Photo")
+							} icon: {
+								ZStack {
+									Circle()
+										.strokeBorder(.white, lineWidth: 3)
+										.frame(width: 62, height: 62)
+									Circle()
+										.fill(.white)
+										.frame(width: 50, height: 50)
+								}
+							}.labelStyle(.iconOnly)
+						}
+						.buttonStyle(.plain)
+						Spacer()
+						Button {
+							model.camera.switchCaptureDevice()
+						} label: {
+							Label("Switch Camera", systemImage: "arrow.triangle.2.circlepath")
+								.font(.system(size: 36, weight: .bold))
+								.foregroundColor(.white)
+								.labelStyle(.iconOnly)
+						}
+					} else {
+						Button(action: {
+							showPickerSelectedPhoto = false
+							model.thumbnailImage = nil
+							model.camera.isPreviewPaused = false
+						}, label: {
+							Label(
+								title: { Text("Retake").bold() },
+								icon: { Image(systemName: "42.circle") }
+							).foregroundStyle(.white)
+								.labelStyle(.titleOnly)
+						})
 					}
 				} else {
 					Button(action: {
+						showPickerSelectedPhoto = false
 						model.thumbnailImage = nil
 						model.camera.isPreviewPaused = false
 					}, label: {
-						Label(
-							title: { Text("Retake").bold() },
-							icon: { Image(systemName: "42.circle") }
-						).foregroundStyle(.white)
-							.labelStyle(.titleOnly)
+						Label {
+							Text("Take a New Picture")
+						} icon: {
+							Image(systemName: "camera.circle")
+						}
+						.foregroundStyle(.white)
+						.font(.system(size: 36, weight: .bold))
+						.labelStyle(.iconOnly)
 					})
+					
+					
 				}
+				
 				
 				Spacer()
 				

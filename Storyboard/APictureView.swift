@@ -137,13 +137,13 @@ struct APictureView: View {
 			})
 		}))
 		.onReceive(viewModel.transferableDone, perform: { result in
-			if result == true {
+			if result == true && showCaptureView == false {
 				sourceType = .photoPicker
 			}
 		})
 		.photosPicker(isPresented: $showPhotoPicker ,selection: $viewModel.imageSelection, matching: .any(of: [.images, .livePhotos]))
 		.fullScreenCover(isPresented: $showCaptureView, content: {
-			CameraView(showCaptureView: $showCaptureView)
+			CameraView(showCaptureView: $showCaptureView, viewModel: viewModel, sourceType: $sourceType)
 		})
 		
 		
