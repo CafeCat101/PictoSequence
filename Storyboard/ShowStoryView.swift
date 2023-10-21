@@ -15,7 +15,7 @@ struct ShowStoryView: View {
 			HStack {
 				Label(
 					title: { Text("Back to List") },
-					icon: { Image(systemName: "arrowshape.backward.fill") }
+					icon: { Image(systemName: "list.bullet.rectangle") }
 				)
 				.labelStyle(.iconOnly)
 				.onTapGesture {

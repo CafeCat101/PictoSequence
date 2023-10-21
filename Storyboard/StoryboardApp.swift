@@ -9,12 +9,15 @@ import SwiftUI
 
 @main
 struct StoryboardApp: App {
+	let persistenceController = PersistenceController.shared
 	@StateObject var sequencer = Sequencer()
 	
 	var body: some Scene {
 		WindowGroup {
-			ContentView()
+			//ContentView()
+			SequenceListView()
 				.environmentObject(sequencer)
+				.environment(\.managedObjectContext, persistenceController.container.viewContext)
 		}
 	}
 }

@@ -6,12 +6,20 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct SequenceListView: View {
-	@State private var text = "Search"
-	@Binding var showStoryboard:Bool
-	@State private var showAddNewSequence = false
 	@Environment(\.colorScheme) var colorScheme
+	
+	@State private var text = "Search"
+	@State private var showStoryboard = false
+	@State private var showAddNewSequence = false
+	
+	@Environment(\.managedObjectContext) private var viewContext
+	@FetchRequest(
+		sortDescriptors: [NSSortDescriptor(keyPath: \Sentences.user_question, ascending: true)],
+			animation: .default)
+	private var sentences: FetchedResults<Sentences>
 	
 	var body: some View {
 		VStack {
@@ -30,27 +38,40 @@ struct SequenceListView: View {
 			.frame(height: 35)
 			.padding([.leading,.trailing,.top], 15)
 			
-			List {
-				ListItemView(textLine: "Do you want to eat pasta or potato?")
-					.onTapGesture {
-						showStoryboard = true
+			if sentences.count > 0 {
+				List {
+					/*ListItemView(textLine: "Do you want to eat pasta or potato?")
+						.onTapGesture {
+							showStoryboard = true
+						}
+					ListItemView(textLine: "Will go to supermarket then go home.")
+						.onTapGesture {
+							showStoryboard = true
+						}*/
+					ForEach(sentences) { sentence in
+						ListItemView(textLine: sentence.user_question ?? "")
+							.onTapGesture {
+								//showStoryboard = true
+							}
 					}
-				ListItemView(textLine: "Will go to supermarket then go home.")
-					.onTapGesture {
-						showStoryboard = true
-					}
+				}
+				.modifier(myListStyle())
+				//.listStyle(.plain)
+				//.background(.green)
+				//.scrollContentBackground(.hidden)
 			}
-			.modifier(myListStyle())
-			//.listStyle(.plain)
-			//.background(.green)
-			//.scrollContentBackground(.hidden)
+			
+			Spacer()
 		}
 		.background(Image(colorScheme == .light ? "vellum_sketchbook_paper" : "balck_canvas_bg4").resizable()
 			.aspectRatio(contentMode: .fill)
 			.edgesIgnoringSafeArea(.all))
-		//.background(Color("testColor"))
-		.sheet(isPresented: $showAddNewSequence, content: {
+		
+		.fullScreenCover(isPresented: $showAddNewSequence, content: {
 			NewSequenceView(showAddNewSequence: $showAddNewSequence, showStoryboard: $showStoryboard)
+		})
+		.fullScreenCover(isPresented: $showStoryboard, content: {
+			ShowStoryView(showStoryboard: $showStoryboard)
 		})
 	}
 	
@@ -77,5 +98,6 @@ struct SequenceListView: View {
 }
 
 #Preview {
-	SequenceListView(showStoryboard: .constant(false))
+	SequenceListView()
+		.environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
 }

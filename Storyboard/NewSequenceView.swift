@@ -9,40 +9,41 @@ import SwiftUI
 
 struct NewSequenceView: View {
 	@EnvironmentObject var sequencer:Sequencer
-	@State private var text = ""
-	@Binding var showAddNewSequence:Bool
-	@State private var previewSequence = false
 	@Environment(\.colorScheme) var colorScheme
+	@Environment(\.managedObjectContext) private var viewContext
+	
+	@State private var text = ""
+	@State private var previewSequence = false
 	@State private var showProgressSpinner = false
+
+	@Binding var showAddNewSequence:Bool
 	@Binding var showStoryboard:Bool
 	
     var body: some View {
 			
 			VStack {
 				HStack {
-					if previewSequence {
-						Label(
-							title: { Text("Back to List") },
-							icon: { Image(systemName: "arrowshape.backward.fill") }
-						)
-						.labelStyle(.iconOnly)
-						.font(.title)
-						.onTapGesture {
-							previewSequence = false
-						}
-					}
-					Text("New Sequence")
-						.font(.title)
-					Spacer()
 					Label(
-						title: { Text("Close") },
-						icon: { Image(systemName: "xmark.circle.fill") }
+						title: { Text("Back to list") },
+						icon: { Image(systemName: "chevron.backward") }
 					)
 					.font(.title)
 					.labelStyle(.iconOnly)
 					.onTapGesture {
-						showAddNewSequence = false
+						if previewSequence == false {
+							showAddNewSequence = false
+						} else {
+							previewSequence = false
+						}
+						
 					}
+					Spacer()
+					Text("New Sequence")
+						.font(.title)
+					Spacer()
+					
+					
+					
 				}
 				.padding(15)
 		
@@ -50,7 +51,6 @@ struct NewSequenceView: View {
 					VStack {
 						TextEditor(text: $text)
 							.font(.title2)
-						//.clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 10)))
 							.padding(5)
 							.scrollContentBackground(.hidden)
 							.background(Color.brown.opacity(0.3))
@@ -106,51 +106,7 @@ struct NewSequenceView: View {
 						}
 					}
 				} else {
-					Text(text)
-						.font(.title2)
-						.bold()
-					StoryView()
-					
-					.background {
-						RoundedRectangle(cornerRadius: 10)
-							.foregroundColor(.brown)
-							.opacity(0.3)
-					}
-					.padding(15)
-					
-					HStack {
-						Spacer()
-						Button(action: {
-							showAddNewSequence = false
-						}, label: {
-							Label(
-								title: { Text("Save It").bold() },
-								icon: { Image(systemName: "checkmark.circle.fill") }
-							)
-						})
-						.padding(EdgeInsets(top: 10, leading: 20, bottom: 10, trailing: 20))
-						.background {
-							RoundedRectangle(cornerRadius: 10)
-								.foregroundColor(.green)
-								.opacity(0.5)
-						}
-						Button(action: {
-							showAddNewSequence = false
-							showStoryboard = true
-						}, label: {
-							Label(
-								title: { Text("Show Now").bold() },
-								icon: { Image(systemName: "eyeglasses") }
-							)
-						})
-						.padding(EdgeInsets(top: 10, leading: 20, bottom: 10, trailing: 20))
-						.background {
-							RoundedRectangle(cornerRadius: 10)
-								.foregroundColor(.blue)
-								.opacity(0.5)
-						}
-						Spacer()
-					}
+					PreviewStoryView(previewSentence: text, showAddNewSequence: $showAddNewSequence, showStoryboard: $showStoryboard)
 				}
 				
 				Spacer()
@@ -159,9 +115,10 @@ struct NewSequenceView: View {
 				UITextView.appearance().backgroundColor = .clear
 			})
 			.foregroundColor(Color("testColor2"))
-			.background(Image(colorScheme == .light ? "vellum_sketchbook_paper" : "balck_canvas_bg4").resizable()
-				.aspectRatio(contentMode: .fill)
-			 .edgesIgnoringSafeArea(.all))
+			.background(
+				Image(colorScheme == .light ? "vellum_sketchbook_paper" : "balck_canvas_bg4").resizable()
+					.aspectRatio(contentMode: .fill)
+					.edgesIgnoringSafeArea(.all))
     }
 	
 	private func generate() async {
@@ -178,7 +135,8 @@ struct NewSequenceView: View {
 		}
 	}
 }
-
-#Preview {
-	NewSequenceView(showAddNewSequence: .constant(true), showStoryboard: .constant(false))
-}
+/*
+ #Preview {
+ NewSequenceView(showAddNewSequence: .constant(true), path: NavigationPath())
+ }
+ */

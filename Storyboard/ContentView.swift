@@ -13,7 +13,7 @@ struct ContentView: View {
 	
 	var body: some View {
 		if showStoryboard == false {
-			SequenceListView(showStoryboard: $showStoryboard)
+			SequenceListView()
 				.onAppear(perform: {
 					print(Date.now)
 				})
