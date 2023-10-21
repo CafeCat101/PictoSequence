@@ -14,9 +14,6 @@ struct APictureView: View {
 	var picWidth:CGFloat = 200
 	var picHeight:CGFloat = 200
 	@State private var showPic = true
-	//@ObservedObject var viewModel: PictureModel
-	//@Binding var showPhotoPicker:Bool
-	//@State private var useIcon = true
 	@State private var sourceType:PictureSource = .icon
 	
 	@StateObject var viewModel = PictureModel()
@@ -41,13 +38,7 @@ struct APictureView: View {
 						ProgressView()
 					}
 				}
-				.frame(width: picWidth, height: picHeight)
-				.background {
-					RoundedRectangle(cornerRadius: 15)
-						.foregroundColor(Color("word_icon_bg"))
-						.opacity(colorScheme == .dark ? 0.5 : 0.8)
-						.shadow(color: .black, radius: 5)
-				}
+				.modifier(photoStyle(getPicWidth: picWidth, getPicHeight: picHeight))
 				.onTapGesture {
 					showPic = false
 				}
@@ -56,22 +47,16 @@ struct APictureView: View {
 			} else if sourceType == .photoPicker {
 				switch viewModel.imageState {
 				case .success(let image):
-					image.resizable()
+					image
 						.resizable()
 						.scaledToFill()
-						.frame(width: picWidth, height: picHeight)
-						.clipShape(RoundedRectangle(cornerSize: CGSize(width: 15, height: 15)))
+						.modifier(photoStyle(getPicWidth: picWidth, getPicHeight: picHeight))
 						 .opacity(showPic ? 1 : 0)
 						 .disabled(showPic ? false : true)
 						 .onTapGesture {
 							 showPic = false
 						 }
-						 .background {
-							 RoundedRectangle(cornerRadius: 15)
-								 .foregroundColor(Color("word_icon_bg"))
-								 .opacity(colorScheme == .dark ? 0.5 : 0.8)
-								 .shadow(color: .black, radius: 5)
-						 }
+						 
 				case .loading:
 					ProgressView()
 						.opacity(showPic ? 1 : 0)
@@ -80,13 +65,12 @@ struct APictureView: View {
 					Image(systemName: "circle.badge.questionmark.fill")
 						.scaledToFit()
 						.padding()
-						.foregroundColor(.white)
 						.opacity(showPic ? 1 : 0)
 						.disabled(showPic ? false : true)
 				case .failure:
 					Image(systemName: "exclamationmark.triangle.fill")
-						.font(.system(size: 40))
-						.foregroundColor(.white)
+						.scaledToFit()
+						.padding()
 						.opacity(showPic ? 1 : 0)
 						.disabled(showPic ? false : true)
 				}
@@ -94,14 +78,7 @@ struct APictureView: View {
 				cameraDataModel.thumbnailImage?
 					.resizable()
 					.scaledToFill()
-					.frame(width: picWidth, height: picHeight)
-					.clipShape(RoundedRectangle(cornerSize: CGSize(width: 15, height: 15)))
-					.background {
-						RoundedRectangle(cornerRadius: 15)
-							.foregroundColor(Color("word_icon_bg"))
-							.opacity(colorScheme == .dark ? 0.5 : 0.8)
-							.shadow(color: .black, radius: 5)
-					}
+					.modifier(photoStyle(getPicWidth: picWidth, getPicHeight: picHeight))
 					.onTapGesture {
 						showPic = false
 					}
@@ -128,7 +105,7 @@ struct APictureView: View {
 				}
 				.frame(minWidth: picWidth, minHeight: picHeight)
 				.background {
-					RoundedRectangle(cornerRadius: 10)
+					RoundedRectangle(cornerRadius: 15)
 						.foregroundColor(.black)
 				}
 				.onTapGesture {
@@ -169,39 +146,25 @@ struct APictureView: View {
 		.fullScreenCover(isPresented: $showCaptureView, content: {
 			CameraView(model:cameraDataModel, showCaptureView: $showCaptureView, viewModel: viewModel, sourceType: $sourceType)
 		})
-		
-		
-		
-		/*if showPic {
-		 AsyncImage(url: URL(string: urlStr)) { phase in
-		 if let image = phase.image {
-		 image
-		 .resizable()
-		 .scaledToFit()
-		 .padding()
-		 } else if phase.error != nil {
-		 Text("There was an error loading the image.")
-		 } else {
-		 ProgressView()
-		 }
-		 }
-		 .frame(width: picWidth, height: picHeight)
-		 .onTapGesture {
-		 showPic = false
-		 }
-		 } else {
-		 Text(word)
-		 .font(.headline)
-		 .padding()
-		 .frame(minWidth: picWidth, minHeight: picHeight)
-		 .onTapGesture {
-		 showPic = true
-		 }
-		 }*/
-		
 	}
 	
-	
+	struct photoStyle: ViewModifier {
+		@Environment(\.colorScheme) var colorScheme
+		var getPicWidth: CGFloat = 200
+		var getPicHeight: CGFloat = 200
+		
+		func body(content: Content) -> some View {
+			content
+				.frame(width: getPicWidth, height: getPicHeight)
+				.clipShape(RoundedRectangle(cornerSize: CGSize(width: 15, height: 15)))
+				.background {
+					RoundedRectangle(cornerRadius: 15)
+						.foregroundColor(Color("word_icon_bg"))
+						.opacity(colorScheme == .dark ? 0.5 : 0.8)
+						.shadow(color: .black, radius: 5)
+				}
+		}
+	}
 }
 
 #Preview {
