@@ -6,9 +6,15 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct ListItemView: View {
+	@EnvironmentObject var sequencer:Sequencer
+	@Environment(\.managedObjectContext) private var managedContext
+	
+	@Binding var showEditSequence:Bool
 	var textLine:String = "Sequence"
+	
 	var body: some View {
 		VStack {
 			Text("\(textLine)")
@@ -16,11 +22,39 @@ struct ListItemView: View {
 		.swipeActions {
 			Button("Edit") {
 				print("edit!")
+				let fetchRequest = NSFetchRequest<Sentences>(entityName: "Sentences")
+				fetchRequest.predicate = NSPredicate(format: "user_question == %@", textLine)
+				do {
+					let sentence = try managedContext.fetch(fetchRequest).first
+					let jsonData =  sentence!.result?.data(using: .utf8)!
+					let sequenceDecoded = try JSONDecoder().decode([SequencerResponseSuccess].self, from: jsonData!)
+					sequencer.currentStory.sentence = sentence!.user_question ?? ""
+					sequencer.currentStory.visualizedSequence = sequenceDecoded
+					showEditSequence = true
+				} catch {
+					
+				}
+				
 			}
 			.tint(.green)
 			
 			Button("Delete") {
 				print("delete!")
+				withAnimation {
+					let fetchRequest = NSFetchRequest<Sentences>(entityName: "Sentences")
+					fetchRequest.predicate = NSPredicate(format: "user_question == %@", textLine)
+					
+					do {
+						let sentences = try managedContext.fetch(fetchRequest)
+						for sentence in sentences {
+							managedContext.delete(sentence)
+						}
+						try managedContext.save()
+					} catch let error as NSError {
+						print("Could not fetch. \(error), \(error.userInfo)")
+					}
+				}
+				
 			}
 			.tint(.red)
 		}
@@ -30,5 +64,5 @@ struct ListItemView: View {
 }
 
 #Preview {
-	ListItemView()
+	ListItemView(showEditSequence: .constant(false))
 }

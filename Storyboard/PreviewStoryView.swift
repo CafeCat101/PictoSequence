@@ -6,18 +6,24 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct PreviewStoryView: View {
 	@EnvironmentObject var sequencer:Sequencer
 	@Environment(\.colorScheme) var colorScheme
+	@Environment(\.managedObjectContext) private var viewContext
+	let fetchRequest = NSFetchRequest<Sentences>(entityName: "Sentences")
 	
-	var previewSentence:String = ""
-	@Binding var showAddNewSequence:Bool
+	//var previewSentence:String = ""
+	@Binding var showSequenceActionView:Bool
 	@Binding var showStoryboard:Bool
+	
+	@State private var showSaveErrorAlert = false
+	@State private var saveError = ""
 
 	var body: some View {
 		VStack {
-			Text(previewSentence)
+			Text(sequencer.currentStory.sentence)
 				.font(.title2)
 				.bold()
 			StoryView()
@@ -31,7 +37,7 @@ struct PreviewStoryView: View {
 			HStack {
 				Spacer()
 				Button(action: {
-					showAddNewSequence = false
+					saveSequence(showStoryNow: false)
 				}, label: {
 					Label(
 						title: { Text("Save It").bold() },
@@ -45,11 +51,10 @@ struct PreviewStoryView: View {
 						.opacity(0.5)
 				}
 				Button(action: {
-					showAddNewSequence = false
-					showStoryboard = true
+					saveSequence(showStoryNow: true)
 				}, label: {
 					Label(
-						title: { Text("Show Now").bold() },
+						title: { Text("Save and Show").bold() },
 						icon: { Image(systemName: "eyeglasses") }
 					)
 				})
@@ -60,11 +65,45 @@ struct PreviewStoryView: View {
 						.opacity(0.5)
 				}
 				Spacer()
+			}.alert("\(saveError)", isPresented: $showSaveErrorAlert) {
+				Button("OK", role: .cancel) { }
 			}
+		}
+		.onAppear(perform: {
+			fetchRequest.predicate = NSPredicate(format: "user_question = %@", sequencer.currentStory.sentence)
+		})
+	}
+	
+	private func saveSequence(showStoryNow: Bool) {
+		do {
+			let existedSentences = try viewContext.fetch(fetchRequest)
+			if existedSentences.isEmpty {
+				let newItem = Sentences(context: viewContext)
+				newItem.user_question = sequencer.currentStory.sentence
+				let seguenceJson = try JSONEncoder().encode(sequencer.currentStory.visualizedSequence)
+				newItem.result = String(data: seguenceJson, encoding: .utf8)!
+				newItem.change_date = Date()
+				try viewContext.save()
+				showSequenceActionView = false
+				if showStoryNow {
+					showStoryboard = true
+				}
+			} else {
+				showSaveErrorAlert = true
+				saveError = "Duplicate sentence."
+			}
+		} catch {
+			// Replace this implementation with code to handle the error appropriately.
+			// fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+			showSaveErrorAlert = true
+			saveError = "Error occurs. The new sentence can not be saved."
+			let nsError = error as NSError
+			fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
 		}
 	}
 }
 
 #Preview {
-	PreviewStoryView(showAddNewSequence: .constant(false), showStoryboard: .constant(false))
+	PreviewStoryView(showSequenceActionView: .constant(false), showStoryboard: .constant(false))
+		.environmentObject(Sequencer())
 }

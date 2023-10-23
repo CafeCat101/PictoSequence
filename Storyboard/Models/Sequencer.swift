@@ -39,7 +39,7 @@ class Sequencer: ObservableObject {
 				
 				/*DispatchQueue.main.async {
 				}*/
-				return Story(sequence: successInfo)
+				return Story(sentence: sentence,visualizedSequence: successInfo)
 			} catch  {
 				print( error)
 				print("[debug] generateNewSequence, error, failed to decode JSON")

@@ -24,7 +24,7 @@ struct StoryView: View {
 			 Text("preview your story")
 			 Spacer()
 			 }*/
-			if sequencer.currentStory.sequence.count > 0 {
+			if sequencer.currentStory.visualizedSequence.count > 0 {
 				GeometryReader { reader1 in
 					ScrollView(.vertical){
 						VStack {
@@ -110,7 +110,7 @@ struct StoryView: View {
 	
 	private func allWords() -> [AWordPic] {
 		var words:[AWordPic] = []
-		for part in sequencer.currentStory.sequence {
+		for part in sequencer.currentStory.visualizedSequence {
 			for wordData in part.words {
 				words.append(AWordPic(word: wordData.word, picture: wordData.pictures[0].thumbnail_url))
 			}

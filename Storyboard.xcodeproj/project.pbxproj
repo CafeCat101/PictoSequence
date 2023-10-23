@@ -43,6 +43,7 @@
 		C8B8A5892AE3AE2200490EF4 /* Main.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = C8B8A5872AE3AE2200490EF4 /* Main.xcdatamodeld */; };
 		C8B8A58B2AE3B3D400490EF4 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B8A58A2AE3B3D400490EF4 /* PersistenceController.swift */; };
 		C8B8A5CD2AE3FA7600490EF4 /* PreviewStoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B8A5CC2AE3FA7600490EF4 /* PreviewStoryView.swift */; };
+		C8B8A5CF2AE659D700490EF4 /* EditSequenceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B8A5CE2AE659D700490EF4 /* EditSequenceView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -84,6 +85,7 @@
 		C8B8A5882AE3AE2200490EF4 /* Main.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Main.xcdatamodel; sourceTree = "<group>"; };
 		C8B8A58A2AE3B3D400490EF4 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 		C8B8A5CC2AE3FA7600490EF4 /* PreviewStoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewStoryView.swift; sourceTree = "<group>"; };
+		C8B8A5CE2AE659D700490EF4 /* EditSequenceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSequenceView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -141,6 +143,7 @@
 				C85267F62AC4317000047B27 /* Preview Content */,
 				C8680B3F2AC9C0BD00198CCA /* Types */,
 				C8B8A5CC2AE3FA7600490EF4 /* PreviewStoryView.swift */,
+				C8B8A5CE2AE659D700490EF4 /* EditSequenceView.swift */,
 			);
 			path = Storyboard;
 			sourceTree = "<group>";
@@ -271,6 +274,7 @@
 				C8680B362AC94BE100198CCA /* Sequencer.swift in Sources */,
 				C89D5E862ADBD71D00083549 /* PhotoCollectionView.swift in Sources */,
 				C8680B642ACFD98000198CCA /* SpinnerView.swift in Sources */,
+				C8B8A5CF2AE659D700490EF4 /* EditSequenceView.swift in Sources */,
 				C8680B682AD0007400198CCA /* Story.swift in Sources */,
 				C8680B662ACFFF3500198CCA /* StoryView.swift in Sources */,
 				C8680B342AC6BF6300198CCA /* NewSequenceView.swift in Sources */,

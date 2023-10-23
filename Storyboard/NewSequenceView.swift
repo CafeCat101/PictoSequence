@@ -10,10 +10,9 @@ import SwiftUI
 struct NewSequenceView: View {
 	@EnvironmentObject var sequencer:Sequencer
 	@Environment(\.colorScheme) var colorScheme
-	@Environment(\.managedObjectContext) private var viewContext
 	
 	@State private var text = ""
-	@State private var previewSequence = false
+	@State var previewSequence = false
 	@State private var showProgressSpinner = false
 
 	@Binding var showAddNewSequence:Bool
@@ -106,7 +105,7 @@ struct NewSequenceView: View {
 						}
 					}
 				} else {
-					PreviewStoryView(previewSentence: text, showAddNewSequence: $showAddNewSequence, showStoryboard: $showStoryboard)
+					PreviewStoryView(showSequenceActionView: $showAddNewSequence, showStoryboard: $showStoryboard)
 				}
 				
 				Spacer()
@@ -126,7 +125,7 @@ struct NewSequenceView: View {
 		do {
 			try await sequencer.currentStory = sequencer.generateNewSequence(sentence:text) ?? Story()
 			showProgressSpinner = false
-			if sequencer.currentStory.sequence.count > 0 {
+			if sequencer.currentStory.visualizedSequence.count > 0 {
 				previewSequence = true
 			}
 		} catch {

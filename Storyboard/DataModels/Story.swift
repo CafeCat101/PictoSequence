@@ -7,5 +7,6 @@
 
 import Foundation
 struct Story {
-	var sequence:[SequencerResponseSuccess] = []
+	var sentence = ""
+	var visualizedSequence:[SequencerResponseSuccess] = []
 }
