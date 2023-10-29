@@ -6,8 +6,8 @@
 //
 
 import Foundation
-enum PictureSource {
-	case icon
-	case photoPicker
-	case camera
+enum PictureSource: String {
+	case icon = "icon"
+	case photoPicker = "photoPicker"
+	case camera = "camera"
 }

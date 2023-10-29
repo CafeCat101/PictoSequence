@@ -84,7 +84,6 @@ struct APictureView: View {
 					}
 					.opacity(showPic ? 1 : 0)
 					.disabled(showPic ? false : true)
-				Image(systemName: "circle.badge.questionmark")
 			} else {
 				Image(systemName: "circle.badge.questionmark")
 			}
