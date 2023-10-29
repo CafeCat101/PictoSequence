@@ -6,7 +6,7 @@
 //
 
 import Foundation
-struct Story {
+struct StoryByAI {
 	var sentence = ""
 	var visualizedSequence:[SequencerResponseSuccess] = []
 }

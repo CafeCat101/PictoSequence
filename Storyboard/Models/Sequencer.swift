@@ -8,9 +8,9 @@
 import Foundation
 
 class Sequencer: ObservableObject {
-	var currentStory:Story = Story()
+	var theStoryByAI:StoryByAI = StoryByAI()
 	
-	func generateNewSequence(sentence: String) async throws -> Story? {
+	func generateNewSequence(sentence: String) async throws -> StoryByAI? {
 		//Task {
 		let now = Date()
 		let gmtTimeZone = TimeZone(identifier: "UTC")
@@ -39,7 +39,7 @@ class Sequencer: ObservableObject {
 				
 				/*DispatchQueue.main.async {
 				}*/
-				return Story(sentence: sentence,visualizedSequence: successInfo)
+				return StoryByAI(sentence: sentence,visualizedSequence: successInfo)
 			} catch  {
 				print( error)
 				print("[debug] generateNewSequence, error, failed to decode JSON")

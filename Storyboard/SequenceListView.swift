@@ -65,8 +65,8 @@ struct SequenceListView: View {
 								do {
 									let jsonData = sentence.result?.data(using: .utf8)!
 									let sequenceDecoded = try JSONDecoder().decode([SequencerResponseSuccess].self, from: jsonData!)
-									sequencer.currentStory.sentence = sentence.user_question ?? ""
-									sequencer.currentStory.visualizedSequence = sequenceDecoded
+									sequencer.theStoryByAI.sentence = sentence.user_question ?? ""
+									sequencer.theStoryByAI.visualizedSequence = sequenceDecoded
 									showStoryboard = true
 								} catch {
 									

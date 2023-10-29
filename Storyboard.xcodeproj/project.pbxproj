@@ -22,7 +22,7 @@
 		C8680B472ACA5CCF00198CCA /* SequencerResponseError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8680B462ACA5CCF00198CCA /* SequencerResponseError.swift */; };
 		C8680B642ACFD98000198CCA /* SpinnerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8680B632ACFD98000198CCA /* SpinnerView.swift */; };
 		C8680B662ACFFF3500198CCA /* StoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8680B652ACFFF3500198CCA /* StoryView.swift */; };
-		C8680B682AD0007400198CCA /* Story.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8680B672AD0007400198CCA /* Story.swift */; };
+		C8680B682AD0007400198CCA /* StoryByAI.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8680B672AD0007400198CCA /* StoryByAI.swift */; };
 		C8680B6A2AD2BF2A00198CCA /* APictureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8680B692AD2BF2A00198CCA /* APictureView.swift */; };
 		C89D5E712AD69EDD00083549 /* PictureModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C89D5E702AD69EDD00083549 /* PictureModel.swift */; };
 		C89D5E732AD7FC9E00083549 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C89D5E722AD7FC9E00083549 /* LaunchScreen.storyboard */; };
@@ -44,6 +44,7 @@
 		C8B8A58B2AE3B3D400490EF4 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B8A58A2AE3B3D400490EF4 /* PersistenceController.swift */; };
 		C8B8A5CD2AE3FA7600490EF4 /* PreviewStoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B8A5CC2AE3FA7600490EF4 /* PreviewStoryView.swift */; };
 		C8B8A5CF2AE659D700490EF4 /* EditSequenceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B8A5CE2AE659D700490EF4 /* EditSequenceView.swift */; };
+		C8B8A5D12AEE968A00490EF4 /* StoryByUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B8A5D02AEE968A00490EF4 /* StoryByUser.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -63,7 +64,7 @@
 		C8680B462ACA5CCF00198CCA /* SequencerResponseError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SequencerResponseError.swift; sourceTree = "<group>"; };
 		C8680B632ACFD98000198CCA /* SpinnerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinnerView.swift; sourceTree = "<group>"; };
 		C8680B652ACFFF3500198CCA /* StoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryView.swift; sourceTree = "<group>"; };
-		C8680B672AD0007400198CCA /* Story.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Story.swift; sourceTree = "<group>"; };
+		C8680B672AD0007400198CCA /* StoryByAI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryByAI.swift; sourceTree = "<group>"; };
 		C8680B692AD2BF2A00198CCA /* APictureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APictureView.swift; sourceTree = "<group>"; };
 		C89D5E702AD69EDD00083549 /* PictureModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureModel.swift; sourceTree = "<group>"; };
 		C89D5E722AD7FC9E00083549 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -86,6 +87,7 @@
 		C8B8A58A2AE3B3D400490EF4 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 		C8B8A5CC2AE3FA7600490EF4 /* PreviewStoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewStoryView.swift; sourceTree = "<group>"; };
 		C8B8A5CE2AE659D700490EF4 /* EditSequenceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSequenceView.swift; sourceTree = "<group>"; };
+		C8B8A5D02AEE968A00490EF4 /* StoryByUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryByUser.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -178,7 +180,8 @@
 				C8680B422AC9C27E00198CCA /* SequencerSendJson.swift */,
 				C8680B442ACA5C6000198CCA /* SequencerResponseSuccess.swift */,
 				C8680B462ACA5CCF00198CCA /* SequencerResponseError.swift */,
-				C8680B672AD0007400198CCA /* Story.swift */,
+				C8680B672AD0007400198CCA /* StoryByAI.swift */,
+				C8B8A5D02AEE968A00490EF4 /* StoryByUser.swift */,
 			);
 			path = DataModels;
 			sourceTree = "<group>";
@@ -275,7 +278,7 @@
 				C89D5E862ADBD71D00083549 /* PhotoCollectionView.swift in Sources */,
 				C8680B642ACFD98000198CCA /* SpinnerView.swift in Sources */,
 				C8B8A5CF2AE659D700490EF4 /* EditSequenceView.swift in Sources */,
-				C8680B682AD0007400198CCA /* Story.swift in Sources */,
+				C8680B682AD0007400198CCA /* StoryByAI.swift in Sources */,
 				C8680B662ACFFF3500198CCA /* StoryView.swift in Sources */,
 				C8680B342AC6BF6300198CCA /* NewSequenceView.swift in Sources */,
 				C89D5E8E2ADBD7E100083549 /* ThumbnailView.swift in Sources */,
@@ -285,6 +288,7 @@
 				C89D5E712AD69EDD00083549 /* PictureModel.swift in Sources */,
 				C89D5E7E2ADBD4E600083549 /* ViewFinderView.swift in Sources */,
 				C85267F32AC4316F00047B27 /* ContentView.swift in Sources */,
+				C8B8A5D12AEE968A00490EF4 /* StoryByUser.swift in Sources */,
 				C89D5E802ADBD54500083549 /* PhotoAsset.swift in Sources */,
 				C89D5E7A2ADBCFEB00083549 /* CameraView.swift in Sources */,
 				C85267F12AC4316F00047B27 /* StoryboardApp.swift in Sources */,

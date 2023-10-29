@@ -23,7 +23,7 @@ struct PreviewStoryView: View {
 
 	var body: some View {
 		VStack {
-			Text(sequencer.currentStory.sentence)
+			Text(sequencer.theStoryByAI.sentence)
 				.font(.title2)
 				.bold()
 			StoryView()
@@ -70,7 +70,7 @@ struct PreviewStoryView: View {
 			}
 		}
 		.onAppear(perform: {
-			fetchRequest.predicate = NSPredicate(format: "user_question = %@", sequencer.currentStory.sentence)
+			fetchRequest.predicate = NSPredicate(format: "user_question = %@", sequencer.theStoryByAI.sentence)
 		})
 	}
 	
@@ -79,11 +79,12 @@ struct PreviewStoryView: View {
 			let existedSentences = try viewContext.fetch(fetchRequest)
 			if existedSentences.isEmpty {
 				let newItem = Sentences(context: viewContext)
-				newItem.user_question = sequencer.currentStory.sentence
-				let seguenceJson = try JSONEncoder().encode(sequencer.currentStory.visualizedSequence)
+				newItem.user_question = sequencer.theStoryByAI.sentence
+				let seguenceJson = try JSONEncoder().encode(sequencer.theStoryByAI.visualizedSequence)
 				newItem.result = String(data: seguenceJson, encoding: .utf8)!
 				newItem.change_date = Date()
 				try viewContext.save()
+				
 				showSequenceActionView = false
 				if showStoryNow {
 					showStoryboard = true
@@ -100,6 +101,24 @@ struct PreviewStoryView: View {
 			let nsError = error as NSError
 			fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
 		}
+	}
+	
+	private func resizeImage(image: UIImage, maxDimension: CGFloat) -> UIImage {
+			var scale: CGFloat
+			if image.size.width > image.size.height {
+					scale = maxDimension / image.size.width
+			} else {
+					scale = maxDimension / image.size.height
+			}
+			
+			let newWidth = image.size.width * scale
+			let newHeight = image.size.height * scale
+			UIGraphicsBeginImageContext(CGSize(width: newWidth, height: newHeight))
+			image.draw(in: CGRect(x: 0, y: 0, width: newWidth, height: newHeight))
+			let newImage = UIGraphicsGetImageFromCurrentImageContext()
+			UIGraphicsEndImageContext()
+
+			return newImage!
 	}
 }
 
