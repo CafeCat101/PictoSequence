@@ -8,7 +8,7 @@
 import Foundation
 
 class Sequencer: ObservableObject {
-	var theStoryByAI:StoryByAI = StoryByAI()
+	//var theStoryByAI:StoryByAI = StoryByAI()
 	var theStoryByUser:StoryByUser = StoryByUser()
 	
 	func generateNewSequence(sentence: String) async throws -> StoryByUser? {

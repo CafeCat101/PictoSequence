@@ -22,7 +22,7 @@ struct ListItemView: View {
 		.swipeActions {
 			Button("Edit") {
 				print("edit!")
-				let fetchRequest = NSFetchRequest<Sentences>(entityName: "Sentences")
+				/*let fetchRequest = NSFetchRequest<Sentences>(entityName: "Sentences")
 				fetchRequest.predicate = NSPredicate(format: "user_question == %@", textLine)
 				do {
 					let sentence = try managedContext.fetch(fetchRequest).first
@@ -33,8 +33,42 @@ struct ListItemView: View {
 					showEditSequence = true
 				} catch {
 					
-				}
+				}*/
+				let fetchRequest = NSFetchRequest<Sentences>(entityName: "Sentences")
+				fetchRequest.predicate = NSPredicate(format: "user_question == %@", textLine)
 				
+				do {
+					let sentences = try managedContext.fetch(fetchRequest)
+					let sentenceID = sentences.first?.id ?? UUID()
+					let fetchWords = NSFetchRequest<Words>(entityName: "Words")
+					fetchWords.predicate = NSPredicate(format: "sentenceID = %@", sentenceID as CVarArg)
+					fetchWords.sortDescriptors = [NSSortDescriptor(keyPath: \Words.order, ascending: true)]
+					let allWords = try managedContext.fetch(fetchWords)
+					if allWords.count > 0 {
+						sequencer.theStoryByUser = StoryByUser()
+						sequencer.theStoryByUser.sentence = sentences.first?.user_question ?? ""
+						for wordItem in allWords {
+							var addWordCard = WordCard()
+							addWordCard.word = wordItem.word ?? ""
+							print("\(String(describing: wordItem.word)) \(String(describing: wordItem.picID))")
+							let fetchPictures = NSFetchRequest<Pictures>(entityName: "Pictures")
+							fetchPictures.predicate = NSPredicate(format: "id = %@", wordItem.picID! as CVarArg)
+							fetchPictures.fetchLimit = 1
+							let usePic = try managedContext.fetch(fetchPictures)
+							if usePic.isEmpty == false {
+								addWordCard.pictureType = .icon // loop up enum later
+								addWordCard.iconURL = usePic.first?.iconURL ?? ""
+							}
+							sequencer.theStoryByUser.visualizedSequence.append(addWordCard)
+						}
+						showEditSequence = true
+					} else {
+						//error
+						print("[debug] fetchWords with sentenceID\(String(describing: sentences.first?.id)) has no item")
+					}
+				} catch {
+					
+				}
 			}
 			.tint(.green)
 			

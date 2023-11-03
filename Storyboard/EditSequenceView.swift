@@ -23,7 +23,7 @@ struct EditSequenceView: View {
 				.font(.title)
 				.labelStyle(.iconOnly)
 				.onTapGesture {
-					
+					showEditSequence = false
 				}
 				Spacer()
 				Text("Edit Sequence")

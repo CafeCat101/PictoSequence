@@ -70,7 +70,7 @@ struct PreviewStoryView: View {
 			}
 		}
 		.onAppear(perform: {
-			fetchRequest.predicate = NSPredicate(format: "user_question = %@", sequencer.theStoryByAI.sentence)
+			fetchRequest.predicate = NSPredicate(format: "user_question = %@", sequencer.theStoryByUser.sentence)
 		})
 	}
 	

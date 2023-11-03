@@ -88,7 +88,7 @@ struct SequenceListView: View {
 										showStoryboard = true
 									} else {
 										//error
-										print("[debug] fetchWords with sentenceID\(sentence.id) has no item")
+										print("[debug] fetchWords with sentenceID\(String(describing: sentence.id)) has no item")
 									}
 								} catch {
 									
@@ -129,7 +129,7 @@ struct SequenceListView: View {
 		.fullScreenCover(isPresented: $showStoryboard, content: {
 			ShowStoryView(showStoryboard: $showStoryboard)
 		})
-		.onAppear(perform: {
+		/*.onAppear(perform: {
 			do {
 				let fetchDanglingWords = NSFetchRequest<Words>(entityName: "Words")
 				fetchDanglingWords.predicate = NSPredicate(format: "sentenceID == nil")
@@ -141,8 +141,7 @@ struct SequenceListView: View {
 			} catch {
 				
 			}
-			
-		})
+		})*/
 	}
 	
 	struct myListStyle: ViewModifier {

@@ -117,7 +117,7 @@ struct StoryView: View {
 		}
 	}
 	
-	private func allWords() -> [AWordPic] {
+	/*private func allWords() -> [AWordPic] {
 		var words:[AWordPic] = []
 		for part in sequencer.theStoryByAI.visualizedSequence {
 			for wordData in part.words {
@@ -125,7 +125,7 @@ struct StoryView: View {
 			}
 		}
 		return words
-	}
+	}*/
 	
 	struct AWordPic: Hashable {
 		var word:String
