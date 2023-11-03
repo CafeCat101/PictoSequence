@@ -129,6 +129,20 @@ struct SequenceListView: View {
 		.fullScreenCover(isPresented: $showStoryboard, content: {
 			ShowStoryView(showStoryboard: $showStoryboard)
 		})
+		.onAppear(perform: {
+			do {
+				let fetchDanglingWords = NSFetchRequest<Words>(entityName: "Words")
+				fetchDanglingWords.predicate = NSPredicate(format: "sentenceID == nil")
+				let danglingWords = try viewContext.fetch(fetchDanglingWords)
+				print("[debug] SequenceListView, onAppear, danglingWords.count \(danglingWords.count)")
+				for theWord in danglingWords {
+					print(theWord.word ?? "")
+				}
+			} catch {
+				
+			}
+			
+		})
 	}
 	
 	struct myListStyle: ViewModifier {

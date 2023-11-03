@@ -49,6 +49,26 @@ struct ListItemView: View {
 						for sentence in sentences {
 							managedContext.delete(sentence)
 						}
+						
+						for wordCard in sequencer.theStoryByUser.visualizedSequence {
+							let fetchSameWords = NSFetchRequest<Words>(entityName: "Words")
+							fetchSameWords.predicate = NSPredicate(format: "word = %@", wordCard.word)
+							let sameWords = try managedContext.fetch(fetchSameWords)
+							print("[debug] ListItemView, delete, sameWords.count \(sameWords.count)")
+							if sameWords.count > 0 {
+								for wordItem in sameWords {
+									print("[debug] ListItemView, delete, wordItem \(String(describing: wordItem.word))")
+									if sameWords.count == 1 {
+										//set the sentenceID to nil
+										wordItem.sentenceID = nil
+									} else {
+										//delete the whole row
+										managedContext.delete(wordItem)
+									}
+								}
+							}
+						}
+						
 						try managedContext.save()
 					} catch let error as NSError {
 						print("Could not fetch. \(error), \(error.userInfo)")

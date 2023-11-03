@@ -11,7 +11,7 @@ import CoreData
 struct PreviewStoryView: View {
 	@EnvironmentObject var sequencer:Sequencer
 	@Environment(\.colorScheme) var colorScheme
-	@Environment(\.managedObjectContext) private var viewContext
+	@Environment(\.managedObjectContext) private var manageContext
 	let fetchRequest = NSFetchRequest<Sentences>(entityName: "Sentences")
 	
 	//var previewSentence:String = ""
@@ -76,17 +76,17 @@ struct PreviewStoryView: View {
 	
 	private func saveSequence(showStoryNow: Bool) {
 		do {
-			let existedSentences = try viewContext.fetch(fetchRequest)
+			let existedSentences = try manageContext.fetch(fetchRequest)
 			if existedSentences.isEmpty {
 				let newID = UUID()
-				let newItem = Sentences(context: viewContext)
+				let newItem = Sentences(context: manageContext)
 				newItem.user_question = sequencer.theStoryByUser.sentence
 				newItem.id = newID
 				//newItem.user_question = sequencer.theStoryByAI.sentence
 				//let seguenceJson = try JSONEncoder().encode(sequencer.theStoryByAI.visualizedSequence)
 				//newItem.result = String(data: seguenceJson, encoding: .utf8)!
 				newItem.change_date = Date()
-				try viewContext.save()
+				try manageContext.save()
 				
 				var wordOrderCount = 0
 				for wordCard in sequencer.theStoryByUser.visualizedSequence {
@@ -96,10 +96,10 @@ struct PreviewStoryView: View {
 					fetchWords.sortDescriptors = [NSSortDescriptor(keyPath: \Words.wordChanged, ascending: false)]
 					fetchWords.fetchLimit = 1
 					print("[debug] PreviewStoryView, before viewContext.fetchWords")
-					let lastWordUsed = try viewContext.fetch(fetchWords)
+					let lastWordUsed = try manageContext.fetch(fetchWords)
 					
 					
-					let addWord = Words(context: viewContext)
+					let addWord = Words(context: manageContext)
 					addWord.sentenceID = newID
 					addWord.word = wordCard.word
 					addWord.sentenceID = newID
@@ -115,12 +115,25 @@ struct PreviewStoryView: View {
 						//add new word and add new picture item
 						let newPicID = UUID()
 						addWord.picID = newPicID
-						let newPic = Pictures(context: viewContext)
+						let newPic = Pictures(context: manageContext)
 						newPic.id = newPicID
 						newPic.type = PictureSource.icon.rawValue
 						newPic.iconURL = wordCard.iconURL
 					}
-					try viewContext.save()
+					try manageContext.save()
+					
+					//after have added the word with pic, it's safe to delete the same word without sentenceID
+					let fetchDanglingWords = NSFetchRequest<Words>(entityName: "Words")
+					fetchDanglingWords.predicate = NSPredicate(format: "(word == %@) AND (sentenceID == nil)", wordCard.word)
+					do {
+						let wordWithoutSentence = try manageContext.fetch(fetchDanglingWords)
+						for danglingWord in wordWithoutSentence {
+							manageContext.delete(danglingWord)
+						}
+						try manageContext.save()
+					} catch let error as NSError {
+						print("Could not fetch. \(error), \(error.userInfo)")
+					}
 				}
 				
 				showSequenceActionView = false
