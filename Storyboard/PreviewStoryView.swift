@@ -23,7 +23,7 @@ struct PreviewStoryView: View {
 
 	var body: some View {
 		VStack {
-			Text(sequencer.theStoryByAI.sentence)
+			Text(sequencer.theStoryByUser.sentence)
 				.font(.title2)
 				.bold()
 			StoryView()
@@ -78,12 +78,50 @@ struct PreviewStoryView: View {
 		do {
 			let existedSentences = try viewContext.fetch(fetchRequest)
 			if existedSentences.isEmpty {
+				let newID = UUID()
 				let newItem = Sentences(context: viewContext)
-				newItem.user_question = sequencer.theStoryByAI.sentence
-				let seguenceJson = try JSONEncoder().encode(sequencer.theStoryByAI.visualizedSequence)
-				newItem.result = String(data: seguenceJson, encoding: .utf8)!
+				newItem.user_question = sequencer.theStoryByUser.sentence
+				newItem.id = newID
+				//newItem.user_question = sequencer.theStoryByAI.sentence
+				//let seguenceJson = try JSONEncoder().encode(sequencer.theStoryByAI.visualizedSequence)
+				//newItem.result = String(data: seguenceJson, encoding: .utf8)!
 				newItem.change_date = Date()
 				try viewContext.save()
+				
+				var wordOrderCount = 0
+				for wordCard in sequencer.theStoryByUser.visualizedSequence {
+					wordOrderCount = wordOrderCount + 1
+					let fetchWords = NSFetchRequest<Words>(entityName: "Words")
+					fetchWords.predicate = NSPredicate(format: "word = %@", wordCard.word)
+					fetchWords.sortDescriptors = [NSSortDescriptor(keyPath: \Words.wordChanged, ascending: false)]
+					fetchWords.fetchLimit = 1
+					print("[debug] PreviewStoryView, before viewContext.fetchWords")
+					let lastWordUsed = try viewContext.fetch(fetchWords)
+					
+					
+					let addWord = Words(context: viewContext)
+					addWord.sentenceID = newID
+					addWord.word = wordCard.word
+					addWord.sentenceID = newID
+					print("[debug] PreviewStoryView, sentenceID \(newID)")
+					addWord.wordChanged = Date()
+					addWord.order = Int16(wordOrderCount)
+					//find picture used for this word
+					
+					if lastWordUsed.count > 0 {
+						//use the same picture
+						addWord.picID = lastWordUsed.first?.picID
+					} else {
+						//add new word and add new picture item
+						let newPicID = UUID()
+						addWord.picID = newPicID
+						let newPic = Pictures(context: viewContext)
+						newPic.id = newPicID
+						newPic.type = PictureSource.icon.rawValue
+						newPic.iconURL = wordCard.iconURL
+					}
+					try viewContext.save()
+				}
 				
 				showSequenceActionView = false
 				if showStoryNow {

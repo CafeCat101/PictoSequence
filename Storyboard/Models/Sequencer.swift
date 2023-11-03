@@ -9,8 +9,9 @@ import Foundation
 
 class Sequencer: ObservableObject {
 	var theStoryByAI:StoryByAI = StoryByAI()
+	var theStoryByUser:StoryByUser = StoryByUser()
 	
-	func generateNewSequence(sentence: String) async throws -> StoryByAI? {
+	func generateNewSequence(sentence: String) async throws -> StoryByUser? {
 		//Task {
 		let now = Date()
 		let gmtTimeZone = TimeZone(identifier: "UTC")
@@ -39,7 +40,9 @@ class Sequencer: ObservableObject {
 				
 				/*DispatchQueue.main.async {
 				}*/
-				return StoryByAI(sentence: sentence,visualizedSequence: successInfo)
+				//return StoryByAI(sentence: sentence,visualizedSequence: successInfo)
+				let AIStory = StoryByAI(sentence: sentence,visualizedSequence: successInfo)
+				return AIStoryToUserStory(AIstory: AIStory)
 			} catch  {
 				print( error)
 				print("[debug] generateNewSequence, error, failed to decode JSON")
@@ -55,5 +58,19 @@ class Sequencer: ObservableObject {
 		//}
 	}
 	
-
+	func AIStoryToUserStory(AIstory: StoryByAI) -> StoryByUser {
+		var userStory = StoryByUser()
+		userStory.sentence = AIstory.sentence
+		for item in AIstory.visualizedSequence {
+			for AIWord in item.words {
+				var addWord = WordCard()
+				addWord.word = AIWord.word
+				addWord.pictureType = .icon
+				addWord.iconURL = AIWord.pictures[0].thumbnail_url
+				userStory.visualizedSequence.append(addWord)
+			}
+			
+		}
+		return userStory
+	}
 }

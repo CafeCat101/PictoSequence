@@ -63,6 +63,39 @@ struct SequenceListView: View {
 						ListItemView(showEditSequence: $showEditSequence, textLine: sentence.user_question ?? "")
 							.onTapGesture {
 								do {
+									let fetchWords = NSFetchRequest<Words>(entityName: "Words")
+									fetchWords.predicate = NSPredicate(format: "sentenceID = %@", sentence.id! as CVarArg)
+									fetchWords.sortDescriptors = [NSSortDescriptor(keyPath: \Words.order, ascending: true)]
+									let allWords = try viewContext.fetch(fetchWords)
+									if allWords.count > 0 {
+										sequencer.theStoryByUser = StoryByUser()
+										sequencer.theStoryByUser.sentence = sentence.user_question ?? ""
+										for wordItem in allWords {
+											var addWordCard = WordCard()
+											addWordCard.word = wordItem.word ?? ""
+											print("\(String(describing: wordItem.word)) \(String(describing: wordItem.picID))")
+											let fetchPictures = NSFetchRequest<Pictures>(entityName: "Pictures")
+											fetchPictures.predicate = NSPredicate(format: "id = %@", wordItem.picID! as CVarArg)
+											fetchPictures.fetchLimit = 1
+											let usePic = try viewContext.fetch(fetchPictures)
+											if usePic.isEmpty == false {
+												addWordCard.pictureType = .icon // loop up enum later
+												addWordCard.iconURL = usePic.first?.iconURL ?? ""
+											}
+											
+											sequencer.theStoryByUser.visualizedSequence.append(addWordCard)
+										}
+										showStoryboard = true
+									} else {
+										//error
+										print("[debug] fetchWords with sentenceID\(sentence.id) has no item")
+									}
+								} catch {
+									
+								}
+								
+								
+								/*do {
 									let jsonData = sentence.result?.data(using: .utf8)!
 									let sequenceDecoded = try JSONDecoder().decode([SequencerResponseSuccess].self, from: jsonData!)
 									sequencer.theStoryByAI.sentence = sentence.user_question ?? ""
@@ -70,7 +103,7 @@ struct SequenceListView: View {
 									showStoryboard = true
 								} catch {
 									
-								}
+								}*/
 								
 							}
 					}/*.onDelete(perform: deleteASentence)*/

@@ -13,7 +13,8 @@ struct StoryByUser {
 	var visualizedSequence:[WordCard] = []
 }
 
-struct WordCard {
+struct WordCard: Identifiable {
+	var id = UUID()
 	var word = ""
 	var picture:Image = Image(systemName: "photo.circle.fill")
 	var pictureType: PictureSource = .icon

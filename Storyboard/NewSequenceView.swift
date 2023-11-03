@@ -123,9 +123,9 @@ struct NewSequenceView: View {
 	private func generate() async {
 		showProgressSpinner = true
 		do {
-			try await sequencer.theStoryByAI = sequencer.generateNewSequence(sentence:text) ?? StoryByAI()
+			try await sequencer.theStoryByUser = sequencer.generateNewSequence(sentence:text) ?? StoryByUser()
 			showProgressSpinner = false
-			if sequencer.theStoryByAI.visualizedSequence.count > 0 {
+			if sequencer.theStoryByUser.visualizedSequence.count > 0 {
 				previewSequence = true
 			}
 		} catch {

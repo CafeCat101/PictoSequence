@@ -24,24 +24,32 @@ struct StoryView: View {
 			 Text("preview your story")
 			 Spacer()
 			 }*/
-			if sequencer.theStoryByAI.visualizedSequence.count > 0 {
+			if sequencer.theStoryByUser.visualizedSequence.count > 0 {
 				GeometryReader { reader1 in
 					ScrollView(.vertical){
 						VStack {
 							HStack {
 								Spacer()
 								Grid {
-									ForEach( allWords() , id: \.self) { item in
+									ForEach(sequencer.theStoryByUser.visualizedSequence) { item in
+										GridRow {
+											VStack {
+												APictureView(word: item.word,urlStr: item.iconURL, picWidth: reader1.size.width/3, picHeight: reader1.size.width/3)
+											}
+											.padding([.bottom,.trailing],5)
+										}
+									}
+									/*ForEach( sequencer.theStoryByUser.visualizedSequence , id: \.self) { item in
 										GridRow {
 											
 											VStack {
-												APictureView(word: item.word,urlStr: item.picture, picWidth: reader1.size.width/3, picHeight: reader1.size.width/3)
+												APictureView(word: item.word,urlStr: item.iconURL, picWidth: reader1.size.width/3, picHeight: reader1.size.width/3)
 											}
 											.padding([.bottom,.trailing],5)
 											
 						
 										}
-									}
+									}*/
 								}
 								Spacer()
 							}
@@ -91,8 +99,9 @@ struct StoryView: View {
 						}
 						.onAppear(perform: {
 							let picSize = reader1.size.width/3
-							let rowCount = CGFloat(allWords().count)
-							gridHeight = picSize*rowCount + 5*rowCount + 100
+							//let rowCount = CGFloat(allWords().count)
+							let rowCount = CGFloat(sequencer.theStoryByUser.visualizedSequence.count)
+							gridHeight = picSize*rowCount + 5*rowCount + 150
 						})
 						.frame(height: gridHeight)
 					}
