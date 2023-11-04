@@ -9,7 +9,7 @@ import Foundation
 
 class Sequencer: ObservableObject {
 	//var theStoryByAI:StoryByAI = StoryByAI()
-	var theStoryByUser:StoryByUser = StoryByUser()
+	@Published var theStoryByUser:StoryByUser = StoryByUser()
 	
 	func generateNewSequence(sentence: String) async throws -> StoryByUser? {
 		//Task {
@@ -41,6 +41,7 @@ class Sequencer: ObservableObject {
 				/*DispatchQueue.main.async {
 				}*/
 				//return StoryByAI(sentence: sentence,visualizedSequence: successInfo)
+				print("[debug] Sequencer, generateNewSequence, sentence \(sentence)")
 				let AIStory = StoryByAI(sentence: sentence,visualizedSequence: successInfo)
 				return AIStoryToUserStory(AIstory: AIStory)
 			} catch  {
@@ -60,6 +61,7 @@ class Sequencer: ObservableObject {
 	
 	func AIStoryToUserStory(AIstory: StoryByAI) -> StoryByUser {
 		var userStory = StoryByUser()
+		print("[debug] Sequencer, AIStoryToUserStory, AIstory.sentence \(AIstory.sentence)")
 		userStory.sentence = AIstory.sentence
 		for item in AIstory.visualizedSequence {
 			for AIWord in item.words {

@@ -70,14 +70,15 @@ struct PreviewStoryView: View {
 			}
 		}
 		.onAppear(perform: {
-			fetchRequest.predicate = NSPredicate(format: "user_question = %@", sequencer.theStoryByUser.sentence)
+			print("[debug] PreviewStoryView, onAppear, sequencer.theStoryByUser.sentence \(sequencer.theStoryByUser.sentence)")
 		})
 	}
 	
 	private func saveSequence(showStoryNow: Bool) {
 		do {
+			fetchRequest.predicate = NSPredicate(format: "user_question = %@", sequencer.theStoryByUser.sentence)
 			let existedSentences = try manageContext.fetch(fetchRequest)
-			if existedSentences.isEmpty {
+			if existedSentences.count == 0 {
 				let newID = UUID()
 				let newItem = Sentences(context: manageContext)
 				newItem.user_question = sequencer.theStoryByUser.sentence
