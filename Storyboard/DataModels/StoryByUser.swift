@@ -16,7 +16,7 @@ struct StoryByUser {
 struct WordCard: Identifiable {
 	var id = UUID()
 	var word = ""
-	var picture:Image = Image(systemName: "photo.circle.fill")
+	var picture:Image?
 	var pictureType: PictureSource = .icon
 	var iconURL = ""
 }
