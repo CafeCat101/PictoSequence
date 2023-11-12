@@ -73,6 +73,7 @@ struct SequenceListView: View {
 										for wordItem in allWords {
 											var addWordCard = WordCard()
 											addWordCard.word = wordItem.word ?? ""
+											addWordCard.cardOrder = Int(wordItem.order)
 											print("\(String(describing: wordItem.word)) \(String(describing: wordItem.picID))")
 											let fetchPictures = NSFetchRequest<Pictures>(entityName: "Pictures")
 											fetchPictures.predicate = NSPredicate(format: "id = %@", wordItem.picID! as CVarArg)

@@ -79,7 +79,7 @@ struct PreviewStoryView: View {
 			fetchRequest.predicate = NSPredicate(format: "user_question = %@", sequencer.theStoryByUser.sentence)
 			let existedSentences = try manageContext.fetch(fetchRequest)
 			if existedSentences.count == 0 {
-				let newID = UUID()
+				let newID = UUID().uuidString
 				let newItem = Sentences(context: manageContext)
 				newItem.user_question = sequencer.theStoryByUser.sentence
 				newItem.id = newID
@@ -89,9 +89,7 @@ struct PreviewStoryView: View {
 				newItem.change_date = Date()
 				try manageContext.save()
 				
-				var wordOrderCount = 0
 				for wordCard in sequencer.theStoryByUser.visualizedSequence {
-					wordOrderCount = wordOrderCount + 1
 					let fetchWords = NSFetchRequest<Words>(entityName: "Words")
 					fetchWords.predicate = NSPredicate(format: "word = %@", wordCard.word)
 					fetchWords.sortDescriptors = [NSSortDescriptor(keyPath: \Words.wordChanged, ascending: false)]
@@ -106,7 +104,7 @@ struct PreviewStoryView: View {
 					addWord.sentenceID = newID
 					print("[debug] PreviewStoryView, sentenceID \(newID)")
 					addWord.wordChanged = Date()
-					addWord.order = Int16(wordOrderCount)
+					addWord.order = Int16(wordCard.cardOrder)
 					//find picture used for this word
 					
 					if lastWordUsed.count > 0 {
@@ -115,9 +113,9 @@ struct PreviewStoryView: View {
 					} else {
 						//add new word and add new picture item
 						let newPicID = UUID()
-						addWord.picID = newPicID
+						addWord.picID = newPicID.uuidString
 						let newPic = Pictures(context: manageContext)
-						newPic.id = newPicID
+						newPic.id = newPicID.uuidString
 						newPic.type = PictureSource.icon.rawValue
 						newPic.iconURL = wordCard.iconURL
 					}

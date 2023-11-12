@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct NewSequenceView: View {
 	@EnvironmentObject var sequencer:Sequencer
 	@Environment(\.colorScheme) var colorScheme
+	@Environment(\.managedObjectContext) private var manageContext
 	
 	@State private var text = ""
 	@State var previewSequence = false
@@ -124,6 +126,40 @@ struct NewSequenceView: View {
 		showProgressSpinner = true
 		do {
 			try await sequencer.theStoryByUser = sequencer.generateNewSequence(sentence:text) ?? StoryByUser()
+			
+			//for preview, replace icon with word's "picture" saved in CoreData if it exists
+			for wordCardItem in sequencer.theStoryByUser.visualizedSequence {
+				let fetchWords = NSFetchRequest<Words>(entityName: "Words")
+				fetchWords.predicate = NSPredicate(format: "word = %@", wordCardItem.word)
+				fetchWords.sortDescriptors = [NSSortDescriptor(keyPath: \Words.wordChanged, ascending: false)]
+				fetchWords.fetchLimit = 1
+				print("[debug] PreviewStoryView, before viewContext.fetchWords")
+				let lastWordUsed = try manageContext.fetch(fetchWords)
+				
+				if lastWordUsed.count > 0 {
+					let fetchPictures = NSFetchRequest<Pictures>(entityName: "Pictures")
+					fetchPictures.predicate = NSPredicate(format: "id = %@", lastWordUsed.first?.picID ?? "")
+					let lastPictureUsed = try manageContext.fetch(fetchPictures)
+					if lastPictureUsed.count > 0 {
+						let findWordIndex = sequencer.theStoryByUser.visualizedSequence.firstIndex(where: {$0.word == wordCardItem.word}) ?? -1
+						if findWordIndex > 0 {
+							sequencer.theStoryByUser.visualizedSequence[findWordIndex].pictureID = UUID(uuidString: lastPictureUsed.first?.id! ?? "") ?? UUID()
+							sequencer.theStoryByUser.visualizedSequence[findWordIndex].pictureLocalPath = lastPictureUsed.first?.pictureLocalPath ?? ""
+							
+							if lastPictureUsed.first?.type == PictureSource.icon.rawValue {
+								sequencer.theStoryByUser.visualizedSequence[findWordIndex].pictureType = .icon
+							} else if lastPictureUsed.first?.type == PictureSource.camera.rawValue {
+								sequencer.theStoryByUser.visualizedSequence[findWordIndex].pictureType = .camera
+							} else {
+								sequencer.theStoryByUser.visualizedSequence[findWordIndex].pictureType = .photoPicker
+							}
+						}
+					}
+				}
+				
+				
+			}
+			
 			showProgressSpinner = false
 			if sequencer.theStoryByUser.visualizedSequence.count > 0 {
 				previewSequence = true

@@ -15,6 +15,7 @@ import Combine
 class PictureModel: ObservableObject {
 	var transferableDone = PassthroughSubject<Bool, Never>()
 	var selectedImage: Image?
+	var selectedImageData: Data?
 	
 	enum ImageState {
 		case empty
@@ -29,6 +30,8 @@ class PictureModel: ObservableObject {
 	
 	struct WordImage: Transferable {
 		let image: Image
+		let imageData: Data
+		
 		
 		static var transferRepresentation: some TransferRepresentation {
 			DataRepresentation(importedContentType: .image) { data in
@@ -37,13 +40,13 @@ class PictureModel: ObservableObject {
 					throw TransferError.importFailed
 				}
 				let image = Image(nsImage: nsImage)
-				return WordImage(image: image)
+				return WordImage(image: image, imageData: data)
 #elseif canImport(UIKit)
 				guard let uiImage = UIImage(data: data) else {
 					throw TransferError.importFailed
 				}
 				let image = Image(uiImage: uiImage)
-				return WordImage(image: image)
+				return WordImage(image: image, imageData: data)
 #else
 				throw TransferError.importFailed
 #endif
@@ -78,6 +81,7 @@ class PictureModel: ObservableObject {
 				case .success(let profileImage?):
 					self.imageState = .success(profileImage.image)
 					self.selectedImage = profileImage.image
+					self.selectedImageData = profileImage.imageData
 					self.transferableDone.send(true)
 				case .success(nil):
 					self.imageState = .empty

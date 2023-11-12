@@ -7,7 +7,7 @@
 
 import SwiftUI
 import PhotosUI
-
+/*
 struct APictureView: View {
 	var word:String = "pic"
 	var urlStr:String = "https://static.thenounproject.com/png/5222984-200.png"
@@ -32,6 +32,9 @@ struct APictureView: View {
 							.resizable()
 							.scaledToFit()
 							.padding()
+							.onAppear(perform: {
+								print("[debug] APictureView, AsyncImage.onAppear, word \(word)")
+							})
 					} else if phase.error != nil {
 						Text("There was an error loading the image.")
 					} else {
@@ -165,7 +168,8 @@ struct APictureView: View {
 		}
 	}
 }
-
-#Preview {
-	APictureView()
-}
+*/
+/*#Preview {
+ APictureView()
+ }
+ */

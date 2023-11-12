@@ -39,9 +39,9 @@ struct ListItemView: View {
 				
 				do {
 					let sentences = try managedContext.fetch(fetchRequest)
-					let sentenceID = sentences.first?.id ?? UUID()
+					let sentenceID = sentences.first?.id
 					let fetchWords = NSFetchRequest<Words>(entityName: "Words")
-					fetchWords.predicate = NSPredicate(format: "sentenceID = %@", sentenceID as CVarArg)
+					fetchWords.predicate = NSPredicate(format: "sentenceID = %@", sentenceID!)
 					fetchWords.sortDescriptors = [NSSortDescriptor(keyPath: \Words.order, ascending: true)]
 					let allWords = try managedContext.fetch(fetchWords)
 					if allWords.count > 0 {

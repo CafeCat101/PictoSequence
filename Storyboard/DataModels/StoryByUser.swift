@@ -13,10 +13,14 @@ struct StoryByUser {
 	var visualizedSequence:[WordCard] = []
 }
 
-struct WordCard: Identifiable {
+struct WordCard: Identifiable, Equatable {
 	var id = UUID()
 	var word = ""
-	var picture:Image?
+	var cardOrder = 0
+	var pictureID = UUID()
 	var pictureType: PictureSource = .icon
+	var pictureLocalPath = ""
+	//var picture:UIImage?
 	var iconURL = ""
+	//var iconLocalPath = ""
 }

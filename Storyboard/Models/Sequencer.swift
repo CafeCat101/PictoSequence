@@ -63,16 +63,30 @@ class Sequencer: ObservableObject {
 		var userStory = StoryByUser()
 		print("[debug] Sequencer, AIStoryToUserStory, AIstory.sentence \(AIstory.sentence)")
 		userStory.sentence = AIstory.sentence
+		var wordOrderCount = 0
 		for item in AIstory.visualizedSequence {
 			for AIWord in item.words {
+				wordOrderCount = wordOrderCount + 1
 				var addWord = WordCard()
 				addWord.word = AIWord.word
+				addWord.cardOrder = wordOrderCount
 				addWord.pictureType = .icon
 				addWord.iconURL = AIWord.pictures[0].thumbnail_url
+				addWord.pictureLocalPath = "pictures/\(getImageFileName(remoteURL: AIWord.pictures[0].thumbnail_url))"
+				//addWord.iconLocalPath = "icons/\(getImageFileName(remoteURL: AIWord.pictures[0].thumbnail_url))"
 				userStory.visualizedSequence.append(addWord)
 			}
 			
 		}
 		return userStory
+	}
+	
+	private func getImageFileName(remoteURL: String) -> String {
+		if let url = URL(string: remoteURL) {
+				let fileName = url.lastPathComponent
+				return fileName
+		} else {
+			return ""
+		}
 	}
 }

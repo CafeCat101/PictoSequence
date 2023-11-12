@@ -34,7 +34,8 @@ struct StoryView: View {
 									ForEach(sequencer.theStoryByUser.visualizedSequence) { item in
 										GridRow {
 											VStack {
-												APictureView(word: item.word,urlStr: item.iconURL, picWidth: reader1.size.width/3, picHeight: reader1.size.width/3)
+												APictureCardView(wordCard: item, picWidth: reader1.size.width/3, picHeight: reader1.size.width/3)
+												//APictureView(word: item.word,urlStr: item.iconURL, picWidth: reader1.size.width/3, picHeight: reader1.size.width/3)
 											}
 											.padding([.bottom,.trailing],5)
 										}
@@ -133,6 +134,6 @@ struct StoryView: View {
 	}
 }
 
-#Preview {
-	StoryView()
-}
+/*#Preview {
+	StoryView(sent)
+}*/

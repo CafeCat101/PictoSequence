@@ -45,6 +45,9 @@
 		C8B8A5CD2AE3FA7600490EF4 /* PreviewStoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B8A5CC2AE3FA7600490EF4 /* PreviewStoryView.swift */; };
 		C8B8A5CF2AE659D700490EF4 /* EditSequenceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B8A5CE2AE659D700490EF4 /* EditSequenceView.swift */; };
 		C8B8A5D12AEE968A00490EF4 /* StoryByUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B8A5D02AEE968A00490EF4 /* StoryByUser.swift */; };
+		C8B8A5D32AF6149000490EF4 /* APictureCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B8A5D22AF6149000490EF4 /* APictureCardView.swift */; };
+		C8B8A5D52AF6190F00490EF4 /* PictureContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B8A5D42AF6190F00490EF4 /* PictureContainerView.swift */; };
+		C8B8A5D72AFB879900490EF4 /* FileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B8A5D62AFB879900490EF4 /* FileManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -88,6 +91,9 @@
 		C8B8A5CC2AE3FA7600490EF4 /* PreviewStoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewStoryView.swift; sourceTree = "<group>"; };
 		C8B8A5CE2AE659D700490EF4 /* EditSequenceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSequenceView.swift; sourceTree = "<group>"; };
 		C8B8A5D02AEE968A00490EF4 /* StoryByUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryByUser.swift; sourceTree = "<group>"; };
+		C8B8A5D22AF6149000490EF4 /* APictureCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APictureCardView.swift; sourceTree = "<group>"; };
+		C8B8A5D42AF6190F00490EF4 /* PictureContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureContainerView.swift; sourceTree = "<group>"; };
+		C8B8A5D62AFB879900490EF4 /* FileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -146,6 +152,8 @@
 				C8680B3F2AC9C0BD00198CCA /* Types */,
 				C8B8A5CC2AE3FA7600490EF4 /* PreviewStoryView.swift */,
 				C8B8A5CE2AE659D700490EF4 /* EditSequenceView.swift */,
+				C8B8A5D22AF6149000490EF4 /* APictureCardView.swift */,
+				C8B8A5D42AF6190F00490EF4 /* PictureContainerView.swift */,
 			);
 			path = Storyboard;
 			sourceTree = "<group>";
@@ -170,6 +178,7 @@
 				C89D5E892ADBD77000083549 /* PhotoLibrary.swift */,
 				C89D5E8F2ADBD82200083549 /* CachedImageManager.swift */,
 				C89D5E912ADBD8B700083549 /* Camera.swift */,
+				C8B8A5D62AFB879900490EF4 /* FileManager.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -275,6 +284,7 @@
 				C89D5E822ADBD5B200083549 /* PhotoAssetCollection.swift in Sources */,
 				C8B8A5892AE3AE2200490EF4 /* Main.xcdatamodeld in Sources */,
 				C8680B362AC94BE100198CCA /* Sequencer.swift in Sources */,
+				C8B8A5D72AFB879900490EF4 /* FileManager.swift in Sources */,
 				C89D5E862ADBD71D00083549 /* PhotoCollectionView.swift in Sources */,
 				C8680B642ACFD98000198CCA /* SpinnerView.swift in Sources */,
 				C8B8A5CF2AE659D700490EF4 /* EditSequenceView.swift in Sources */,
@@ -285,6 +295,7 @@
 				C89D5E902ADBD82200083549 /* CachedImageManager.swift in Sources */,
 				C8680B472ACA5CCF00198CCA /* SequencerResponseError.swift in Sources */,
 				C89D5E942ADD2F3A00083549 /* PictureSource.swift in Sources */,
+				C8B8A5D52AF6190F00490EF4 /* PictureContainerView.swift in Sources */,
 				C89D5E712AD69EDD00083549 /* PictureModel.swift in Sources */,
 				C89D5E7E2ADBD4E600083549 /* ViewFinderView.swift in Sources */,
 				C85267F32AC4316F00047B27 /* ContentView.swift in Sources */,
@@ -297,6 +308,7 @@
 				C8680B6A2AD2BF2A00198CCA /* APictureView.swift in Sources */,
 				C89D5E842ADBD6C400083549 /* PhotoCollection.swift in Sources */,
 				C85268012AC445F700047B27 /* ShowStoryView.swift in Sources */,
+				C8B8A5D32AF6149000490EF4 /* APictureCardView.swift in Sources */,
 				C89D5E8A2ADBD77000083549 /* PhotoLibrary.swift in Sources */,
 				C8680B432AC9C27E00198CCA /* SequencerSendJson.swift in Sources */,
 				C89D5E7C2ADBD01B00083549 /* DataModel.swift in Sources */,

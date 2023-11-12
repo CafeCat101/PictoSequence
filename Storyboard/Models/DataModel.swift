@@ -8,6 +8,7 @@
 import AVFoundation
 import SwiftUI
 import os.log
+import Combine
 
 final class DataModel: ObservableObject {
 		let camera = Camera()
@@ -15,6 +16,8 @@ final class DataModel: ObservableObject {
 		
 		@Published var viewfinderImage: Image?
 		@Published var thumbnailImage: Image?
+		var thumbnailImageData: Data?
+		var capturedImageDone = PassthroughSubject<Data, Never>()
 		
 		var isPhotosLoaded = false
 		
@@ -46,6 +49,8 @@ final class DataModel: ObservableObject {
 				for await photoData in unpackedPhotoStream {
 						Task { @MainActor in
 								thumbnailImage = photoData.thumbnailImage
+							thumbnailImageData = photoData.imageData
+							self.capturedImageDone.send(thumbnailImageData!)
 							camera.isPreviewPaused = true
 						}
 						//savePhoto(imageData: photoData.imageData) //::after capture image, don't save into photo library
