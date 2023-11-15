@@ -38,16 +38,29 @@ struct APictureCardView: View {
 				if result == true && showCaptureView == false {
 					cameraDataModel.thumbnailImage = nil
 					sourceType = .photoPicker
+					wordCard.pictureID = UUID()
+					wordCard.pictureLocalPath = "pictures/\(wordCard.pictureID.uuidString).jpg"
+					wordCard.pictureType = .photoPicker
+					wordCard.photo = UIImage(data: viewModel.selectedImageData!)
+					
+					let findCardIndex = sequencer.theStoryByUser.visualizedSequence.firstIndex(where: {$0.word == wordCard.word}) ?? -1
+					if findCardIndex > -1 {
+						sequencer.theStoryByUser.visualizedSequence[findCardIndex] = wordCard
+					}
 				}
 			})
 			.onReceive(cameraDataModel.capturedImageDone, perform: {result in
-				/*let findCardIndex = sequencer.theStoryByUser.visualizedSequence.firstIndex(where: {$0.word == wordCard.word}) ?? -1
-				let newPicID = UUID()
-				sequencer.theStoryByUser.visualizedSequence[findCardIndex].pictureID = newPicID
-				let toUIImage = UIImage(data: viewModel.selectedImageData!)
-				sequencer.theStoryByUser.visualizedSequence[findCardIndex].pictureLocalPath = saveJpg(saveImage: toUIImage!, imageFileName: newPicID.uuidString)*/
 				viewModel.selectedImage = nil
 				sourceType = .camera
+				wordCard.pictureID = UUID()
+				wordCard.pictureLocalPath = "pictures/\(wordCard.pictureID.uuidString).jpg"
+				wordCard.pictureType = .camera
+				wordCard.photo = UIImage(data: cameraDataModel.thumbnailImageData!)
+				
+				let findCardIndex = sequencer.theStoryByUser.visualizedSequence.firstIndex(where: {$0.word == wordCard.word}) ?? -1
+				if findCardIndex > -1 {
+					sequencer.theStoryByUser.visualizedSequence[findCardIndex] = wordCard
+				}
 			})
 		}
 		.overlay(content: {
@@ -82,6 +95,15 @@ struct APictureCardView: View {
 					viewModel.selectedImage = nil
 					cameraDataModel.thumbnailImage = nil
 					sourceType = .icon
+					
+					wordCard.pictureID = UUID()
+					wordCard.pictureLocalPath = "pictures/\(sequencer.getImageFileName(remoteURL: wordCard.iconURL))"
+					wordCard.pictureType = .icon
+					
+					let findCardIndex = sequencer.theStoryByUser.visualizedSequence.firstIndex(where: {$0.word == wordCard.word}) ?? -1
+					if findCardIndex > -1 {
+						sequencer.theStoryByUser.visualizedSequence[findCardIndex] = wordCard
+					}
 				}, label: {
 					Text("Use icon")
 				})
@@ -104,13 +126,6 @@ struct APictureCardView: View {
 		.fullScreenCover(isPresented: $showCaptureView, content: {
 			CameraView(model:cameraDataModel, showCaptureView: $showCaptureView, viewModel: viewModel, sourceType: $sourceType)
 		})
-	}
-	
-	private func saveJpg(saveImage: UIImage, imageFileName: String) -> String {
-		let jpgData = saveImage.jpegData(compressionQuality: 0.6)
-		let saveToURL = URL(fileURLWithPath: imageFileName, relativeTo: FileManager.pictureDirectoryURL).appendingPathExtension("jpg")
-		try? jpgData!.write(to: saveToURL)
-		return "pictures/\(imageFileName).jpg"
 	}
 	
 	struct photoStyle: ViewModifier {
@@ -168,15 +183,30 @@ struct APictureCardView: View {
 	
 	@ViewBuilder
 	private func displayImageFromFile() -> some View {
-		if FileManager.default.fileExists(atPath: wordCard.pictureLocalPath) {
-			let pictureURL = URL(string: wordCard.pictureLocalPath, relativeTo: FileManager.documentoryDirecotryURL)!
-			Image(uiImage: UIImage(contentsOfFile: pictureURL.absoluteString)!)
-				.onAppear(perform: {
-					print("[debug] APictureCardView, pictureContainer, pictureLocalPath \(wordCard.pictureLocalPath)")
-				})
-				.onChange(of: wordCard, perform: { wordCard in
-					print("[debug] APictureCardView, pictureContainer, photo-pictureLocalPath \(wordCard.pictureLocalPath)")
-				})
+		if pictureExists(localPath: wordCard.pictureLocalPath) {
+			let pictureURL = FileManager.documentoryDirecotryURL.appending(component: wordCard.pictureLocalPath)
+			if wordCard.pictureType == .icon {
+				Image(uiImage: UIImage(contentsOfFile: pictureURL.path())!)
+					.resizable()
+					.scaledToFit()
+					.onAppear(perform: {
+						print("[debug] APictureCardView, displayImageFromFile, onAppear (fileExists \(wordCard.word)) \(wordCard.pictureLocalPath)")
+					})
+					.onChange(of: wordCard, perform: { wordCard in
+						print("[debug] APictureCardView, displayImageFromFile, onChange (fileExists \(wordCard.word)) \(wordCard.pictureLocalPath)")
+					})
+			} else {
+				Image(uiImage: UIImage(contentsOfFile: pictureURL.path())!)
+					.resizable()
+					.scaledToFill()
+					.onAppear(perform: {
+						print("[debug] APictureCardView, displayImageFromFile, onAppear (fileExists \(wordCard.word)) \(wordCard.pictureLocalPath)")
+					})
+					.onChange(of: wordCard, perform: { wordCard in
+						print("[debug] APictureCardView, displayImageFromFile, onChange (fileExists \(wordCard.word)) \(wordCard.pictureLocalPath)")
+					})
+			}
+			
 		} else {
 			AsyncImage(url: URL(string: wordCard.iconURL)) { phase in
 				if let image = phase.image {
@@ -185,14 +215,27 @@ struct APictureCardView: View {
 						.scaledToFit()
 						.padding()
 						.onAppear(perform: {
-							print("[debug] APictureView, AsyncImage.onAppear, word \(wordCard.word)")
+							print("[debug] APictureCardView, displayImageFromFile, AsyncImage.onAppear, word \(wordCard.word) \(wordCard.pictureLocalPath)")
 						})
 				} else if phase.error != nil {
 					Text("There was an error loading the image.")
 				} else {
 					ProgressView()
+						.onAppear(perform: {
+							print("[debug] APictureCardView, displayImageFromFile, AsyncImage-ProgressView() word \(wordCard.word) \(wordCard.pictureLocalPath)")
+						})
 				}
 			}
+		}
+	}
+	
+	private func pictureExists(localPath: String) -> Bool {
+		//localPath is wordCard.pictureLocalPath
+		let imageUrl = FileManager.documentoryDirecotryURL.appending(path: localPath)
+		if FileManager.default.fileExists(atPath: imageUrl.path()) {
+			return true
+		} else {
+			return false
 		}
 	}
 }

@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22222" systemVersion="23A344" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
     <entity name="Pictures" representedClassName="Pictures" syncable="YES" codeGenerationType="class">
-        <attribute name="iconLocalPath" optional="YES" attributeType="String" defaultValueString=""/>
         <attribute name="iconURL" optional="YES" attributeType="String" defaultValueString=""/>
         <attribute name="id" attributeType="String"/>
-        <attribute name="picture" optional="YES" attributeType="Binary" valueTransformerName="NSSecureUnarchiveFromData" customClassName="NSData"/>
         <attribute name="pictureLocalPath" optional="YES" attributeType="String" defaultValueString=""/>
         <attribute name="type" attributeType="String"/>
     </entity>

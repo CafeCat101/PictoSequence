@@ -73,7 +73,6 @@ class Sequencer: ObservableObject {
 				addWord.pictureType = .icon
 				addWord.iconURL = AIWord.pictures[0].thumbnail_url
 				addWord.pictureLocalPath = "pictures/\(getImageFileName(remoteURL: AIWord.pictures[0].thumbnail_url))"
-				//addWord.iconLocalPath = "icons/\(getImageFileName(remoteURL: AIWord.pictures[0].thumbnail_url))"
 				userStory.visualizedSequence.append(addWord)
 			}
 			
@@ -81,7 +80,7 @@ class Sequencer: ObservableObject {
 		return userStory
 	}
 	
-	private func getImageFileName(remoteURL: String) -> String {
+	func getImageFileName(remoteURL: String) -> String {
 		if let url = URL(string: remoteURL) {
 				let fileName = url.lastPathComponent
 				return fileName

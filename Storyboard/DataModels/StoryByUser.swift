@@ -20,7 +20,7 @@ struct WordCard: Identifiable, Equatable {
 	var pictureID = UUID()
 	var pictureType: PictureSource = .icon
 	var pictureLocalPath = ""
-	//var picture:UIImage?
+	var photo:UIImage?
 	var iconURL = ""
 	//var iconLocalPath = ""
 }

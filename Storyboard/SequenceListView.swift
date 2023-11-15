@@ -80,8 +80,16 @@ struct SequenceListView: View {
 											fetchPictures.fetchLimit = 1
 											let usePic = try viewContext.fetch(fetchPictures)
 											if usePic.isEmpty == false {
-												addWordCard.pictureType = .icon // loop up enum later
+												//addWordCard.pictureID = UUID(uuidString: usePic.first?.id!!!) ?? UUID()
+												if usePic.first?.type == PictureSource.icon.rawValue {
+													addWordCard.pictureType = .icon
+												} else if usePic.first?.type == PictureSource.photoPicker.rawValue {
+													addWordCard.pictureType = .photoPicker
+												} else if usePic.first?.type == PictureSource.camera.rawValue {
+													addWordCard.pictureType = .camera
+												}
 												addWordCard.iconURL = usePic.first?.iconURL ?? ""
+												addWordCard.pictureLocalPath = usePic.first?.pictureLocalPath ?? ""
 											}
 											
 											sequencer.theStoryByUser.visualizedSequence.append(addWordCard)
@@ -129,6 +137,9 @@ struct SequenceListView: View {
 		})
 		.fullScreenCover(isPresented: $showStoryboard, content: {
 			ShowStoryView(showStoryboard: $showStoryboard)
+		})
+		.onAppear(perform: {
+			//print("[deubg] pictureURL \(FileManager.picturesDirectoryURL.path())")
 		})
 		/*.onAppear(perform: {
 			do {
