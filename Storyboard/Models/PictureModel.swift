@@ -16,6 +16,7 @@ class PictureModel: ObservableObject {
 	var transferableDone = PassthroughSubject<Bool, Never>()
 	var selectedImage: Image?
 	var selectedImageData: Data?
+	var selectToUse:Bool = true //true is click on the photo means use it right away.
 	
 	enum ImageState {
 		case empty
@@ -87,9 +88,18 @@ class PictureModel: ObservableObject {
 					self.imageState = .empty
 				case .failure(let error):
 					self.imageState = .failure(error)
-					self.transferableDone.send(true)
+					self.transferableDone.send(false)
 				}
 			}
 		}
+	}
+	
+	func sendTransferableDone() {
+		if self.selectedImage != nil {
+			self.transferableDone.send(true)
+		} else {
+			self.transferableDone.send(false)
+		}
+		
 	}
 }

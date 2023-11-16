@@ -46,15 +46,14 @@ final class DataModel: ObservableObject {
 				let unpackedPhotoStream = camera.photoStream
 						.compactMap { self.unpackPhoto($0) }
 				
-				for await photoData in unpackedPhotoStream {
-						Task { @MainActor in
-								thumbnailImage = photoData.thumbnailImage
-							thumbnailImageData = photoData.imageData
-							self.capturedImageDone.send(thumbnailImageData!)
-							camera.isPreviewPaused = true
-						}
-						//savePhoto(imageData: photoData.imageData) //::after capture image, don't save into photo library
+			for await photoData in unpackedPhotoStream {
+				Task { @MainActor in
+					thumbnailImage = photoData.thumbnailImage
+					thumbnailImageData = photoData.imageData
+					camera.isPreviewPaused = true
 				}
+				//savePhoto(imageData: photoData.imageData) //::after capture image, don't save into photo library
+			}
 		}
 		
 		private func unpackPhoto(_ photo: AVCapturePhoto) -> PhotoData? {
@@ -117,6 +116,11 @@ final class DataModel: ObservableObject {
 		}
 	func setThumbnail(target: Image) {
 		self.thumbnailImage = target
+	}
+	
+	func sendCaptureImageDone() {
+		print("[debug] DataModel, sendCaptureImageDone")
+		self.capturedImageDone.send(self.thumbnailImageData!)
 	}
 }
 

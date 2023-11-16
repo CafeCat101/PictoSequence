@@ -17,6 +17,7 @@ struct CameraView: View {
 	@ObservedObject var viewModel:PictureModel
 	@Binding var sourceType:PictureSource
 	@State private var showPickerSelectedPhoto = false
+	@State private var previousPhotoPickerPicture:Image?
 	
 	
 	var body: some View {
@@ -33,6 +34,7 @@ struct CameraView: View {
 						HStack {
 							Button(action: {
 								model.camera.isPreviewPaused = true
+								showPickerSelectedPhoto = false
 								showCaptureView = false
 							}, label: {
 								Label(
@@ -46,9 +48,14 @@ struct CameraView: View {
 							Spacer()
 							Button(action: {
 								if model.thumbnailImage != nil {
+									viewModel.selectedImage = nil
 									sourceType = .camera
+									model.sendCaptureImageDone()
 								} else if showPickerSelectedPhoto == true {
+									model.thumbnailImage = nil
 									sourceType = .photoPicker
+									viewModel.selectToUse = true
+									viewModel.sendTransferableDone()
 								}
 								showCaptureView = false
 							}, label: {
@@ -121,7 +128,7 @@ struct CameraView: View {
 				.background(.black)
 		}
 		.onReceive(viewModel.transferableDone, perform: { result in
-			if result == true {
+			if result == true && viewModel.selectToUse == false {
 				showPickerSelectedPhoto = true
 				model.thumbnailImage = nil
 				model.camera.isPreviewPaused = true
@@ -129,8 +136,9 @@ struct CameraView: View {
 		})
 		.task {
 			await model.camera.start()
-			//await model.loadPhotos()
-			//await model.loadThumbnail()
+			model.camera.isPreviewPaused = false
+			model.thumbnailImage = nil
+			viewModel.selectedImage = nil
 		}
 		.navigationTitle("Camera")
 		.navigationBarTitleDisplayMode(.inline)
@@ -172,8 +180,13 @@ struct CameraView: View {
 					.foregroundStyle(.white)
 					.font(.system(size: 36, weight: .bold))
 					.labelStyle(.iconOnly)
-				}
+				}.onAppear(perform: {
+					viewModel.selectToUse = false
+					print("[debug] CameraView, PhotoPicker-onAppear, selectToUse \(viewModel.selectToUse)")
+				})
+				
 				Spacer()
+				
 				if showPickerSelectedPhoto == false {
 					if model.thumbnailImage == nil {
 						Button {
@@ -231,8 +244,6 @@ struct CameraView: View {
 						.font(.system(size: 36, weight: .bold))
 						.labelStyle(.iconOnly)
 					})
-					
-					
 				}
 				
 				

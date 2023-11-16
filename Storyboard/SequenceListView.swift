@@ -102,18 +102,6 @@ struct SequenceListView: View {
 								} catch {
 									
 								}
-								
-								
-								/*do {
-									let jsonData = sentence.result?.data(using: .utf8)!
-									let sequenceDecoded = try JSONDecoder().decode([SequencerResponseSuccess].self, from: jsonData!)
-									sequencer.theStoryByAI.sentence = sentence.user_question ?? ""
-									sequencer.theStoryByAI.visualizedSequence = sequenceDecoded
-									showStoryboard = true
-								} catch {
-									
-								}*/
-								
 							}
 					}/*.onDelete(perform: deleteASentence)*/
 				}

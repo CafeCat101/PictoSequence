@@ -23,45 +23,48 @@ struct APictureCardView: View {
 	@State private var showCaptureView = false
 	@StateObject private var cameraDataModel = DataModel()
 	@StateObject private var viewModel = PictureModel()
+	@State private var editingCount = 0
+	@State private var selectedChangedPhoto:Image?
 	
 	
 	var body: some View {
 		VStack {
 			pictureContainer()
-			.modifier(photoStyle(getPicWidth: picWidth, getPicHeight: picHeight))
-			.onTapGesture {
-				showPic = false
-			}
-			.opacity(showPic ? 1 : 0)
-			.disabled(showPic ? false : true)
-			.onReceive(viewModel.transferableDone, perform: { result in
-				if result == true && showCaptureView == false {
-					cameraDataModel.thumbnailImage = nil
-					sourceType = .photoPicker
+				.modifier(photoStyle(getPicWidth: picWidth, getPicHeight: picHeight))
+				.onTapGesture {
+					showPic = false
+				}
+				.opacity(showPic ? 1 : 0)
+				.disabled(showPic ? false : true)
+				.onReceive(viewModel.transferableDone, perform: { result in
+					print("[debug] APictureCardView, onRecieve viewModel.transferableDone \(viewModel.selectToUse)")
+					if result == true && viewModel.selectToUse == true {
+						selectedChangedPhoto = viewModel.selectedImage
+						cameraDataModel.thumbnailImage = nil
+						sourceType = .photoPicker
+						wordCard.pictureID = UUID()
+						wordCard.pictureLocalPath = "pictures/\(wordCard.pictureID.uuidString).jpg"
+						wordCard.pictureType = .photoPicker
+						wordCard.photo = UIImage(data: viewModel.selectedImageData!)
+						
+						let findCardIndex = sequencer.theStoryByUser.visualizedSequence.firstIndex(where: {$0.word == wordCard.word}) ?? -1
+						if findCardIndex > -1 {
+							sequencer.theStoryByUser.visualizedSequence[findCardIndex] = wordCard
+						}
+					}
+				})
+				.onReceive(cameraDataModel.capturedImageDone, perform: {result in
+					selectedChangedPhoto = cameraDataModel.thumbnailImage
 					wordCard.pictureID = UUID()
 					wordCard.pictureLocalPath = "pictures/\(wordCard.pictureID.uuidString).jpg"
-					wordCard.pictureType = .photoPicker
-					wordCard.photo = UIImage(data: viewModel.selectedImageData!)
+					wordCard.pictureType = .camera
+					wordCard.photo = UIImage(data: cameraDataModel.thumbnailImageData!)
 					
 					let findCardIndex = sequencer.theStoryByUser.visualizedSequence.firstIndex(where: {$0.word == wordCard.word}) ?? -1
 					if findCardIndex > -1 {
 						sequencer.theStoryByUser.visualizedSequence[findCardIndex] = wordCard
 					}
-				}
-			})
-			.onReceive(cameraDataModel.capturedImageDone, perform: {result in
-				viewModel.selectedImage = nil
-				sourceType = .camera
-				wordCard.pictureID = UUID()
-				wordCard.pictureLocalPath = "pictures/\(wordCard.pictureID.uuidString).jpg"
-				wordCard.pictureType = .camera
-				wordCard.photo = UIImage(data: cameraDataModel.thumbnailImageData!)
-				
-				let findCardIndex = sequencer.theStoryByUser.visualizedSequence.firstIndex(where: {$0.word == wordCard.word}) ?? -1
-				if findCardIndex > -1 {
-					sequencer.theStoryByUser.visualizedSequence[findCardIndex] = wordCard
-				}
-			})
+				})
 		}
 		.overlay(content: {
 			if showPic == false {
@@ -92,6 +95,7 @@ struct APictureCardView: View {
 		.contextMenu(ContextMenu(menuItems: {
 			if sourceType != .icon {
 				Button(action: {
+					selectedChangedPhoto = nil
 					viewModel.selectedImage = nil
 					cameraDataModel.thumbnailImage = nil
 					sourceType = .icon
@@ -110,8 +114,8 @@ struct APictureCardView: View {
 			}
 			
 			Button(action: {
+				viewModel.selectToUse = true
 				showPhotoPicker.toggle()
-				//sourceType = .photoPicker
 			}, label: {
 				Text("Select a photo")
 			})
@@ -148,37 +152,13 @@ struct APictureCardView: View {
 	
 	@ViewBuilder
 	private func pictureContainer() -> some View {
-		//if sourceType == .icon {
-		//	displayImageFromFile()
-		//} else {
-			if viewModel.selectedImage != nil || cameraDataModel.thumbnailImage != nil {
-				if viewModel.selectedImage != nil {
-					switch viewModel.imageState {
-					case .success(let image):
-						image
-							.resizable()
-							.scaledToFill()
-					case .loading:
-						ProgressView()
-					case .empty:
-						Image(systemName: "circle.badge.questionmark.fill")
-							.scaledToFit()
-							.padding()
-					case .failure:
-						Image(systemName: "exclamationmark.triangle.fill")
-							.scaledToFit()
-							.padding()
-					}
-				} else if cameraDataModel.thumbnailImage != nil {
-					cameraDataModel.thumbnailImage?
-						.resizable()
-						.scaledToFill()
-				}
-			} else {
-				displayImageFromFile()
-			}
-		//}
-		
+		if selectedChangedPhoto != nil {
+			selectedChangedPhoto!
+				.resizable()
+				.scaledToFill()
+		} else {
+			displayImageFromFile()
+		}
 	}
 	
 	@ViewBuilder
@@ -189,6 +169,7 @@ struct APictureCardView: View {
 				Image(uiImage: UIImage(contentsOfFile: pictureURL.path())!)
 					.resizable()
 					.scaledToFit()
+					.padding()
 					.onAppear(perform: {
 						print("[debug] APictureCardView, displayImageFromFile, onAppear (fileExists \(wordCard.word)) \(wordCard.pictureLocalPath)")
 					})
@@ -241,5 +222,5 @@ struct APictureCardView: View {
 }
 
 /*#Preview {
-	APictureCardView()
-}*/
+ APictureCardView()
+ }*/
