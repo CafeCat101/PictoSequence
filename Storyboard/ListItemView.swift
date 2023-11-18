@@ -45,8 +45,8 @@ struct ListItemView: View {
 							fetchPictures.predicate = NSPredicate(format: "id = %@", wordItem.picID! as CVarArg)
 							fetchPictures.fetchLimit = 1
 							let usePic = try managedContext.fetch(fetchPictures)
-							if usePic.isEmpty == false {
-								//addWordCard.pictureID = UUID(uuidString: usePic.first?.id!!!) ?? UUID()
+							if usePic.count > 0 {
+								addWordCard.pictureID = UUID(uuidString: usePic.first?.id ?? "") ?? UUID()
 								if usePic.first?.type == PictureSource.icon.rawValue {
 									addWordCard.pictureType = .icon
 								} else if usePic.first?.type == PictureSource.photoPicker.rawValue {

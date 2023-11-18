@@ -2,21 +2,21 @@
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22222" systemVersion="23A344" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
     <entity name="Pictures" representedClassName="Pictures" syncable="YES" codeGenerationType="class">
         <attribute name="iconURL" optional="YES" attributeType="String" defaultValueString=""/>
-        <attribute name="id" attributeType="String"/>
+        <attribute name="id" attributeType="String" defaultValueString=""/>
         <attribute name="pictureLocalPath" optional="YES" attributeType="String" defaultValueString=""/>
-        <attribute name="type" attributeType="String"/>
+        <attribute name="type" attributeType="String" defaultValueString=""/>
     </entity>
     <entity name="Sentences" representedClassName="Sentences" syncable="YES" codeGenerationType="class">
         <attribute name="change_date" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="id" attributeType="String"/>
-        <attribute name="result" optional="YES" attributeType="String"/>
-        <attribute name="user_question" attributeType="String"/>
+        <attribute name="id" attributeType="String" defaultValueString=""/>
+        <attribute name="result" optional="YES" attributeType="String" defaultValueString=""/>
+        <attribute name="user_question" attributeType="String" defaultValueString=""/>
     </entity>
     <entity name="Words" representedClassName="Words" syncable="YES" codeGenerationType="class">
         <attribute name="order" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="picID" attributeType="String"/>
-        <attribute name="sentenceID" optional="YES" attributeType="String"/>
-        <attribute name="word" attributeType="String"/>
+        <attribute name="picID" attributeType="String" defaultValueString=""/>
+        <attribute name="sentenceID" optional="YES" attributeType="String" defaultValueString=""/>
+        <attribute name="word" attributeType="String" defaultValueString=""/>
         <attribute name="wordChanged" attributeType="Date" usesScalarValueType="NO"/>
     </entity>
 </model>

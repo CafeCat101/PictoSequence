@@ -32,7 +32,7 @@ struct EditSequenceView: View {
 			}
 			.padding(15)
 			
-			PreviewStoryView(showSequenceActionView: $showEditSequence, showStoryboard: $showStoryboard)
+			PreviewStoryView(showSequenceActionView: $showEditSequence, showStoryboard: $showStoryboard, editMode: true)
 		}
 		.foregroundColor(Color("testColor2"))
 		.background(

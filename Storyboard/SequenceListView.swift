@@ -76,11 +76,11 @@ struct SequenceListView: View {
 											addWordCard.cardOrder = Int(wordItem.order)
 											print("\(String(describing: wordItem.word)) \(String(describing: wordItem.picID))")
 											let fetchPictures = NSFetchRequest<Pictures>(entityName: "Pictures")
-											fetchPictures.predicate = NSPredicate(format: "id = %@", wordItem.picID! as CVarArg)
+											fetchPictures.predicate = NSPredicate(format: "id = %@", wordItem.picID ?? "")
 											fetchPictures.fetchLimit = 1
 											let usePic = try viewContext.fetch(fetchPictures)
-											if usePic.isEmpty == false {
-												//addWordCard.pictureID = UUID(uuidString: usePic.first?.id!!!) ?? UUID()
+											if usePic.count > 0 {
+												addWordCard.pictureID = UUID(uuidString: usePic.first?.id ?? "") ?? UUID()
 												if usePic.first?.type == PictureSource.icon.rawValue {
 													addWordCard.pictureType = .icon
 												} else if usePic.first?.type == PictureSource.photoPicker.rawValue {

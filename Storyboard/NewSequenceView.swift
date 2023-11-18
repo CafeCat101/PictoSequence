@@ -107,7 +107,7 @@ struct NewSequenceView: View {
 						}
 					}
 				} else {
-					PreviewStoryView(showSequenceActionView: $showAddNewSequence, showStoryboard: $showStoryboard)
+					PreviewStoryView(showSequenceActionView: $showAddNewSequence, showStoryboard: $showStoryboard, editMode: false)
 				}
 				
 				Spacer()

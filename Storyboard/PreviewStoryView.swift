@@ -17,6 +17,7 @@ struct PreviewStoryView: View {
 	//var previewSentence:String = ""
 	@Binding var showSequenceActionView:Bool
 	@Binding var showStoryboard:Bool
+	var editMode = false
 	
 	@State private var showSaveErrorAlert = false
 	@State private var saveError = ""
@@ -38,7 +39,11 @@ struct PreviewStoryView: View {
 				Spacer()
 				Button(action: {
 					Task {
-						await saveSequence(showStoryNow: false)
+						if editMode == false {
+							await saveSequence(showStoryNow: false)
+						} else {
+							await editSequence(showStoryNow: false)
+						}
 					}
 				}, label: {
 					Label(
@@ -54,7 +59,11 @@ struct PreviewStoryView: View {
 				}
 				Button(action: {
 					Task {
-						await saveSequence(showStoryNow: true)
+						if editMode == false {
+							await saveSequence(showStoryNow: true)
+						} else {
+							await editSequence(showStoryNow: true)
+						}
 					}
 				}, label: {
 					Label(
@@ -110,6 +119,7 @@ struct PreviewStoryView: View {
 					if lastWordUsed.count > 0 {
 						//use the same picture
 						addWord.picID = lastWordUsed.first?.picID
+						try manageContext.save()
 					} else {
 						//add new word and add new picture item
 						addWord.picID = wordCard.pictureID.uuidString
@@ -163,8 +173,6 @@ struct PreviewStoryView: View {
 		}
 	}
 	
-
-	
 	private func resizeImage(image: UIImage, maxDimension: CGFloat) -> UIImage {
 		var scale: CGFloat
 		if image.size.width > image.size.height {
@@ -194,24 +202,7 @@ struct PreviewStoryView: View {
 			imgData = saveImage.pngData()!
 			fileExtension = "png"
 		}
-		
-		/*let destPictureURL = URL(string: "pictures", relativeTo: FileManager.documentoryDirecotryURL)!
-		do {
-			print("[debug] saveJpg destCourseURL:\(destPictureURL.path)")
-			var isDirectory = ObjCBool(true)
-			if FileManager.default.fileExists(atPath: destPictureURL.path, isDirectory: &isDirectory) == false {
-				try FileManager.default.createDirectory(atPath: destPictureURL.path, withIntermediateDirectories: true)
-			}
-		} catch {
-			print("[debug] saveJpg, check create destPictureURL, catch \(error)")
-		}*/
-		
-		/*var isDirectory = ObjCBool(true)
-		if FileManager.default.fileExists(atPath: FileManager.picturesDirectoryURL!.path, isDirectory: &isDirectory) == true {
-			let saveToURL = URL(fileURLWithPath: "\(imageFileName)", relativeTo: FileManager.picturesDirectoryURL).appendingPathExtension(fileExtension)
-			try? imgData.write(to: saveToURL)
-			print("[debug] saveJpg, saveToURL \(saveToURL)")
-		}*/
+
 		let saveToURL = URL(fileURLWithPath: "\(imageFileName)", relativeTo: FileManager.picturesDirectoryURL).appendingPathExtension(fileExtension)
 		if FileManager.default.fileExists(atPath: saveToURL.path()) == false {
 			try? imgData.write(to: saveToURL)
@@ -238,6 +229,8 @@ struct PreviewStoryView: View {
 				DispatchQueue.main.async {
 					print("[debug] PreviewStoryView, downloadIcon(), moveItem at \(destIconURL.path())")
 				}
+			} catch {
+				print("Error \(error)")
 			}
 		}
 	}
@@ -252,6 +245,64 @@ struct PreviewStoryView: View {
 			}
 		} catch {
 			print("[debug] saveJpg, check create destPictureURL, catch \(error)")
+		}
+	}
+	
+	private func editSequence(showStoryNow: Bool) async {
+		do {
+			fetchRequest.predicate = NSPredicate(format: "user_question = %@", sequencer.theStoryByUser.sentence)
+			let existedSentences = try manageContext.fetch(fetchRequest)
+			if existedSentences.count > 0 {
+				for wordCard in sequencer.theStoryByUser.visualizedSequence {
+					let fetchEditWords = NSFetchRequest<Words>(entityName: "Words")
+					fetchEditWords.predicate = NSPredicate(format: "sentenceID = %@ AND word = %@", existedSentences.first?.id ?? "", wordCard.word)
+					let findWord = try manageContext.fetch(fetchEditWords)
+					if findWord.count > 0 {
+						if findWord.first?.picID != wordCard.pictureID.uuidString {
+							//piciture has changed
+							findWord.first?.picID = wordCard.pictureID.uuidString
+							findWord.first?.wordChanged = Date()
+							//=>update this later, findWord.first?.wordChanged =
+							let fetchPictures = NSFetchRequest<Pictures>(entityName: "Pictures")
+							fetchPictures.predicate = NSPredicate(format: "id = %@", wordCard.pictureID.uuidString)
+							let existingPictures = try manageContext.fetch(fetchPictures)
+							if existingPictures.count == 0 {
+								//a new image, should create a new picture object, save it and download the image to disk
+								let newPic = Pictures(context: manageContext)
+								newPic.id = wordCard.pictureID.uuidString
+								newPic.type = wordCard.pictureType.rawValue
+								newPic.pictureLocalPath = wordCard.pictureLocalPath
+								newPic.iconURL = wordCard.iconURL
+								
+								//save image to disk
+								var isDirectory = ObjCBool(true)
+								if FileManager.default.fileExists(atPath: FileManager.picturesDirectoryURL!.path, isDirectory: &isDirectory) == true {
+									if wordCard.pictureType == .photoPicker || wordCard.pictureType == .camera {
+										let resizedImage = resizeImage(image: wordCard.photo!, maxDimension: 1000)
+										saveImageToDisk(saveImage: resizedImage, imageFileName: wordCard.pictureID.uuidString, asJPG: true)
+									} else if wordCard.pictureType == .icon {
+										try await downloadIcon(remoteIconURL: wordCard.iconURL, iconURL: wordCard.pictureLocalPath)
+									}
+								}
+							}
+							try manageContext.save()
+						}
+					} else {
+						//should find the word in the sentence, but not finding it in CoreData
+					}
+				}
+				
+				showSequenceActionView = false
+				if showStoryNow {
+					showStoryboard = true
+				}
+			} else {
+				showSaveErrorAlert = true
+				saveError = "Can not find the sentence to edit."
+			}
+		} catch {
+			showSaveErrorAlert = true
+			saveError = "Error occurs. Unable to save editted sentence."
 		}
 	}
 }
