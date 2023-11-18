@@ -46,7 +46,6 @@
 		C8B8A5CF2AE659D700490EF4 /* EditSequenceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B8A5CE2AE659D700490EF4 /* EditSequenceView.swift */; };
 		C8B8A5D12AEE968A00490EF4 /* StoryByUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B8A5D02AEE968A00490EF4 /* StoryByUser.swift */; };
 		C8B8A5D32AF6149000490EF4 /* APictureCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B8A5D22AF6149000490EF4 /* APictureCardView.swift */; };
-		C8B8A5D52AF6190F00490EF4 /* PictureContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B8A5D42AF6190F00490EF4 /* PictureContainerView.swift */; };
 		C8B8A5D72AFB879900490EF4 /* FileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B8A5D62AFB879900490EF4 /* FileManager.swift */; };
 /* End PBXBuildFile section */
 
@@ -92,7 +91,6 @@
 		C8B8A5CE2AE659D700490EF4 /* EditSequenceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSequenceView.swift; sourceTree = "<group>"; };
 		C8B8A5D02AEE968A00490EF4 /* StoryByUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryByUser.swift; sourceTree = "<group>"; };
 		C8B8A5D22AF6149000490EF4 /* APictureCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APictureCardView.swift; sourceTree = "<group>"; };
-		C8B8A5D42AF6190F00490EF4 /* PictureContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureContainerView.swift; sourceTree = "<group>"; };
 		C8B8A5D62AFB879900490EF4 /* FileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -153,7 +151,6 @@
 				C8B8A5CC2AE3FA7600490EF4 /* PreviewStoryView.swift */,
 				C8B8A5CE2AE659D700490EF4 /* EditSequenceView.swift */,
 				C8B8A5D22AF6149000490EF4 /* APictureCardView.swift */,
-				C8B8A5D42AF6190F00490EF4 /* PictureContainerView.swift */,
 			);
 			path = Storyboard;
 			sourceTree = "<group>";
@@ -295,7 +292,6 @@
 				C89D5E902ADBD82200083549 /* CachedImageManager.swift in Sources */,
 				C8680B472ACA5CCF00198CCA /* SequencerResponseError.swift in Sources */,
 				C89D5E942ADD2F3A00083549 /* PictureSource.swift in Sources */,
-				C8B8A5D52AF6190F00490EF4 /* PictureContainerView.swift in Sources */,
 				C89D5E712AD69EDD00083549 /* PictureModel.swift in Sources */,
 				C89D5E7E2ADBD4E600083549 /* ViewFinderView.swift in Sources */,
 				C85267F32AC4316F00047B27 /* ContentView.swift in Sources */,

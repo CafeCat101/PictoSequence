@@ -64,7 +64,7 @@ struct SequenceListView: View {
 							.onTapGesture {
 								do {
 									let fetchWords = NSFetchRequest<Words>(entityName: "Words")
-									fetchWords.predicate = NSPredicate(format: "sentenceID = %@", sentence.id! as CVarArg)
+									fetchWords.predicate = NSPredicate(format: "sentenceID = %@", sentence.id ?? "")
 									fetchWords.sortDescriptors = [NSSortDescriptor(keyPath: \Words.order, ascending: true)]
 									let allWords = try viewContext.fetch(fetchWords)
 									if allWords.count > 0 {

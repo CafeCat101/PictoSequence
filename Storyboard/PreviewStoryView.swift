@@ -93,15 +93,51 @@ struct PreviewStoryView: View {
 			fetchRequest.predicate = NSPredicate(format: "user_question = %@", sequencer.theStoryByUser.sentence)
 			let existedSentences = try manageContext.fetch(fetchRequest)
 			if existedSentences.count == 0 {
-				let newID = UUID().uuidString
+				let newSentenceID = UUID().uuidString
 				let newItem = Sentences(context: manageContext)
 				newItem.user_question = sequencer.theStoryByUser.sentence
-				newItem.id = newID
+				newItem.id = newSentenceID
 				newItem.change_date = Date()
 				try manageContext.save()
 				
 				//createPicturesFolder()
 				for wordCard in sequencer.theStoryByUser.visualizedSequence {
+					let addWord = Words(context: manageContext)
+					addWord.sentenceID = newSentenceID
+					addWord.word = wordCard.word
+					print("[debug] PreviewStoryView, sentenceID \(newSentenceID)")
+					addWord.wordChanged = Date()
+					addWord.order = Int16(wordCard.cardOrder)
+					addWord.picID = wordCard.pictureID.uuidString
+					try manageContext.save()
+					
+					//check if a new picture object is requred
+					let fecthPictures = NSFetchRequest<Pictures>(entityName: "Pictures")
+					fecthPictures.predicate = NSPredicate(format: "id = %@", wordCard.pictureID.uuidString)
+					fecthPictures.fetchLimit = 1
+					let existingPictures = try manageContext.fetch(fecthPictures)
+					if existingPictures.count == 0 {
+						let newPic = Pictures(context: manageContext)
+						newPic.id = wordCard.pictureID.uuidString
+						newPic.type = wordCard.pictureType.rawValue
+						newPic.pictureLocalPath = wordCard.pictureLocalPath
+						newPic.iconURL = wordCard.iconURL
+						try manageContext.save()
+						
+						//save image to disk
+						var isDirectory = ObjCBool(true)
+						if FileManager.default.fileExists(atPath: FileManager.picturesDirectoryURL!.path, isDirectory: &isDirectory) == true {
+							if wordCard.pictureType == .photoPicker || wordCard.pictureType == .camera {
+								let resizedImage = resizeImage(image: wordCard.photo!, maxDimension: 1000)
+								saveImageToDisk(saveImage: resizedImage, imageFileName: wordCard.pictureID.uuidString, asJPG: true)
+							} else if wordCard.pictureType == .icon {
+								try await downloadIcon(remoteIconURL: wordCard.iconURL, iconURL: wordCard.pictureLocalPath)
+							}
+						}
+					}
+					
+					//**************************
+					/*
 					let fetchWords = NSFetchRequest<Words>(entityName: "Words")
 					fetchWords.predicate = NSPredicate(format: "word = %@", wordCard.word)
 					fetchWords.sortDescriptors = [NSSortDescriptor(keyPath: \Words.wordChanged, ascending: false)]
@@ -155,6 +191,7 @@ struct PreviewStoryView: View {
 						}
 						
 					}
+					*/
 				}
 				
 				showSequenceActionView = false
@@ -304,6 +341,12 @@ struct PreviewStoryView: View {
 			showSaveErrorAlert = true
 			saveError = "Error occurs. Unable to save editted sentence."
 		}
+	}
+	
+	private func updatePicToLatest(targetWord: String, toPicID: String) {
+		let fecthWords = NSFetchRequest<Words>(entityName: "Words")
+		fecthWords.predicate = NSPredicate(format: "word = %@", targetWord)
+		let updateWords = try manageContext.fetch(fecthWords)
 	}
 }
 	/*#Preview {
