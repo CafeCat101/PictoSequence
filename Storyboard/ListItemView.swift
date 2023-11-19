@@ -78,30 +78,28 @@ struct ListItemView: View {
 					
 					do {
 						let sentences = try managedContext.fetch(fetchRequest)
-						for sentence in sentences {
-							managedContext.delete(sentence)
-						}
-						
-						for wordCard in sequencer.theStoryByUser.visualizedSequence {
-							let fetchSameWords = NSFetchRequest<Words>(entityName: "Words")
-							fetchSameWords.predicate = NSPredicate(format: "word = %@", wordCard.word)
-							let sameWords = try managedContext.fetch(fetchSameWords)
-							print("[debug] ListItemView, delete, sameWords.count \(sameWords.count)")
-							if sameWords.count > 0 {
-								for wordItem in sameWords {
-									print("[debug] ListItemView, delete, wordItem \(String(describing: wordItem.word))")
-									if sameWords.count == 1 {
-										//set the sentenceID to nil
-										wordItem.sentenceID = nil
-									} else {
-										//delete the whole row
-										managedContext.delete(wordItem)
+						if sentences.count > 0 {
+							let deleteSentenceID = sentences.first?.id ?? ""
+							for sentence in sentences {
+								managedContext.delete(sentence)
+							}
+							
+							for wordCard in sequencer.theStoryByUser.visualizedSequence {
+								let fetchSameWords = NSFetchRequest<Words>(entityName: "Words")
+								fetchSameWords.predicate = NSPredicate(format: "word = %@ AND sentenceID = %@", wordCard.word, deleteSentenceID)
+								let sameWords = try managedContext.fetch(fetchSameWords)
+								print("[debug] ListItemView, delete, sameWords.count \(sameWords.count)")
+								if sameWords.count > 0 {
+									for wordItem in sameWords {
+										print("[debug] ListItemView, delete, wordItem \(String(describing: wordItem.word))")
+										wordItem.sentenceID = ""
 									}
 								}
 							}
 						}
-						
 						try managedContext.save()
+						
+						clearDuplicatedIconRecord()
 					} catch let error as NSError {
 						print("Could not fetch. \(error), \(error.userInfo)")
 					}
@@ -112,6 +110,38 @@ struct ListItemView: View {
 		}
 		.foregroundColor(Color("testColor2"))
 		.listRowBackground(Color.clear)
+	}
+	
+	private func clearDuplicatedIconRecord() {
+		//in the order of word added first, remove word without sentenceID and use an icon that are added more than once.
+		//preserver the latest word with that icon so "generate() in NewSequenceView will find the last used image(icon or photo) for that word. Sometimes a word object without the sentenceID can be created by deleting a sentence."
+		let fetchWords = NSFetchRequest<Words>(entityName: "Words")
+		fetchWords.predicate = NSPredicate(format: "sentenceID = %@", "")
+		fetchWords.sortDescriptors = [NSSortDescriptor(keyPath: \Words.wordChanged, ascending: true)]
+		do {
+			let emptySentneceIDWords = try managedContext.fetch(fetchWords)
+			if emptySentneceIDWords.count > 0 {
+				let fetchWordsWithSamePicID = NSFetchRequest<Words>(entityName: "Words")
+				for wordItem in emptySentneceIDWords {
+					fetchWordsWithSamePicID.predicate = NSPredicate(format: "sentenceID = %@ AND picID = %@", "", wordItem.picID ?? "")
+					let wordsWithSamePicID = try managedContext.fetch(fetchWordsWithSamePicID)
+					let countWordsWithSamePicID = wordsWithSamePicID.count
+
+					let fetchPictures = NSFetchRequest<Pictures>(entityName: "Pictures")
+					fetchPictures.predicate = NSPredicate(format: "id = %@ AND type = %@", wordItem.picID ?? "", PictureSource.icon.rawValue)
+					let findPictures = try managedContext.fetch(fetchPictures)
+					
+					if findPictures.count > 0 && countWordsWithSamePicID > 1 {
+						managedContext.delete(wordItem)
+						try managedContext.save()
+					}
+				}
+			}
+		} catch {
+			
+		}
+		
+		//let updateWords = try manageContext.fetch(fecthWords)
 	}
 }
 

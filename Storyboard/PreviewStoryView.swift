@@ -396,9 +396,7 @@ struct PreviewStoryView: View {
 			let emptySentneceIDWords = try manageContext.fetch(fetchWords)
 			if emptySentneceIDWords.count > 0 {
 				let fetchWordsWithSamePicID = NSFetchRequest<Words>(entityName: "Words")
-				let filterSentenceID = ""
 				for wordItem in emptySentneceIDWords {
-					let filterPicID = wordItem.picID ?? ""
 					fetchWordsWithSamePicID.predicate = NSPredicate(format: "sentenceID = %@ AND picID = %@", "", wordItem.picID ?? "")
 					let wordsWithSamePicID = try manageContext.fetch(fetchWordsWithSamePicID)
 					let countWordsWithSamePicID = wordsWithSamePicID.count
