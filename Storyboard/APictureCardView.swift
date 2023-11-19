@@ -6,11 +6,13 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct APictureCardView: View {
 	//var word:String = "pic"
 	@EnvironmentObject var sequencer:Sequencer
 	@Environment(\.colorScheme) var colorScheme
+	@Environment(\.managedObjectContext) private var manageContext
 	
 	@State var wordCard:WordCard = WordCard()
 	var picWidth:CGFloat = 200
@@ -93,14 +95,27 @@ struct APictureCardView: View {
 			}
 		})
 		.contextMenu(ContextMenu(menuItems: {
-			if sourceType != .icon {
+			if wordCard.pictureType != .icon {
 				Button(action: {
 					selectedChangedPhoto = nil
 					viewModel.selectedImage = nil
 					cameraDataModel.thumbnailImage = nil
 					sourceType = .icon
+					//find existing icon, try not to create another picture object has the same icon
+					let fecthPictures = NSFetchRequest<Pictures>(entityName: "Pictures")
+					fecthPictures.predicate = NSPredicate(format: "type = %@ AND pictureLocalPath = %@", PictureSource.icon.rawValue, "pictures/\(sequencer.getImageFileName(remoteURL: wordCard.iconURL))")
+					fecthPictures.fetchLimit = 1
+					do {
+						let existingIcons = try manageContext.fetch(fecthPictures)
+						if existingIcons.count > 0 {
+							wordCard.pictureID = UUID(uuidString: existingIcons.first?.id ?? "") ?? UUID()
+						} else {
+							wordCard.pictureID = UUID()
+						}
+					} catch {
+						wordCard.pictureID = UUID()
+					}
 					
-					wordCard.pictureID = UUID()
 					wordCard.pictureLocalPath = "pictures/\(sequencer.getImageFileName(remoteURL: wordCard.iconURL))"
 					wordCard.pictureType = .icon
 					

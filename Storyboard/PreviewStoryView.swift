@@ -297,6 +297,47 @@ struct PreviewStoryView: View {
 					if findWord.count > 0 {
 						if findWord.first?.picID != wordCard.pictureID.uuidString {
 							//piciture has changed
+							findWord.first?.wordChanged = Date()
+							findWord.first?.sentenceID = ""
+							try manageContext.save()
+							
+							let addWord = Words(context: manageContext)
+							addWord.sentenceID = existedSentences.first?.id ?? ""
+							addWord.word = wordCard.word
+							addWord.wordChanged = Date()
+							addWord.order = Int16(wordCard.cardOrder)
+							addWord.picID = wordCard.pictureID.uuidString
+							try manageContext.save()
+							
+							//check if a new picture object is requred
+							let fecthPictures = NSFetchRequest<Pictures>(entityName: "Pictures")
+							fecthPictures.predicate = NSPredicate(format: "id = %@", wordCard.pictureID.uuidString)
+							fecthPictures.fetchLimit = 1
+							let existingPictures = try manageContext.fetch(fecthPictures)
+							if existingPictures.count == 0 {
+								let newPic = Pictures(context: manageContext)
+								newPic.id = wordCard.pictureID.uuidString
+								newPic.type = wordCard.pictureType.rawValue
+								newPic.pictureLocalPath = wordCard.pictureLocalPath
+								newPic.iconURL = wordCard.iconURL
+								try manageContext.save()
+								
+								//save image to disk
+								var isDirectory = ObjCBool(true)
+								if FileManager.default.fileExists(atPath: FileManager.picturesDirectoryURL!.path, isDirectory: &isDirectory) == true {
+									if wordCard.pictureType == .photoPicker || wordCard.pictureType == .camera {
+										let resizedImage = resizeImage(image: wordCard.photo!, maxDimension: 1000)
+										saveImageToDisk(saveImage: resizedImage, imageFileName: wordCard.pictureID.uuidString, asJPG: true)
+									} else if wordCard.pictureType == .icon {
+										try await downloadIcon(remoteIconURL: wordCard.iconURL, iconURL: wordCard.pictureLocalPath)
+									}
+								}
+							}
+							
+							clearDuplicatedIconRecord()
+							
+							//*********************
+							/*
 							findWord.first?.picID = wordCard.pictureID.uuidString
 							findWord.first?.wordChanged = Date()
 							//=>update this later, findWord.first?.wordChanged =
@@ -323,6 +364,8 @@ struct PreviewStoryView: View {
 								}
 							}
 							try manageContext.save()
+							 */
+							//********************
 						}
 					} else {
 						//should find the word in the sentence, but not finding it in CoreData
@@ -343,10 +386,38 @@ struct PreviewStoryView: View {
 		}
 	}
 	
-	private func updatePicToLatest(targetWord: String, toPicID: String) {
-		let fecthWords = NSFetchRequest<Words>(entityName: "Words")
-		fecthWords.predicate = NSPredicate(format: "word = %@", targetWord)
-		let updateWords = try manageContext.fetch(fecthWords)
+	private func clearDuplicatedIconRecord() {
+		//in the order of word added first, remove word without sentenceID and use an icon that are added more than once.
+		//preserver the latest word with that icon so "generate() in NewSequenceView will find the last used image(icon or photo) for that word. Sometimes a word object without the sentenceID can be created by deleting a sentence."
+		let fetchWords = NSFetchRequest<Words>(entityName: "Words")
+		fetchWords.predicate = NSPredicate(format: "sentenceID = %@", "")
+		fetchWords.sortDescriptors = [NSSortDescriptor(keyPath: \Words.wordChanged, ascending: true)]
+		do {
+			let emptySentneceIDWords = try manageContext.fetch(fetchWords)
+			if emptySentneceIDWords.count > 0 {
+				let fetchWordsWithSamePicID = NSFetchRequest<Words>(entityName: "Words")
+				let filterSentenceID = ""
+				for wordItem in emptySentneceIDWords {
+					let filterPicID = wordItem.picID ?? ""
+					fetchWordsWithSamePicID.predicate = NSPredicate(format: "sentenceID = %@ AND picID = %@", "", wordItem.picID ?? "")
+					let wordsWithSamePicID = try manageContext.fetch(fetchWordsWithSamePicID)
+					let countWordsWithSamePicID = wordsWithSamePicID.count
+
+					let fetchPictures = NSFetchRequest<Pictures>(entityName: "Pictures")
+					fetchPictures.predicate = NSPredicate(format: "id = %@ AND type = %@", wordItem.picID ?? "", PictureSource.icon.rawValue)
+					let findPictures = try manageContext.fetch(fetchPictures)
+					
+					if findPictures.count > 0 && countWordsWithSamePicID > 1 {
+						manageContext.delete(wordItem)
+						try manageContext.save()
+					}
+				}
+			}
+		} catch {
+			
+		}
+		
+		//let updateWords = try manageContext.fetch(fecthWords)
 	}
 }
 	/*#Preview {

@@ -42,7 +42,7 @@ struct ListItemView: View {
 							addWordCard.cardOrder = Int(wordItem.order)
 							print("\(String(describing: wordItem.word)) \(String(describing: wordItem.picID))")
 							let fetchPictures = NSFetchRequest<Pictures>(entityName: "Pictures")
-							fetchPictures.predicate = NSPredicate(format: "id = %@", wordItem.picID! as CVarArg)
+							fetchPictures.predicate = NSPredicate(format: "id = %@", wordItem.picID ?? "")
 							fetchPictures.fetchLimit = 1
 							let usePic = try managedContext.fetch(fetchPictures)
 							if usePic.count > 0 {

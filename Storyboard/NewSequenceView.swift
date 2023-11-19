@@ -132,18 +132,19 @@ struct NewSequenceView: View {
 				let fetchWords = NSFetchRequest<Words>(entityName: "Words")
 				fetchWords.predicate = NSPredicate(format: "word = %@", wordCardItem.word)
 				fetchWords.sortDescriptors = [NSSortDescriptor(keyPath: \Words.wordChanged, ascending: false)]
-				fetchWords.fetchLimit = 1
-				print("[debug] PreviewStoryView, before viewContext.fetchWords")
+				//fetchWords.fetchLimit = 1
+				print("[debug] NewSequenceView, generate(), look up word \(wordCardItem.word)")
 				let lastWordUsed = try manageContext.fetch(fetchWords)
-				
+				print("[debug] NewSequenceView, generate(), lastWordUsed \(String(describing: lastWordUsed.first?.word))")
 				if lastWordUsed.count > 0 {
 					let fetchPictures = NSFetchRequest<Pictures>(entityName: "Pictures")
 					fetchPictures.predicate = NSPredicate(format: "id = %@", lastWordUsed.first?.picID ?? "")
 					let lastPictureUsed = try manageContext.fetch(fetchPictures)
 					if lastPictureUsed.count > 0 {
 						let findWordIndex = sequencer.theStoryByUser.visualizedSequence.firstIndex(where: {$0.word == wordCardItem.word}) ?? -1
-						if findWordIndex > 0 {
-							sequencer.theStoryByUser.visualizedSequence[findWordIndex].pictureID = UUID(uuidString: lastPictureUsed.first?.id! ?? "") ?? UUID()
+						if findWordIndex >= 0 {
+							let thePictureIDString = lastPictureUsed.first?.id ?? ""
+							sequencer.theStoryByUser.visualizedSequence[findWordIndex].pictureID = UUID(uuidString: thePictureIDString) ?? UUID()
 							sequencer.theStoryByUser.visualizedSequence[findWordIndex].pictureLocalPath = lastPictureUsed.first?.pictureLocalPath ?? ""
 							
 							if lastPictureUsed.first?.type == PictureSource.icon.rawValue {
