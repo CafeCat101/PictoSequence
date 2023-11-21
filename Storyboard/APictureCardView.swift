@@ -128,6 +128,34 @@ struct APictureCardView: View {
 				})
 			}
 			
+			if let myPhotos = doesWordHavePhoto(), myPhotos.count > 0 {
+				Button(action: {
+					selectedChangedPhoto = Image(uiImage: UIImage(contentsOfFile: localPictureURLPath(pictureURLString: myPhotos.first?.pictureLocalPath ?? "")) ?? UIImage())
+					wordCard.pictureID = UUID(uuidString: myPhotos.first?.id ?? "") ?? UUID()
+					wordCard.pictureLocalPath = myPhotos.first?.pictureLocalPath ?? ""
+					if myPhotos.first?.type == PictureSource.photoPicker.rawValue {
+						wordCard.pictureType = .photoPicker
+						cameraDataModel.thumbnailImage = nil
+					} else {
+						wordCard.pictureType = .camera
+					}
+					wordCard.photo = UIImage(contentsOfFile: localPictureURLPath(pictureURLString: myPhotos.first?.pictureLocalPath ?? "")) ?? UIImage()
+					
+					let findCardIndex = sequencer.theStoryByUser.visualizedSequence.firstIndex(where: {$0.word == wordCard.word}) ?? -1
+					if findCardIndex > -1 {
+						sequencer.theStoryByUser.visualizedSequence[findCardIndex] = wordCard
+					}
+				}, label: {
+					Label(title: {
+						Text("Use my saved phpto")
+					}, icon: {
+						Image(uiImage: UIImage(contentsOfFile: localPictureURLPath(pictureURLString: myPhotos.first?.pictureLocalPath ?? "")) ?? UIImage())
+							.resizable()
+							.scaledToFill()
+					})
+				})
+			}
+			
 			Button(action: {
 				viewModel.selectToUse = true
 				showPhotoPicker.toggle()
@@ -138,7 +166,7 @@ struct APictureCardView: View {
 			Button(action: {
 				showCaptureView = true
 			}, label: {
-				Text("Take a new photo")
+				Text("Take a new picture")
 			})
 		}))
 		.photosPicker(isPresented: $showPhotoPicker ,selection: $viewModel.imageSelection, matching: .any(of: [.images, .livePhotos]))
@@ -233,6 +261,86 @@ struct APictureCardView: View {
 		} else {
 			return false
 		}
+	}
+	
+	private func doesWordHavePhoto() -> [Pictures]? {
+		let fetchWords = NSFetchRequest<Words>(entityName: "Words")
+		fetchWords.predicate = NSPredicate(format: "word = %@", wordCard.word)
+		fetchWords.sortDescriptors = [NSSortDescriptor(keyPath: \Words.wordChanged, ascending: false)]
+		//var findPicID = ""
+		var coreDataPicturesObj:[Pictures] = []
+		
+		do {
+			let findWords = try manageContext.fetch(fetchWords)
+			if findWords.count > 0 {
+				for coreDataWord in findWords {
+					let fetchPictures = NSFetchRequest<Pictures>(entityName: "Pictures")
+					fetchPictures.predicate = NSPredicate(format: "id = %@ AND (type = %@ OR type = %@)", coreDataWord.picID ?? "", PictureSource.photoPicker.rawValue, PictureSource.camera.rawValue)
+					let findPhotos = try manageContext.fetch(fetchPictures)
+					
+					if findPhotos.count > 0 {
+						coreDataPicturesObj = findPhotos
+						//findPicID = findPhotos.first?.id ?? ""
+						break
+					}
+				}
+			}
+		} catch {
+			
+		}
+		//return findPicID
+		if coreDataPicturesObj.first?.id == wordCard.pictureID.uuidString {
+			return []
+		} else {
+			return coreDataPicturesObj
+		}
+	}
+	
+	
+	/*
+	@ViewBuilder
+	private func useMyPhotoButton() -> some View {
+		let getPicID = doesWordHavePhoto()
+		
+		Button(action: {
+			
+		}, label: {
+			Label(title: Text("Use my saved photo"), icon: {
+				Image(uiImage: UIImage(contentsOfFile: ""))
+					.resizable()
+					.scaledToFit()
+			})
+		})
+		
+		
+		let fetchPictures = NSFetchRequest<Pictures>(entityName: "Pictures")
+		fetchPictures.predicate = NSPredicate(format: "id = %@", getPicID)
+		let getPictures = try manageContext.fetch(fetchPictures)
+		if getPictures.count > 0 {
+			if getPicID.isEmpty == false {
+				Button(action: {
+					
+				}, label: {
+					Label(title: Text("Use my saved photo"), icon: {
+						Image(uiImage: UIImage(contentsOfFile: ""))
+							.resizable()
+							.scaledToFit()
+					})
+				})
+			} else {
+				EmptyView()
+			}
+		} else {
+			EmptyView()
+		}
+		
+		
+	}
+	 */
+	
+	private func localPictureURLPath(pictureURLString: String) -> String {
+		let pictureURL = FileManager.documentoryDirecotryURL.appending(component: pictureURLString)
+		return pictureURL.path()
 	}
 }
 

@@ -9,6 +9,8 @@ import SwiftUI
 
 struct ShowStoryView: View {
 	@EnvironmentObject var sequencer:Sequencer
+	@Environment(\.colorScheme) var colorScheme
+	
 	@Binding var showStoryboard:Bool
 	
 	@State private var sentence = ""
@@ -32,15 +34,18 @@ struct ShowStoryView: View {
 			StoryView()
 			Spacer()
 		}
-		.background(
+		/*.background(
 			LinearGradient(gradient: Gradient(colors: [Color("testColor"), Color("testColor3")]), startPoint: .top, endPoint: .bottom)
-		)
+		)*/
 		.onAppear(perform: {
 			print("[debug] PreviewStoryView, onAppear, sequencer.theStoryByUser.sentence \(sequencer.theStoryByUser.sentence)")
 			sentence = sequencer.theStoryByUser.sentence
 			pictureCards = sequencer.theStoryByUser.visualizedSequence
 		})
-		//.background(Color("testColor"))
+		.background(
+			Image(colorScheme == .light ? "vellum_sketchbook_paper" : "balck_canvas_bg4").resizable()
+				.aspectRatio(contentMode: .fill)
+				.edgesIgnoringSafeArea(.all))
 	}
 }
 
