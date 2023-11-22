@@ -35,7 +35,7 @@ struct ChangePictureView: View {
 				 .pickerStyle(.segmented)
 				 
 				 Spacer()*/
-			}.padding()
+			}.padding([.top,.leading,.trailing], 15)
 			
 			Text(wordCard.word)
 				.font(.title)

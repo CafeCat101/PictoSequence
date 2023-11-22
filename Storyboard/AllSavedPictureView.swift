@@ -50,7 +50,7 @@ struct AllSavedPictureView: View {
 									RoundedRectangle(cornerRadius: 15)
 										.foregroundColor(Color("word_icon_bg"))
 										.opacity(colorScheme == .dark ? 0.5 : 0.8)
-										.shadow(color: .black, radius: 5)
+										.shadow(color: .gray, radius: 3)
 								}
 								.onTapGesture(perform: {
 									print("[debug] AllSavedPictureView, image.onTap \(imageItem.localPicturePath)")
