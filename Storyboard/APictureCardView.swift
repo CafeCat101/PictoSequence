@@ -27,6 +27,7 @@ struct APictureCardView: View {
 	@StateObject private var viewModel = PictureModel()
 	@State private var editingCount = 0
 	@State private var selectedChangedPhoto:Image?
+	@State private var showChangePictureView = false
 	
 	
 	var body: some View {
@@ -95,6 +96,13 @@ struct APictureCardView: View {
 			}
 		})
 		.contextMenu(ContextMenu(menuItems: {
+			Button(action: {
+				showChangePictureView = true
+			}, label: {
+				Text("Change picture")
+			})
+			
+			/*
 			if wordCard.pictureType != .icon {
 				Button(action: {
 					selectedChangedPhoto = nil
@@ -127,7 +135,8 @@ struct APictureCardView: View {
 					Text("Use icon")
 				})
 			}
-			
+			*/
+			/*
 			if let myPhotos = doesWordHavePhoto(), myPhotos.count > 0 {
 				Button(action: {
 					selectedChangedPhoto = Image(uiImage: UIImage(contentsOfFile: localPictureURLPath(pictureURLString: myPhotos.first?.pictureLocalPath ?? "")) ?? UIImage())
@@ -155,6 +164,7 @@ struct APictureCardView: View {
 					})
 				})
 			}
+			 */
 			
 			Button(action: {
 				viewModel.selectToUse = true
@@ -172,6 +182,9 @@ struct APictureCardView: View {
 		.photosPicker(isPresented: $showPhotoPicker ,selection: $viewModel.imageSelection, matching: .any(of: [.images, .livePhotos]))
 		.fullScreenCover(isPresented: $showCaptureView, content: {
 			CameraView(model:cameraDataModel, showCaptureView: $showCaptureView, viewModel: viewModel, sourceType: $sourceType)
+		})
+		.sheet(isPresented: $showChangePictureView, content: {
+			ChangePictureView(wordCard: wordCard, showChangePictureView: $showChangePictureView)
 		})
 	}
 	
@@ -282,6 +295,41 @@ struct APictureCardView: View {
 						coreDataPicturesObj = findPhotos
 						//findPicID = findPhotos.first?.id ?? ""
 						break
+					}
+				}
+			}
+		} catch {
+			
+		}
+		//return findPicID
+		if coreDataPicturesObj.first?.id == wordCard.pictureID.uuidString {
+			return []
+		} else {
+			return coreDataPicturesObj
+		}
+	}
+	
+	private func doesWordHaveImages() -> [Pictures]? {
+		let fetchWords = NSFetchRequest<Words>(entityName: "Words")
+		fetchWords.predicate = NSPredicate(format: "word = %@", wordCard.word)
+		fetchWords.sortDescriptors = [NSSortDescriptor(keyPath: \Words.wordChanged, ascending: false)]
+		//var findPicID = ""
+		var coreDataPicturesObj:[Pictures] = []
+		var trackPicID:[String] = []
+		do {
+			let findWords = try manageContext.fetch(fetchWords)
+			if findWords.count > 0 {
+				for coreDataWord in findWords {
+					let fetchPictures = NSFetchRequest<Pictures>(entityName: "Pictures")
+					fetchPictures.predicate = NSPredicate(format: "id = %@", coreDataWord.picID ?? "")
+					let findPhotos = try manageContext.fetch(fetchPictures)
+					
+					if findPhotos.count > 0 {
+						print("[debug] APictureCarVide picture.id \(findPhotos.first?.id ?? "") [\(trackPicID)]")
+						if trackPicID.contains(where: {$0 == findPhotos.first?.id ?? ""}) == false {
+							coreDataPicturesObj = findPhotos
+							trackPicID.append(findPhotos.first?.id ?? "")
+						}
 					}
 				}
 			}

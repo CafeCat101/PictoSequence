@@ -47,6 +47,10 @@
 		C8B8A5D12AEE968A00490EF4 /* StoryByUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B8A5D02AEE968A00490EF4 /* StoryByUser.swift */; };
 		C8B8A5D32AF6149000490EF4 /* APictureCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B8A5D22AF6149000490EF4 /* APictureCardView.swift */; };
 		C8B8A5D72AFB879900490EF4 /* FileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B8A5D62AFB879900490EF4 /* FileManager.swift */; };
+		C8B8A5D92B0CAEDE00490EF4 /* ChangePictureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B8A5D82B0CAEDE00490EF4 /* ChangePictureView.swift */; };
+		C8B8A5DB2B0CB43E00490EF4 /* ChangePictureAllIconsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B8A5DA2B0CB43E00490EF4 /* ChangePictureAllIconsView.swift */; };
+		C8B8A5DD2B0CB45B00490EF4 /* AllSavedPictureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B8A5DC2B0CB45B00490EF4 /* AllSavedPictureView.swift */; };
+		C8B8A5DF2B0DFC1B00490EF4 /* MyImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B8A5DE2B0DFC1B00490EF4 /* MyImage.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -92,6 +96,10 @@
 		C8B8A5D02AEE968A00490EF4 /* StoryByUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryByUser.swift; sourceTree = "<group>"; };
 		C8B8A5D22AF6149000490EF4 /* APictureCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APictureCardView.swift; sourceTree = "<group>"; };
 		C8B8A5D62AFB879900490EF4 /* FileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManager.swift; sourceTree = "<group>"; };
+		C8B8A5D82B0CAEDE00490EF4 /* ChangePictureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangePictureView.swift; sourceTree = "<group>"; };
+		C8B8A5DA2B0CB43E00490EF4 /* ChangePictureAllIconsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangePictureAllIconsView.swift; sourceTree = "<group>"; };
+		C8B8A5DC2B0CB45B00490EF4 /* AllSavedPictureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllSavedPictureView.swift; sourceTree = "<group>"; };
+		C8B8A5DE2B0DFC1B00490EF4 /* MyImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyImage.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -151,6 +159,9 @@
 				C8B8A5CC2AE3FA7600490EF4 /* PreviewStoryView.swift */,
 				C8B8A5CE2AE659D700490EF4 /* EditSequenceView.swift */,
 				C8B8A5D22AF6149000490EF4 /* APictureCardView.swift */,
+				C8B8A5D82B0CAEDE00490EF4 /* ChangePictureView.swift */,
+				C8B8A5DA2B0CB43E00490EF4 /* ChangePictureAllIconsView.swift */,
+				C8B8A5DC2B0CB45B00490EF4 /* AllSavedPictureView.swift */,
 			);
 			path = Storyboard;
 			sourceTree = "<group>";
@@ -188,6 +199,7 @@
 				C8680B462ACA5CCF00198CCA /* SequencerResponseError.swift */,
 				C8680B672AD0007400198CCA /* StoryByAI.swift */,
 				C8B8A5D02AEE968A00490EF4 /* StoryByUser.swift */,
+				C8B8A5DE2B0DFC1B00490EF4 /* MyImage.swift */,
 			);
 			path = DataModels;
 			sourceTree = "<group>";
@@ -284,6 +296,7 @@
 				C8B8A5D72AFB879900490EF4 /* FileManager.swift in Sources */,
 				C89D5E862ADBD71D00083549 /* PhotoCollectionView.swift in Sources */,
 				C8680B642ACFD98000198CCA /* SpinnerView.swift in Sources */,
+				C8B8A5DB2B0CB43E00490EF4 /* ChangePictureAllIconsView.swift in Sources */,
 				C8B8A5CF2AE659D700490EF4 /* EditSequenceView.swift in Sources */,
 				C8680B682AD0007400198CCA /* StoryByAI.swift in Sources */,
 				C8680B662ACFFF3500198CCA /* StoryView.swift in Sources */,
@@ -293,6 +306,7 @@
 				C8680B472ACA5CCF00198CCA /* SequencerResponseError.swift in Sources */,
 				C89D5E942ADD2F3A00083549 /* PictureSource.swift in Sources */,
 				C89D5E712AD69EDD00083549 /* PictureModel.swift in Sources */,
+				C8B8A5D92B0CAEDE00490EF4 /* ChangePictureView.swift in Sources */,
 				C89D5E7E2ADBD4E600083549 /* ViewFinderView.swift in Sources */,
 				C85267F32AC4316F00047B27 /* ContentView.swift in Sources */,
 				C8B8A5D12AEE968A00490EF4 /* StoryByUser.swift in Sources */,
@@ -304,8 +318,10 @@
 				C8680B6A2AD2BF2A00198CCA /* APictureView.swift in Sources */,
 				C89D5E842ADBD6C400083549 /* PhotoCollection.swift in Sources */,
 				C85268012AC445F700047B27 /* ShowStoryView.swift in Sources */,
+				C8B8A5DD2B0CB45B00490EF4 /* AllSavedPictureView.swift in Sources */,
 				C8B8A5D32AF6149000490EF4 /* APictureCardView.swift in Sources */,
 				C89D5E8A2ADBD77000083549 /* PhotoLibrary.swift in Sources */,
+				C8B8A5DF2B0DFC1B00490EF4 /* MyImage.swift in Sources */,
 				C8680B432AC9C27E00198CCA /* SequencerSendJson.swift in Sources */,
 				C89D5E7C2ADBD01B00083549 /* DataModel.swift in Sources */,
 				C8B8A58B2AE3B3D400490EF4 /* PersistenceController.swift in Sources */,
