@@ -9,7 +9,8 @@ import Foundation
 import SwiftUI
 
 struct MyImage: Identifiable {
-	let id = UUID()
-	var image:Image
+	var id = UUID()
+	var image:UIImage?
 	var localPicturePath:String = ""
+	var pictureType:PictureSource = .icon
 }

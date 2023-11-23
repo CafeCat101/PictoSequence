@@ -20,14 +20,15 @@ struct APictureCardView: View {
 	var fromDatabase = false
 	
 	@State private var showPic = true
-	@State private var sourceType:PictureSource = .icon
+	//@State private var sourceType:PictureSource = .icon
 	@State private var showPhotoPicker = false
 	@State private var showCaptureView = false
 	@StateObject private var cameraDataModel = DataModel()
 	@StateObject private var viewModel = PictureModel()
 	@State private var editingCount = 0
-	@State private var selectedChangedPhoto:Image?
+	@State private var selectedChangedPhoto:Image? //this is for PhotoPicker and Live Camera Capture only
 	@State private var showChangePictureView = false
+	@StateObject private var savedPictureModel = SavedPicturesByWord()
 	
 	
 	var body: some View {
@@ -44,16 +45,13 @@ struct APictureCardView: View {
 					if result == true && viewModel.selectToUse == true {
 						selectedChangedPhoto = viewModel.selectedImage
 						cameraDataModel.thumbnailImage = nil
-						sourceType = .photoPicker
+						//sourceType = .photoPicker
 						wordCard.pictureID = UUID()
 						wordCard.pictureLocalPath = "pictures/\(wordCard.pictureID.uuidString).jpg"
 						wordCard.pictureType = .photoPicker
 						wordCard.photo = UIImage(data: viewModel.selectedImageData!)
 						
-						let findCardIndex = sequencer.theStoryByUser.visualizedSequence.firstIndex(where: {$0.word == wordCard.word}) ?? -1
-						if findCardIndex > -1 {
-							sequencer.theStoryByUser.visualizedSequence[findCardIndex] = wordCard
-						}
+						updateStoryByUserSequence()
 					}
 				})
 				.onReceive(cameraDataModel.capturedImageDone, perform: {result in
@@ -63,10 +61,25 @@ struct APictureCardView: View {
 					wordCard.pictureType = .camera
 					wordCard.photo = UIImage(data: cameraDataModel.thumbnailImageData!)
 					
-					let findCardIndex = sequencer.theStoryByUser.visualizedSequence.firstIndex(where: {$0.word == wordCard.word}) ?? -1
-					if findCardIndex > -1 {
-						sequencer.theStoryByUser.visualizedSequence[findCardIndex] = wordCard
+					updateStoryByUserSequence()
+				})
+				.onReceive(savedPictureModel.pictureSelected, perform: { result in
+					wordCard.pictureID = result.id
+					wordCard.pictureLocalPath = result.localPicturePath
+					wordCard.pictureType = result.pictureType
+					wordCard.photo = result.image
+					selectedChangedPhoto = nil
+					if result.pictureType == .icon {
+						viewModel.selectedImage = nil
+						cameraDataModel.thumbnailImage = nil
+					} else if result.pictureType == .photoPicker {
+						cameraDataModel.thumbnailImage = nil
+					} else if result.pictureType == .camera {
+						viewModel.selectedImage = nil
 					}
+					//sourceType = result.pictureType
+					
+					updateStoryByUserSequence()
 				})
 		}
 		.overlay(content: {
@@ -181,10 +194,13 @@ struct APictureCardView: View {
 		}))
 		.photosPicker(isPresented: $showPhotoPicker ,selection: $viewModel.imageSelection, matching: .any(of: [.images, .livePhotos]))
 		.fullScreenCover(isPresented: $showCaptureView, content: {
-			CameraView(model:cameraDataModel, showCaptureView: $showCaptureView, viewModel: viewModel, sourceType: $sourceType)
+			CameraView(model:cameraDataModel, showCaptureView: $showCaptureView, viewModel: viewModel)
 		})
 		.sheet(isPresented: $showChangePictureView, content: {
-			ChangePictureView(wordCard: wordCard, showChangePictureView: $showChangePictureView)
+			ChangePictureView(wordCard: wordCard, showChangePictureView: $showChangePictureView, savedPictureModel: savedPictureModel)
+		})
+		.onAppear(perform: {
+			setMySavedPictures()
 		})
 	}
 	
@@ -344,6 +360,52 @@ struct APictureCardView: View {
 		}
 	}
 	
+	private func setMySavedPictures() {
+		let fetchWords = NSFetchRequest<Words>(entityName: "Words")
+		fetchWords.predicate = NSPredicate(format: "word = %@", wordCard.word)
+		fetchWords.sortDescriptors = [NSSortDescriptor(keyPath: \Words.wordChanged, ascending: false)]
+		var trackPicID:[String] = []
+		
+		do {
+			let findWords = try manageContext.fetch(fetchWords)
+			if findWords.count > 0 {
+				for coreDataWord in findWords {
+					let fetchPictures = NSFetchRequest<Pictures>(entityName: "Pictures")
+					fetchPictures.predicate = NSPredicate(format: "id = %@", coreDataWord.picID ?? "")
+					let findPhotos = try manageContext.fetch(fetchPictures)
+					
+					if findPhotos.count > 0 {
+						print("[debug] ChangePictureView, \(wordCard.word) picture.id \(findPhotos.first?.id ?? "") [\(trackPicID)]")
+						if trackPicID.contains(where: {$0 == findPhotos.first?.id ?? ""}) == false {
+							trackPicID.append(findPhotos.first?.id ?? "")
+							
+							if pictureExists(localPath: findPhotos.first?.pictureLocalPath ?? "") {
+								let pictureURL = FileManager.documentoryDirecotryURL.appending(component: findPhotos.first?.pictureLocalPath ?? "")
+								var myPicture = MyImage()
+								myPicture.id = UUID(uuidString: findPhotos.first?.id ?? "") ?? UUID()
+								myPicture.image = UIImage(contentsOfFile: pictureURL.path())
+								myPicture.localPicturePath = findPhotos.first?.pictureLocalPath ?? ""
+								let picType = findPhotos.first?.type ?? ""
+								if picType == PictureSource.photoPicker.rawValue {
+									myPicture.pictureType = .photoPicker
+								} else if picType == PictureSource.camera.rawValue {
+									myPicture.pictureType = .camera
+								}
+								savedPictureModel.savedPictures.append(myPicture)
+								
+								print("[debug] ChangePictureView, append Image \(pictureURL.path())")
+								print("[debug] ChangePictureView, mySavedImage.count \(savedPictureModel.savedPictures.count)")
+							} else {
+								print("[debug] ChangePictureView, \(findPhotos.first?.pictureLocalPath ?? "") pictureExists=false")
+							}
+						}
+					}
+				}
+			}
+		} catch {
+			
+		}
+	}
 	
 	/*
 	@ViewBuilder
@@ -389,6 +451,13 @@ struct APictureCardView: View {
 	private func localPictureURLPath(pictureURLString: String) -> String {
 		let pictureURL = FileManager.documentoryDirecotryURL.appending(component: pictureURLString)
 		return pictureURL.path()
+	}
+	
+	private func updateStoryByUserSequence() {
+		let findCardIndex = sequencer.theStoryByUser.visualizedSequence.firstIndex(where: {$0.word == wordCard.word}) ?? -1
+		if findCardIndex > -1 {
+			sequencer.theStoryByUser.visualizedSequence[findCardIndex] = wordCard
+		}
 	}
 }
 

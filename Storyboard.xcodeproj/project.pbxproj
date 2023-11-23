@@ -51,6 +51,7 @@
 		C8B8A5DB2B0CB43E00490EF4 /* ChangePictureAllIconsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B8A5DA2B0CB43E00490EF4 /* ChangePictureAllIconsView.swift */; };
 		C8B8A5DD2B0CB45B00490EF4 /* AllSavedPictureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B8A5DC2B0CB45B00490EF4 /* AllSavedPictureView.swift */; };
 		C8B8A5DF2B0DFC1B00490EF4 /* MyImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B8A5DE2B0DFC1B00490EF4 /* MyImage.swift */; };
+		C8B8A5E12B0E4DBF00490EF4 /* SavedPicturesByWord.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B8A5E02B0E4DBF00490EF4 /* SavedPicturesByWord.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -100,6 +101,7 @@
 		C8B8A5DA2B0CB43E00490EF4 /* ChangePictureAllIconsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangePictureAllIconsView.swift; sourceTree = "<group>"; };
 		C8B8A5DC2B0CB45B00490EF4 /* AllSavedPictureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllSavedPictureView.swift; sourceTree = "<group>"; };
 		C8B8A5DE2B0DFC1B00490EF4 /* MyImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyImage.swift; sourceTree = "<group>"; };
+		C8B8A5E02B0E4DBF00490EF4 /* SavedPicturesByWord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedPicturesByWord.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -187,6 +189,7 @@
 				C89D5E8F2ADBD82200083549 /* CachedImageManager.swift */,
 				C89D5E912ADBD8B700083549 /* Camera.swift */,
 				C8B8A5D62AFB879900490EF4 /* FileManager.swift */,
+				C8B8A5E02B0E4DBF00490EF4 /* SavedPicturesByWord.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -288,6 +291,7 @@
 				C8B8A5CD2AE3FA7600490EF4 /* PreviewStoryView.swift in Sources */,
 				C89D5E8C2ADBD7AA00083549 /* PhotoView.swift in Sources */,
 				C85267FF2AC433A300047B27 /* ListItemView.swift in Sources */,
+				C8B8A5E12B0E4DBF00490EF4 /* SavedPicturesByWord.swift in Sources */,
 				C8680B412AC9C0D500198CCA /* WordType.swift in Sources */,
 				C8680B322AC6BA1100198CCA /* SequenceListView.swift in Sources */,
 				C89D5E822ADBD5B200083549 /* PhotoAssetCollection.swift in Sources */,

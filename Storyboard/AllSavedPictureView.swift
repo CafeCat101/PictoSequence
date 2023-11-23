@@ -12,28 +12,19 @@ struct AllSavedPictureView: View {
 	@Environment(\.colorScheme) var colorScheme
 	
 	var card:WordCard = WordCard()
-	var showImages:[MyImage] = []
+	@ObservedObject var savedPictureModel:SavedPicturesByWord
+	
 	let columns = [
 					GridItem(.adaptive(minimum: 100, maximum: 140))
 			]
 	
 	var body: some View {
 		VStack {
-			if showImages.count > 0 {
+			if savedPictureModel.savedPictures.count > 0 {
 				LazyVGrid(columns: columns, spacing: 20) {
-					ForEach(showImages) { imageItem in
+					ForEach(savedPictureModel.savedPictures) { imageItem in
 						if imageItem.localPicturePath == card.pictureLocalPath {
-							imageItem.image
-								.resizable()
-								.scaledToFill()
-								.frame(minWidth: 100, maxWidth: 140, minHeight: 100, maxHeight: 140)
-								.clipShape(RoundedRectangle(cornerSize: CGSize(width: 15, height: 15)))
-								.background {
-									RoundedRectangle(cornerRadius: 15)
-										.foregroundColor(Color("word_icon_bg"))
-										.opacity(colorScheme == .dark ? 0.5 : 0.8)
-										.shadow(color: .black, radius: 5)
-								}
+							displayImage(savedImage: imageItem.image!)
 								.overlay(alignment: .topLeading, content: {
 									Label("selected", systemImage: "checkmark.circle.fill")
 										.labelStyle(.iconOnly)
@@ -41,18 +32,9 @@ struct AllSavedPictureView: View {
 										.padding([.top,.leading], 5)
 								})
 						} else {
-							imageItem.image
-								.resizable()
-								.scaledToFill()
-								.frame(minWidth: 100, maxWidth: 140, minHeight: 100, maxHeight: 140)
-								.clipShape(RoundedRectangle(cornerSize: CGSize(width: 15, height: 15)))
-								.background {
-									RoundedRectangle(cornerRadius: 15)
-										.foregroundColor(Color("word_icon_bg"))
-										.opacity(colorScheme == .dark ? 0.5 : 0.8)
-										.shadow(color: .gray, radius: 3)
-								}
+							displayImage(savedImage: imageItem.image!)
 								.onTapGesture(perform: {
+									savedPictureModel.pictureSelected.send(imageItem)
 									print("[debug] AllSavedPictureView, image.onTap \(imageItem.localPicturePath)")
 								})
 						}
@@ -64,8 +46,23 @@ struct AllSavedPictureView: View {
 			}
 		}
 	}
+	
+	@ViewBuilder
+	private func displayImage(savedImage: UIImage) -> some View {
+		Image(uiImage: savedImage)
+			.resizable()
+			.scaledToFill()
+			.frame(minWidth: 100, maxWidth: 140, minHeight: 100, maxHeight: 140)
+			.clipShape(RoundedRectangle(cornerSize: CGSize(width: 15, height: 15)))
+			.background {
+				RoundedRectangle(cornerRadius: 15)
+					.foregroundColor(Color("word_icon_bg"))
+					.opacity(colorScheme == .dark ? 0.5 : 0.8)
+					.shadow(color: .black, radius: 5)
+			}
+	}
 }
 
-#Preview {
+/*#Preview {
 	AllSavedPictureView()
-}
+}*/

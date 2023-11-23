@@ -20,7 +20,7 @@ struct ChangePictureAllIconsView: View {
 			if showImages.count > 0 {
 				LazyVGrid(columns: columns, spacing: 20) {
 					ForEach(showImages) { imageItem in
-						imageItem.image
+						Image(uiImage: imageItem.image!)
 							.resizable()
 							.scaledToFill()
 							.padding(15)
@@ -31,21 +31,6 @@ struct ChangePictureAllIconsView: View {
 			}
 		}
 		.onAppear(perform: {
-			showImages.append(MyImage(image: Image(systemName:"square.and.arrow.up")))
-			showImages.append(MyImage(image: Image(systemName:"square.and.arrow.up.trianglebadge.exclamationmark")))
-			showImages.append(MyImage(image: Image(systemName:"square.and.arrow.up.on.square.fill")))
-			showImages.append(MyImage(image: Image(systemName:"rectangle.portrait.and.arrow.right.fill")))
-			showImages.append(MyImage(image: Image(systemName: "eraser.line.dashed")))
-			showImages.append(MyImage(image: Image(systemName:"square.and.arrow.up")))
-			showImages.append(MyImage(image: Image(systemName:"square.and.arrow.up.trianglebadge.exclamationmark")))
-			showImages.append(MyImage(image: Image(systemName:"square.and.arrow.up.on.square.fill")))
-			showImages.append(MyImage(image: Image(systemName:"rectangle.portrait.and.arrow.right.fill")))
-			showImages.append(MyImage(image: Image(systemName: "eraser.line.dashed")))
-			showImages.append(MyImage(image: Image(systemName:"square.and.arrow.up")))
-			showImages.append(MyImage(image: Image(systemName:"square.and.arrow.up.trianglebadge.exclamationmark")))
-			showImages.append(MyImage(image: Image(systemName:"square.and.arrow.up.on.square.fill")))
-			showImages.append(MyImage(image: Image(systemName:"rectangle.portrait.and.arrow.right.fill")))
-			showImages.append(MyImage(image: Image(systemName: "eraser.line.dashed")))
 		})
 	}
 }

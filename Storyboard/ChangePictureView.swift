@@ -13,10 +13,11 @@ struct ChangePictureView: View {
 	@Environment(\.managedObjectContext) private var manageContext
 	@Environment(\.colorScheme) var colorScheme
 	//@State private var pickerSelection = 1
-	@State private var mySavedPictures:[MyImage] = []
+	//@State private var mySavedPictures:[MyImage] = []
 	
 	@State var wordCard:WordCard = WordCard()
 	@Binding var showChangePictureView:Bool
+	@ObservedObject var savedPictureModel:SavedPicturesByWord
 	
 	var body: some View {
 		VStack {
@@ -25,6 +26,7 @@ struct ChangePictureView: View {
 					showChangePictureView = false
 				}, label: {
 					Text("Cancel")
+						.bold()
 				})
 				Spacer()
 				/*
@@ -50,7 +52,7 @@ struct ChangePictureView: View {
 					Spacer()
 				}
 				.padding([.leading,.trailing], 15)
-				AllSavedPictureView(card: wordCard, showImages: mySavedPictures)
+				AllSavedPictureView(card: wordCard, savedPictureModel: savedPictureModel)
 					.padding([.leading,.trailing], 15)
 				
 				HStack {
@@ -63,9 +65,6 @@ struct ChangePictureView: View {
 				ChangePictureAllIconsView(word: wordCard.word)
 					.padding([.leading,.trailing], 15)
 			}
-			.onAppear(perform: {
-				setMySavedPictures()
-			})
 			
 			Spacer()
 		}
@@ -76,6 +75,7 @@ struct ChangePictureView: View {
 				.edgesIgnoringSafeArea(.all))
 	}
 	
+	/*
 	private func setMySavedPictures() {
 		let fetchWords = NSFetchRequest<Words>(entityName: "Words")
 		fetchWords.predicate = NSPredicate(format: "word = %@", wordCard.word)
@@ -122,8 +122,9 @@ struct ChangePictureView: View {
 			return false
 		}
 	}
+	 */
 }
 
 #Preview {
-	ChangePictureView(showChangePictureView: .constant(false))
+	ChangePictureView(showChangePictureView: .constant(false), savedPictureModel: SavedPicturesByWord())
 }

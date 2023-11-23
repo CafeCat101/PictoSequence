@@ -15,7 +15,7 @@ struct CameraView: View {
 	@Binding var showCaptureView:Bool
 	//@StateObject var viewModel = PictureModel()
 	@ObservedObject var viewModel:PictureModel
-	@Binding var sourceType:PictureSource
+	//@Binding var sourceType:PictureSource
 	@State private var showPickerSelectedPhoto = false
 	@State private var previousPhotoPickerPicture:Image?
 	
@@ -49,11 +49,11 @@ struct CameraView: View {
 							Button(action: {
 								if model.thumbnailImage != nil {
 									viewModel.selectedImage = nil
-									sourceType = .camera
+									//sourceType = .camera
 									model.sendCaptureImageDone()
 								} else if showPickerSelectedPhoto == true {
 									model.thumbnailImage = nil
-									sourceType = .photoPicker
+									//sourceType = .photoPicker
 									viewModel.selectToUse = true
 									viewModel.sendTransferableDone()
 								}
