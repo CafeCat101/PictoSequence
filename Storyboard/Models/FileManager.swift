@@ -37,4 +37,6 @@ public extension FileManager {
 		
 		return picturesDirectoryURL
 	}
+	
+	static var storyboardPictureFolderName = "pictures"
 }

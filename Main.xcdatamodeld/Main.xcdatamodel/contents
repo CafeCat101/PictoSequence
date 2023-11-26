@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22222" systemVersion="23A344" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22225" systemVersion="23B81" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="PictureDictionary" representedClassName="PictureDictionary" syncable="YES" codeGenerationType="class"/>
     <entity name="Pictures" representedClassName="Pictures" syncable="YES" codeGenerationType="class">
         <attribute name="iconURL" optional="YES" attributeType="String" defaultValueString=""/>
         <attribute name="id" attributeType="String" defaultValueString=""/>
         <attribute name="pictureLocalPath" optional="YES" attributeType="String" defaultValueString=""/>
         <attribute name="type" attributeType="String" defaultValueString=""/>
+        <attribute name="word" attributeType="String" defaultValueString=""/>
     </entity>
     <entity name="Sentences" representedClassName="Sentences" syncable="YES" codeGenerationType="class">
         <attribute name="change_date" attributeType="Date" usesScalarValueType="NO"/>

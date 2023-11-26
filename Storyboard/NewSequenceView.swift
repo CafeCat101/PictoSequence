@@ -157,8 +157,6 @@ struct NewSequenceView: View {
 						}
 					}
 				}
-				
-				
 			}
 			
 			showProgressSpinner = false

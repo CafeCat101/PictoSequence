@@ -8,7 +8,7 @@
 import Foundation
 
 class Sequencer: ObservableObject {
-	//var theStoryByAI:StoryByAI = StoryByAI()
+	var theStoryByAI:StoryByAI = StoryByAI()
 	@Published var theStoryByUser:StoryByUser = StoryByUser()
 	
 	func generateNewSequence(sentence: String) async throws -> StoryByUser? {
@@ -42,8 +42,8 @@ class Sequencer: ObservableObject {
 				}*/
 				//return StoryByAI(sentence: sentence,visualizedSequence: successInfo)
 				print("[debug] Sequencer, generateNewSequence, sentence \(sentence)")
-				let AIStory = StoryByAI(sentence: sentence,visualizedSequence: successInfo)
-				return AIStoryToUserStory(AIstory: AIStory)
+				self.theStoryByAI = StoryByAI(sentence: sentence,visualizedSequence: successInfo)
+				return AIStoryToUserStory(AIstory: self.theStoryByAI)
 			} catch  {
 				print( error)
 				print("[debug] generateNewSequence, error, failed to decode JSON")
@@ -72,10 +72,9 @@ class Sequencer: ObservableObject {
 				addWord.cardOrder = wordOrderCount
 				addWord.pictureType = .icon
 				addWord.iconURL = AIWord.pictures[0].thumbnail_url
-				addWord.pictureLocalPath = "pictures/\(getImageFileName(remoteURL: AIWord.pictures[0].thumbnail_url))"
+				addWord.pictureLocalPath = getLocalPictureURLPath(remoteURL: AIWord.pictures[0].thumbnail_url)
 				userStory.visualizedSequence.append(addWord)
 			}
-			
 		}
 		return userStory
 	}
@@ -84,6 +83,16 @@ class Sequencer: ObservableObject {
 		if let url = URL(string: remoteURL) {
 				let fileName = url.lastPathComponent
 				return fileName
+		} else {
+			return ""
+		}
+	}
+	
+	func getLocalPictureURLPath(remoteURL: String) -> String {
+		if let url = URL(string: remoteURL) {
+			var urlPathComponent = url.pathComponents
+			urlPathComponent.remove(at: 0)
+			return FileManager.storyboardPictureFolderName+"/"+urlPathComponent.joined(separator: "__")
 		} else {
 			return ""
 		}

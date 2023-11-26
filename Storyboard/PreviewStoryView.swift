@@ -100,7 +100,7 @@ struct PreviewStoryView: View {
 				newItem.change_date = Date()
 				try manageContext.save()
 				
-				//createPicturesFolder()
+				//every word in the sentence will have a new object associated with the new sentenceID
 				for wordCard in sequencer.theStoryByUser.visualizedSequence {
 					let addWord = Words(context: manageContext)
 					addWord.sentenceID = newSentenceID
@@ -119,6 +119,7 @@ struct PreviewStoryView: View {
 					if existingPictures.count == 0 {
 						let newPic = Pictures(context: manageContext)
 						newPic.id = wordCard.pictureID.uuidString
+						newPic.word = wordCard.word
 						newPic.type = wordCard.pictureType.rawValue
 						newPic.pictureLocalPath = wordCard.pictureLocalPath
 						newPic.iconURL = wordCard.iconURL
@@ -192,6 +193,12 @@ struct PreviewStoryView: View {
 						
 					}
 					*/
+				}
+				
+				print("[debug] PreviewStoryView, AI sentence \(sequencer.theStoryByAI.sentence)")
+				print("[debug] PreviewStoryView, User sentence \(sequencer.theStoryByUser.sentence)")
+				if sequencer.theStoryByAI.sentence == sequencer.theStoryByUser.sentence {
+					saveIconOptions()
 				}
 				
 				showSequenceActionView = false
@@ -272,7 +279,7 @@ struct PreviewStoryView: View {
 		}
 	}
 	
-	private func createPicturesFolder() {
+	/*private func createPicturesFolder() {
 		let destPictureURL = URL(string: "pictures", relativeTo: FileManager.documentoryDirecotryURL)!
 		do {
 			print("[debug] saveJpg destCourseURL:\(destPictureURL.path)")
@@ -283,7 +290,7 @@ struct PreviewStoryView: View {
 		} catch {
 			print("[debug] saveJpg, check create destPictureURL, catch \(error)")
 		}
-	}
+	}*/
 	
 	private func editSequence(showStoryNow: Bool) async {
 		do {
@@ -317,6 +324,7 @@ struct PreviewStoryView: View {
 							if existingPictures.count == 0 {
 								let newPic = Pictures(context: manageContext)
 								newPic.id = wordCard.pictureID.uuidString
+								newPic.word = wordCard.word
 								newPic.type = wordCard.pictureType.rawValue
 								newPic.pictureLocalPath = wordCard.pictureLocalPath
 								newPic.iconURL = wordCard.iconURL
@@ -416,6 +424,33 @@ struct PreviewStoryView: View {
 		}
 		
 		//let updateWords = try manageContext.fetch(fecthWords)
+	}
+	
+	private func saveIconOptions() {
+		let fetchPictures = NSFetchRequest<Pictures>(entityName: "Pictures")
+		do {
+			for sequenceItem in sequencer.theStoryByAI.visualizedSequence {
+				for wordItem in sequenceItem.words {
+					for picture in wordItem.pictures {
+						fetchPictures.predicate = NSPredicate(format: "iconURL = %@ AND type = %@", picture.thumbnail_url, PictureSource.icon.rawValue)
+						let findIcons = try manageContext.fetch(fetchPictures)
+						print("[debug] PreviewStoryView, saveIconOptios(), findIcons.count \(findIcons.count)")
+						if findIcons.count == 0 {
+							let newPic = Pictures(context: manageContext)
+							newPic.id = UUID().uuidString
+							newPic.word = wordItem.word
+							newPic.type = PictureSource.icon.rawValue
+							newPic.iconURL = picture.thumbnail_url
+							newPic.pictureLocalPath = sequencer.getLocalPictureURLPath(remoteURL: picture.thumbnail_url)
+							try manageContext.save()
+						}
+					}
+				}
+			}
+		} catch {
+			
+		}
+		
 	}
 }
 	/*#Preview {
