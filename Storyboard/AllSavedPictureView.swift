@@ -12,17 +12,17 @@ struct AllSavedPictureView: View {
 	@Environment(\.colorScheme) var colorScheme
 	
 	var card:WordCard = WordCard()
-	@ObservedObject var savedPictureModel:SavedPicturesByWord
+	@ObservedObject var savedPictureModel:PictureOptionsByWord
 	
 	let columns = [
-					GridItem(.adaptive(minimum: 100, maximum: 140))
-			]
+		GridItem(.adaptive(minimum: 100, maximum: 140))
+	]
 	
 	var body: some View {
 		VStack {
-			if savedPictureModel.savedPictures.count > 0 {
+			if savedPictureModel.availablePictures.count > 0 {
 				LazyVGrid(columns: columns, spacing: 20) {
-					ForEach(savedPictureModel.savedPictures) { imageItem in
+					ForEach(savedPictureModel.availablePictures) { imageItem in
 						if imageItem.localPicturePath == card.pictureLocalPath {
 							displayImage(savedImage: imageItem.image!)
 								.overlay(alignment: .topLeading, content: {

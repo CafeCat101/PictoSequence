@@ -13,4 +13,5 @@ struct MyImage: Identifiable {
 	var image:UIImage?
 	var localPicturePath:String = ""
 	var pictureType:PictureSource = .icon
+	var iconURL = ""
 }

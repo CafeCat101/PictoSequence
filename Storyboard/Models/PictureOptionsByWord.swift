@@ -9,8 +9,7 @@ import Foundation
 import Combine
 import SwiftUI
 
-final class SavedPicturesByWord: ObservableObject {
-	var savedPictures:[MyImage] = []
+final class PictureOptionsByWord: ObservableObject {
+	var availablePictures:[MyImage] = []
 	var pictureSelected = PassthroughSubject<MyImage, Never>()
-
 }

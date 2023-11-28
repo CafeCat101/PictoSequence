@@ -28,7 +28,8 @@ struct APictureCardView: View {
 	@State private var editingCount = 0
 	@State private var selectedChangedPhoto:Image? //this is for PhotoPicker and Live Camera Capture only
 	@State private var showChangePictureView = false
-	@StateObject private var savedPictureModel = SavedPicturesByWord()
+	@StateObject private var pictureOptionsModel = PictureOptionsByWord()
+	@StateObject private var iconOoptionsModel = PictureOptionsByWord()
 	
 	
 	var body: some View {
@@ -63,7 +64,7 @@ struct APictureCardView: View {
 					
 					updateStoryByUserSequence()
 				})
-				.onReceive(savedPictureModel.pictureSelected, perform: { result in
+				.onReceive(pictureOptionsModel.pictureSelected, perform: { result in
 					wordCard.pictureID = result.id
 					wordCard.pictureLocalPath = result.localPicturePath
 					wordCard.pictureType = result.pictureType
@@ -133,7 +134,7 @@ struct APictureCardView: View {
 			CameraView(model:cameraDataModel, showCaptureView: $showCaptureView, viewModel: viewModel)
 		})
 		.sheet(isPresented: $showChangePictureView, content: {
-			ChangePictureView(wordCard: wordCard, showChangePictureView: $showChangePictureView, savedPictureModel: savedPictureModel)
+			ChangePictureView(wordCard: wordCard, showChangePictureView: $showChangePictureView, pictureOptionsModel: pictureOptionsModel, iconOoptionsModel: iconOoptionsModel)
 		})
 		.onAppear(perform: {
 			setMySavedPictures()
@@ -327,10 +328,11 @@ struct APictureCardView: View {
 								} else if picType == PictureSource.camera.rawValue {
 									myPicture.pictureType = .camera
 								}
-								savedPictureModel.savedPictures.append(myPicture)
+								myPicture.iconURL = findPhotos.first?.iconURL ?? ""
+								pictureOptionsModel.availablePictures.append(myPicture)
 								
 								print("[debug] ChangePictureView, append Image \(pictureURL.path())")
-								print("[debug] ChangePictureView, mySavedImage.count \(savedPictureModel.savedPictures.count)")
+								print("[debug] ChangePictureView, mySavedImage.count \(pictureOptionsModel.availablePictures.count)")
 							} else {
 								print("[debug] ChangePictureView, \(findPhotos.first?.pictureLocalPath ?? "") pictureExists=false")
 							}

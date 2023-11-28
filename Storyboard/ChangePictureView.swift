@@ -17,7 +17,8 @@ struct ChangePictureView: View {
 	
 	@State var wordCard:WordCard = WordCard()
 	@Binding var showChangePictureView:Bool
-	@ObservedObject var savedPictureModel:SavedPicturesByWord
+	@ObservedObject var pictureOptionsModel:PictureOptionsByWord
+	@ObservedObject var iconOoptionsModel:PictureOptionsByWord
 	
 	var body: some View {
 		VStack {
@@ -52,7 +53,7 @@ struct ChangePictureView: View {
 					Spacer()
 				}
 				.padding([.leading,.trailing], 15)
-				AllSavedPictureView(card: wordCard, savedPictureModel: savedPictureModel)
+				AllSavedPictureView(card: wordCard, savedPictureModel: pictureOptionsModel)
 					.padding([.leading,.trailing], 15)
 				
 				HStack {
@@ -62,7 +63,7 @@ struct ChangePictureView: View {
 					Spacer()
 				}
 				.padding([.leading,.trailing], 15)
-				ChangePictureAllIconsView(word: wordCard.word)
+				ChangePictureAllIconsView(card: wordCard, iconOptionsModel: iconOoptionsModel)
 					.padding([.leading,.trailing], 15)
 			}
 			
@@ -126,5 +127,5 @@ struct ChangePictureView: View {
 }
 
 #Preview {
-	ChangePictureView(showChangePictureView: .constant(false), savedPictureModel: SavedPicturesByWord())
+	ChangePictureView(showChangePictureView: .constant(false), pictureOptionsModel: PictureOptionsByWord(), iconOoptionsModel: PictureOptionsByWord())
 }

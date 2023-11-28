@@ -8,24 +8,19 @@
 import SwiftUI
 
 struct ChangePictureAllIconsView: View {
-	@State var word:String = ""
+	@Environment(\.colorScheme) var colorScheme
 	
-	@State private var showImages:[MyImage] = []
+	var card:WordCard = WordCard()
+	@ObservedObject var iconOptionsModel:PictureOptionsByWord
+	
 	let columns = [
-					GridItem(.adaptive(minimum: 70, maximum: 120))
-			]
+		GridItem(.adaptive(minimum: 100, maximum: 140))
+	]
 	
 	var body: some View {
 		VStack {
-			if showImages.count > 0 {
-				LazyVGrid(columns: columns, spacing: 20) {
-					ForEach(showImages) { imageItem in
-						Image(uiImage: imageItem.image!)
-							.resizable()
-							.scaledToFill()
-							.padding(15)
-					}
-				}
+			if iconOptionsModel.availablePictures.count > 0 {
+				Text("\(iconOptionsModel.availablePictures.count) icons for \(card.word)")
 			} else {
 				Text("Your saved picture will be available after you have saved sentences.")
 			}
@@ -35,6 +30,8 @@ struct ChangePictureAllIconsView: View {
 	}
 }
 
-#Preview {
-	ChangePictureAllIconsView()
-}
+/*
+ #Preview {
+ ChangePictureAllIconsView(iconOptionsModel: PictureOptionsByWord())
+ }
+ */
