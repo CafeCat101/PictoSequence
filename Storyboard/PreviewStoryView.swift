@@ -329,7 +329,9 @@ struct PreviewStoryView: View {
 								newPic.pictureLocalPath = wordCard.pictureLocalPath
 								newPic.iconURL = wordCard.iconURL
 								try manageContext.save()
-								
+							}
+							
+							if pictureExists(localPath: wordCard.pictureLocalPath) == false {
 								//save image to disk
 								var isDirectory = ObjCBool(true)
 								if FileManager.default.fileExists(atPath: FileManager.picturesDirectoryURL!.path, isDirectory: &isDirectory) == true {
@@ -451,6 +453,16 @@ struct PreviewStoryView: View {
 			
 		}
 		
+	}
+	
+	private func pictureExists(localPath: String) -> Bool {
+		//localPath is wordCard.pictureLocalPath
+		let imageUrl = FileManager.documentoryDirecotryURL.appending(path: localPath)
+		if FileManager.default.fileExists(atPath: imageUrl.path()) {
+			return true
+		} else {
+			return false
+		}
 	}
 }
 	/*#Preview {

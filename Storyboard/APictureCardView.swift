@@ -29,7 +29,7 @@ struct APictureCardView: View {
 	@State private var selectedChangedPhoto:Image? //this is for PhotoPicker and Live Camera Capture only
 	@State private var showChangePictureView = false
 	@StateObject private var pictureOptionsModel = PictureOptionsByWord()
-	@StateObject private var iconOoptionsModel = PictureOptionsByWord()
+	@StateObject private var iconOptionsModel = PictureOptionsByWord()
 	
 	
 	var body: some View {
@@ -78,8 +78,24 @@ struct APictureCardView: View {
 					} else if result.pictureType == .camera {
 						viewModel.selectedImage = nil
 					}
-					//sourceType = result.pictureType
-					
+					updateStoryByUserSequence()
+				})
+				.onReceive(iconOptionsModel.pictureSelected, perform: { result in
+					print("[debug] APictureCardView, .onReceive:iconOptionsModel.pictureSelected")
+					wordCard.pictureID = result.id
+					wordCard.pictureLocalPath = result.localPicturePath
+					wordCard.pictureType = result.pictureType
+					wordCard.photo = result.image
+					wordCard.iconURL = result.iconURL
+					selectedChangedPhoto = nil
+					if result.pictureType == .icon {
+						viewModel.selectedImage = nil
+						cameraDataModel.thumbnailImage = nil
+					} else if result.pictureType == .photoPicker {
+						cameraDataModel.thumbnailImage = nil
+					} else if result.pictureType == .camera {
+						viewModel.selectedImage = nil
+					}
 					updateStoryByUserSequence()
 				})
 		}
@@ -134,10 +150,11 @@ struct APictureCardView: View {
 			CameraView(model:cameraDataModel, showCaptureView: $showCaptureView, viewModel: viewModel)
 		})
 		.sheet(isPresented: $showChangePictureView, content: {
-			ChangePictureView(wordCard: wordCard, showChangePictureView: $showChangePictureView, pictureOptionsModel: pictureOptionsModel, iconOoptionsModel: iconOoptionsModel)
+			ChangePictureView(wordCard: wordCard, showChangePictureView: $showChangePictureView, pictureOptionsModel: pictureOptionsModel, iconOoptionsModel: iconOptionsModel)
 		})
 		.onAppear(perform: {
-			setMySavedPictures()
+			//setMySavedPictures()
+			//setAllIconOptions()
 		})
 	}
 	
@@ -343,6 +360,49 @@ struct APictureCardView: View {
 		} catch {
 			
 		}
+	}
+	
+	private func setAllIconOptions() {
+		let fetchPictures = NSFetchRequest<Pictures>(entityName: "Pictures")
+		fetchPictures.predicate = NSPredicate(format: "type = %@ AND word =  %@", PictureSource.icon.rawValue, wordCard.word)
+		do {
+			let findIcons = try manageContext.fetch(fetchPictures)
+			if findIcons.count > 0 {
+				//this sentence is saved before, has icons in the coredata
+				for iconItem in findIcons {
+					var iconOption = MyImage()
+					iconOption.iconURL = iconItem.iconURL ?? ""
+					iconOption.pictureType = .icon
+					iconOption.localPicturePath = sequencer.getLocalPictureURLPath(remoteURL: iconItem.pictureLocalPath ?? "")
+					if pictureExists(localPath: iconItem.pictureLocalPath ?? "") {
+						let pictureURL = FileManager.documentoryDirecotryURL.appending(component: iconItem.pictureLocalPath ?? "")
+						iconOption.image = UIImage(contentsOfFile: pictureURL.path())
+					}
+					iconOptionsModel.availablePictures.append(iconOption)
+				}
+			} else {
+				//this sentence is not saved yet, can be just a newly generated sentence
+				if sequencer.theStoryByUser.sentence == sequencer.theStoryByAI.sentence {
+					if sequencer.theStoryByAI.visualizedSequence.count > 0 {
+						let findTheSequence = sequencer.theStoryByAI.visualizedSequence.first(where: {$0.words[0].word == wordCard.word})
+						let findPictures = findTheSequence?.words[0].pictures ?? []
+						if findPictures.count > 0 {
+							for pictureItem in findPictures {
+								var iconOption = MyImage()
+								iconOption.iconURL = pictureItem.thumbnail_url
+								iconOption.pictureType = .icon
+								iconOption.localPicturePath = sequencer.getLocalPictureURLPath(remoteURL: pictureItem.thumbnail_url)
+								iconOptionsModel.availablePictures.append(iconOption)
+							}
+							
+						}
+					}
+				}
+			}
+		} catch {
+			
+		}
+		
 	}
 	
 	/*

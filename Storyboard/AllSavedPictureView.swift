@@ -13,17 +13,21 @@ struct AllSavedPictureView: View {
 	
 	var card:WordCard = WordCard()
 	@ObservedObject var savedPictureModel:PictureOptionsByWord
+	@Binding var showChangePictureView:Bool
 	
 	let columns = [
 		GridItem(.adaptive(minimum: 100, maximum: 140))
 	]
+	
+	@State private var tapThis:UUID = UUID()
+	@State private var imageSize:CGFloat = 110
 	
 	var body: some View {
 		VStack {
 			if savedPictureModel.availablePictures.count > 0 {
 				LazyVGrid(columns: columns, spacing: 20) {
 					ForEach(savedPictureModel.availablePictures) { imageItem in
-						if imageItem.localPicturePath == card.pictureLocalPath {
+						if imageItem.localPicturePath == card.pictureLocalPath || imageItem.id == tapThis {
 							displayImage(savedImage: imageItem.image!)
 								.overlay(alignment: .topLeading, content: {
 									Label("selected", systemImage: "checkmark.circle.fill")
@@ -31,11 +35,21 @@ struct AllSavedPictureView: View {
 										.foregroundColor(.green)
 										.padding([.top,.leading], 5)
 								})
+								.onAppear(perform: {
+									print("[debug] AllSavedPictureView, selected:iconOption-localPath \(imageItem.localPicturePath) & card.localPath \(card.pictureLocalPath)")
+								})
 						} else {
 							displayImage(savedImage: imageItem.image!)
 								.onTapGesture(perform: {
+									tapThis = imageItem.id
 									savedPictureModel.pictureSelected.send(imageItem)
+									DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+										showChangePictureView = false
+									}
 									print("[debug] AllSavedPictureView, image.onTap \(imageItem.localPicturePath)")
+								})
+								.onAppear(perform: {
+									print("[debug] AllSavedPictureView, option:iconOption-localPath \(imageItem.localPicturePath) & card.localPath \(card.pictureLocalPath)")
 								})
 						}
 						
@@ -52,7 +66,8 @@ struct AllSavedPictureView: View {
 		Image(uiImage: savedImage)
 			.resizable()
 			.scaledToFill()
-			.frame(minWidth: 100, maxWidth: 140, minHeight: 100, maxHeight: 140)
+			.frame(width:imageSize, height:imageSize)
+			//.frame(minWidth: 100, maxWidth: 140, minHeight: 100, maxHeight: 140)
 			.clipShape(RoundedRectangle(cornerSize: CGSize(width: 15, height: 15)))
 			.background {
 				RoundedRectangle(cornerRadius: 15)

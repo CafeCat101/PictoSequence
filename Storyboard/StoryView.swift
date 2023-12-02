@@ -34,7 +34,7 @@ struct StoryView: View {
 									ForEach(sequencer.theStoryByUser.visualizedSequence) { item in
 										GridRow {
 											VStack {
-												APictureCardView(wordCard: item, picWidth: reader1.size.width/3, picHeight: reader1.size.width/3)
+												APictureCardView(wordCard: item, picWidth: reader1.size.width/2, picHeight: reader1.size.width/2)
 												//APictureView(word: item.word,urlStr: item.iconURL, picWidth: reader1.size.width/3, picHeight: reader1.size.width/3)
 											}
 											.padding([.bottom,.trailing],5)
@@ -99,7 +99,7 @@ struct StoryView: View {
 							.padding()*/
 						}
 						.onAppear(perform: {
-							let picSize = reader1.size.width/3
+							let picSize = reader1.size.width/2
 							//let rowCount = CGFloat(allWords().count)
 							let rowCount = CGFloat(sequencer.theStoryByUser.visualizedSequence.count)
 							gridHeight = picSize*rowCount + 5*rowCount + 150

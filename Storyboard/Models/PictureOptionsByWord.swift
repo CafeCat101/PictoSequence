@@ -10,6 +10,6 @@ import Combine
 import SwiftUI
 
 final class PictureOptionsByWord: ObservableObject {
-	var availablePictures:[MyImage] = []
+	@Published var availablePictures:[MyImage] = []
 	var pictureSelected = PassthroughSubject<MyImage, Never>()
 }
