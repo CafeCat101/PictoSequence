@@ -196,6 +196,11 @@ struct APictureCardView: View {
 					.resizable()
 					.scaledToFit()
 					.padding()
+					.overlay(alignment: .center, content: {
+						if sequencer.isPictureMissing(remoteURL: wordCard.iconURL) {
+							Text("No Picture").bold()
+						}
+					})
 					.onAppear(perform: {
 						print("[debug] APictureCardView, displayImageFromFile, onAppear (fileExists \(wordCard.word)) \(wordCard.pictureLocalPath)")
 					})
@@ -221,6 +226,11 @@ struct APictureCardView: View {
 						.resizable()
 						.scaledToFit()
 						.padding()
+						.overlay(alignment: .center, content: {
+							if sequencer.isPictureMissing(remoteURL: wordCard.iconURL) {
+								Text("No Icon").bold()
+							}
+						})
 						.onAppear(perform: {
 							print("[debug] APictureCardView, displayImageFromFile, AsyncImage.onAppear, word \(wordCard.word) \(wordCard.pictureLocalPath)")
 						})

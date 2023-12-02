@@ -10,6 +10,7 @@ import Foundation
 class Sequencer: ObservableObject {
 	var theStoryByAI:StoryByAI = StoryByAI()
 	@Published var theStoryByUser:StoryByUser = StoryByUser()
+	private var picturePlaceHolderDefault = "https://static.thenounproject.com/png/1768759-200.png"
 	
 	func generateNewSequence(sentence: String) async throws -> StoryByUser? {
 		//Task {
@@ -71,8 +72,14 @@ class Sequencer: ObservableObject {
 				addWord.word = AIWord.word
 				addWord.cardOrder = wordOrderCount
 				addWord.pictureType = .icon
-				addWord.iconURL = AIWord.pictures[0].thumbnail_url
-				addWord.pictureLocalPath = getLocalPictureURLPath(remoteURL: AIWord.pictures[0].thumbnail_url)
+				if AIWord.pictures.count > 0 {
+					addWord.iconURL = AIWord.pictures[0].thumbnail_url
+					addWord.pictureLocalPath = getLocalPictureURLPath(remoteURL: AIWord.pictures[0].thumbnail_url)
+				} else {
+					addWord.iconURL = picturePlaceHolderDefault
+					addWord.pictureLocalPath = getLocalPictureURLPath(remoteURL: picturePlaceHolderDefault)
+				}
+				
 				userStory.visualizedSequence.append(addWord)
 			}
 		}
@@ -95,6 +102,14 @@ class Sequencer: ObservableObject {
 			return FileManager.storyboardPictureFolderName+"/"+urlPathComponent.joined(separator: "__")
 		} else {
 			return ""
+		}
+	}
+	
+	func isPictureMissing(remoteURL: String) -> Bool {
+		if remoteURL == picturePlaceHolderDefault {
+			return true
+		} else {
+			return false
 		}
 	}
 }
