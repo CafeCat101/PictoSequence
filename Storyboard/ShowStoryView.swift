@@ -15,6 +15,7 @@ struct ShowStoryView: View {
 	
 	@State private var sentence = ""
 	@State private var pictureCards:[WordCard] = []
+	@State private var storyViewMode:StoryViewMode = .showSentence
 	
 	var body: some View {
 		VStack {
@@ -31,7 +32,7 @@ struct ShowStoryView: View {
 			}
 			.padding([.trailing,.leading], 15)
 			Spacer()
-			StoryView()
+			StoryView(storyViewMode: $storyViewMode)
 			Spacer()
 		}
 		/*.background(

@@ -17,7 +17,8 @@ struct PreviewStoryView: View {
 	//var previewSentence:String = ""
 	@Binding var showSequenceActionView:Bool
 	@Binding var showStoryboard:Bool
-	var editMode = false
+	@Binding var storyViewMode:StoryViewMode
+	//var editMode = false
 	
 	@State private var showSaveErrorAlert = false
 	@State private var saveError = ""
@@ -27,7 +28,7 @@ struct PreviewStoryView: View {
 			Text(sequencer.theStoryByUser.sentence)
 				.font(.title2)
 				.bold()
-			StoryView()
+			StoryView(storyViewMode: $storyViewMode)
 				.background {
 					RoundedRectangle(cornerRadius: 10)
 						.foregroundColor(.brown)
@@ -39,9 +40,9 @@ struct PreviewStoryView: View {
 				Spacer()
 				Button(action: {
 					Task {
-						if editMode == false {
+						if storyViewMode == .newSentence {
 							await saveSequence(showStoryNow: false)
-						} else {
+						} else if storyViewMode == .editSentence {
 							await editSequence(showStoryNow: false)
 						}
 					}
@@ -59,9 +60,9 @@ struct PreviewStoryView: View {
 				}
 				Button(action: {
 					Task {
-						if editMode == false {
+						if storyViewMode == .newSentence {
 							await saveSequence(showStoryNow: true)
-						} else {
+						} else if storyViewMode == .editSentence {
 							await editSequence(showStoryNow: true)
 						}
 					}
@@ -124,8 +125,10 @@ struct PreviewStoryView: View {
 						newPic.pictureLocalPath = wordCard.pictureLocalPath
 						newPic.iconURL = wordCard.iconURL
 						try manageContext.save()
-						
-						//save image to disk
+					}
+					
+					//save image to disk
+					if pictureExists(localPath: wordCard.pictureLocalPath) == false {
 						var isDirectory = ObjCBool(true)
 						if FileManager.default.fileExists(atPath: FileManager.picturesDirectoryURL!.path, isDirectory: &isDirectory) == true {
 							if wordCard.pictureType == .photoPicker || wordCard.pictureType == .camera {

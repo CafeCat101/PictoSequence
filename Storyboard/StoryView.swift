@@ -11,6 +11,9 @@ struct StoryView: View {
 	@EnvironmentObject var sequencer:Sequencer
 	@State private var gridHeight:CGFloat = 100
 	
+	@Binding var storyViewMode:StoryViewMode
+	//var editMode = false
+	
 	let columns = [
 		GridItem(.flexible()),
 		//GridItem(.flexible()),
@@ -34,7 +37,7 @@ struct StoryView: View {
 									ForEach(sequencer.theStoryByUser.visualizedSequence) { item in
 										GridRow {
 											VStack {
-												APictureCardView(wordCard: item, picWidth: reader1.size.width/2, picHeight: reader1.size.width/2)
+												APictureCardView(wordCard: item, picWidth: reader1.size.width/2, picHeight: reader1.size.width/2, storyViewMode: $storyViewMode)
 												//APictureView(word: item.word,urlStr: item.iconURL, picWidth: reader1.size.width/3, picHeight: reader1.size.width/3)
 											}
 											.padding([.bottom,.trailing],5)

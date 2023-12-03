@@ -16,6 +16,7 @@ struct NewSequenceView: View {
 	@State private var text = ""
 	@State var previewSequence = false
 	@State private var showProgressSpinner = false
+	@State private var storyViewMode:StoryViewMode = .newSentence
 
 	@Binding var showAddNewSequence:Bool
 	@Binding var showStoryboard:Bool
@@ -107,7 +108,7 @@ struct NewSequenceView: View {
 						}
 					}
 				} else {
-					PreviewStoryView(showSequenceActionView: $showAddNewSequence, showStoryboard: $showStoryboard, editMode: false)
+					PreviewStoryView(showSequenceActionView: $showAddNewSequence, showStoryboard: $showStoryboard, storyViewMode: $storyViewMode)
 				}
 				
 				Spacer()
@@ -141,7 +142,28 @@ struct NewSequenceView: View {
 					fetchPictures.predicate = NSPredicate(format: "id = %@", lastWordUsed.first?.picID ?? "")
 					let lastPictureUsed = try manageContext.fetch(fetchPictures)
 					if lastPictureUsed.count > 0 {
-						let findWordIndex = sequencer.theStoryByUser.visualizedSequence.firstIndex(where: {$0.word == wordCardItem.word}) ?? -1
+						let findWordCards = sequencer.theStoryByUser.visualizedSequence.filter({$0.word == wordCardItem.word})
+						if findWordCards.count > 0 {
+							for wordCard in findWordCards {
+								let findWordCardIndex = sequencer.theStoryByUser.visualizedSequence.firstIndex(where: {$0.id == wordCard.id}) ?? -1
+								
+								let thePictureIDString = lastPictureUsed.first?.id ?? ""
+								sequencer.theStoryByUser.visualizedSequence[findWordCardIndex].pictureID = UUID(uuidString: thePictureIDString) ?? UUID()
+								sequencer.theStoryByUser.visualizedSequence[findWordCardIndex].pictureLocalPath = lastPictureUsed.first?.pictureLocalPath ?? ""
+								
+								if lastPictureUsed.first?.type == PictureSource.icon.rawValue {
+									sequencer.theStoryByUser.visualizedSequence[findWordCardIndex].pictureType = .icon
+									sequencer.theStoryByUser.visualizedSequence[findWordCardIndex].iconURL = lastPictureUsed.first?.iconURL ?? ""
+								} else if lastPictureUsed.first?.type == PictureSource.camera.rawValue {
+									sequencer.theStoryByUser.visualizedSequence[findWordCardIndex].pictureType = .camera
+								} else {
+									sequencer.theStoryByUser.visualizedSequence[findWordCardIndex].pictureType = .photoPicker
+								}
+							}
+						}
+						
+						
+						/*let findWordIndex = sequencer.theStoryByUser.visualizedSequence.firstIndex(where: {$0.word == wordCardItem.word}) ?? -1
 						if findWordIndex >= 0 {
 							let thePictureIDString = lastPictureUsed.first?.id ?? ""
 							sequencer.theStoryByUser.visualizedSequence[findWordIndex].pictureID = UUID(uuidString: thePictureIDString) ?? UUID()
@@ -149,12 +171,13 @@ struct NewSequenceView: View {
 							
 							if lastPictureUsed.first?.type == PictureSource.icon.rawValue {
 								sequencer.theStoryByUser.visualizedSequence[findWordIndex].pictureType = .icon
+								sequencer.theStoryByUser.visualizedSequence[findWordIndex].iconURL = lastPictureUsed.first?.iconURL ?? ""
 							} else if lastPictureUsed.first?.type == PictureSource.camera.rawValue {
 								sequencer.theStoryByUser.visualizedSequence[findWordIndex].pictureType = .camera
 							} else {
 								sequencer.theStoryByUser.visualizedSequence[findWordIndex].pictureType = .photoPicker
 							}
-						}
+						}*/
 					}
 				}
 			}

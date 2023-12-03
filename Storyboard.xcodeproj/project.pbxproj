@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C84EC32C2B135633005379B1 /* IconLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = C84EC32B2B135633005379B1 /* IconLibrary.swift */; };
 		C85267F12AC4316F00047B27 /* StoryboardApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C85267F02AC4316F00047B27 /* StoryboardApp.swift */; };
 		C85267F32AC4316F00047B27 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C85267F22AC4316F00047B27 /* ContentView.swift */; };
 		C85267F52AC4317000047B27 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C85267F42AC4317000047B27 /* Assets.xcassets */; };
@@ -53,10 +52,10 @@
 		C8B8A5DD2B0CB45B00490EF4 /* AllSavedPictureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B8A5DC2B0CB45B00490EF4 /* AllSavedPictureView.swift */; };
 		C8B8A5DF2B0DFC1B00490EF4 /* MyImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B8A5DE2B0DFC1B00490EF4 /* MyImage.swift */; };
 		C8B8A5E12B0E4DBF00490EF4 /* PictureOptionsByWord.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B8A5E02B0E4DBF00490EF4 /* PictureOptionsByWord.swift */; };
+		C8C396B22B1C145A00C1E921 /* StoryViewMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8C396B12B1C145A00C1E921 /* StoryViewMode.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		C84EC32B2B135633005379B1 /* IconLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconLibrary.swift; sourceTree = "<group>"; };
 		C85267ED2AC4316F00047B27 /* Storyboard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Storyboard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C85267F02AC4316F00047B27 /* StoryboardApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryboardApp.swift; sourceTree = "<group>"; };
 		C85267F22AC4316F00047B27 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -104,6 +103,7 @@
 		C8B8A5DC2B0CB45B00490EF4 /* AllSavedPictureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllSavedPictureView.swift; sourceTree = "<group>"; };
 		C8B8A5DE2B0DFC1B00490EF4 /* MyImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyImage.swift; sourceTree = "<group>"; };
 		C8B8A5E02B0E4DBF00490EF4 /* PictureOptionsByWord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureOptionsByWord.swift; sourceTree = "<group>"; };
+		C8C396B12B1C145A00C1E921 /* StoryViewMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryViewMode.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -192,7 +192,6 @@
 				C89D5E912ADBD8B700083549 /* Camera.swift */,
 				C8B8A5D62AFB879900490EF4 /* FileManager.swift */,
 				C8B8A5E02B0E4DBF00490EF4 /* PictureOptionsByWord.swift */,
-				C84EC32B2B135633005379B1 /* IconLibrary.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -215,6 +214,7 @@
 			children = (
 				C8680B402AC9C0D500198CCA /* WordType.swift */,
 				C89D5E932ADD2F3A00083549 /* PictureSource.swift */,
+				C8C396B12B1C145A00C1E921 /* StoryViewMode.swift */,
 			);
 			path = Types;
 			sourceTree = "<group>";
@@ -295,7 +295,6 @@
 				C89D5E8C2ADBD7AA00083549 /* PhotoView.swift in Sources */,
 				C85267FF2AC433A300047B27 /* ListItemView.swift in Sources */,
 				C8B8A5E12B0E4DBF00490EF4 /* PictureOptionsByWord.swift in Sources */,
-				C84EC32C2B135633005379B1 /* IconLibrary.swift in Sources */,
 				C8680B412AC9C0D500198CCA /* WordType.swift in Sources */,
 				C8680B322AC6BA1100198CCA /* SequenceListView.swift in Sources */,
 				C89D5E822ADBD5B200083549 /* PhotoAssetCollection.swift in Sources */,
@@ -328,6 +327,7 @@
 				C85268012AC445F700047B27 /* ShowStoryView.swift in Sources */,
 				C8B8A5DD2B0CB45B00490EF4 /* AllSavedPictureView.swift in Sources */,
 				C8B8A5D32AF6149000490EF4 /* APictureCardView.swift in Sources */,
+				C8C396B22B1C145A00C1E921 /* StoryViewMode.swift in Sources */,
 				C89D5E8A2ADBD77000083549 /* PhotoLibrary.swift in Sources */,
 				C8B8A5DF2B0DFC1B00490EF4 /* MyImage.swift in Sources */,
 				C8680B432AC9C27E00198CCA /* SequencerSendJson.swift in Sources */,

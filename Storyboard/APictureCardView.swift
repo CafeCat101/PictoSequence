@@ -17,7 +17,8 @@ struct APictureCardView: View {
 	@State var wordCard:WordCard = WordCard()
 	var picWidth:CGFloat = 200
 	var picHeight:CGFloat = 200
-	var fromDatabase = false
+	@Binding var storyViewMode:StoryViewMode
+	//var editMode = false
 	
 	@State private var showPic = true
 	//@State private var sourceType:PictureSource = .icon
@@ -25,7 +26,6 @@ struct APictureCardView: View {
 	@State private var showCaptureView = false
 	@StateObject private var cameraDataModel = DataModel()
 	@StateObject private var viewModel = PictureModel()
-	@State private var editingCount = 0
 	@State private var selectedChangedPhoto:Image? //this is for PhotoPicker and Live Camera Capture only
 	@State private var showChangePictureView = false
 	@StateObject private var pictureOptionsModel = PictureOptionsByWord()
@@ -126,24 +126,26 @@ struct APictureCardView: View {
 			}
 		})
 		.contextMenu(ContextMenu(menuItems: {
-			Button(action: {
-				showChangePictureView = true
-			}, label: {
-				Text("Change picture")
-			})
-			
-			Button(action: {
-				viewModel.selectToUse = true
-				showPhotoPicker.toggle()
-			}, label: {
-				Text("Select a photo")
-			})
-			
-			Button(action: {
-				showCaptureView = true
-			}, label: {
-				Text("Take a new picture")
-			})
+			if storyViewMode == .editSentence || storyViewMode == .newSentence {
+				Button(action: {
+					showChangePictureView = true
+				}, label: {
+					Text("Change picture")
+				})
+				
+				Button(action: {
+					viewModel.selectToUse = true
+					showPhotoPicker.toggle()
+				}, label: {
+					Text("Select a photo")
+				})
+				
+				Button(action: {
+					showCaptureView = true
+				}, label: {
+					Text("Take a new picture")
+				})
+			}
 		}))
 		.photosPicker(isPresented: $showPhotoPicker ,selection: $viewModel.imageSelection, matching: .any(of: [.images, .livePhotos]))
 		.fullScreenCover(isPresented: $showCaptureView, content: {

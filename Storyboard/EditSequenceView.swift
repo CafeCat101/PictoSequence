@@ -10,6 +10,8 @@ import SwiftUI
 struct EditSequenceView: View {
 	@Environment(\.colorScheme) var colorScheme
 	
+	@State private var storyViewMode:StoryViewMode = .editSentence
+	
 	@Binding var showEditSequence:Bool
 	@Binding var showStoryboard:Bool
 	
@@ -32,7 +34,7 @@ struct EditSequenceView: View {
 			}
 			.padding(15)
 			
-			PreviewStoryView(showSequenceActionView: $showEditSequence, showStoryboard: $showStoryboard, editMode: true)
+			PreviewStoryView(showSequenceActionView: $showEditSequence, showStoryboard: $showStoryboard, storyViewMode: $storyViewMode)
 		}
 		.foregroundColor(Color("testColor2"))
 		.background(
