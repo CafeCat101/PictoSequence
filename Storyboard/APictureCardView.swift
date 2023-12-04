@@ -26,7 +26,7 @@ struct APictureCardView: View {
 	@State private var showCaptureView = false
 	@StateObject private var cameraDataModel = DataModel()
 	@StateObject private var viewModel = PictureModel()
-	@State private var selectedChangedPhoto:Image? //this is for PhotoPicker and Live Camera Capture only
+	//@State private var selectedChangedPhoto:Image? //this is for PhotoPicker and Live Camera Capture only
 	@State private var showChangePictureView = false
 	@StateObject private var pictureOptionsModel = PictureOptionsByWord()
 	@StateObject private var iconOptionsModel = PictureOptionsByWord()
@@ -44,40 +44,34 @@ struct APictureCardView: View {
 				.onReceive(viewModel.transferableDone, perform: { result in
 					print("[debug] APictureCardView, onRecieve viewModel.transferableDone \(viewModel.selectToUse)")
 					if result == true && viewModel.selectToUse == true {
-						selectedChangedPhoto = viewModel.selectedImage
+						//selectedChangedPhoto = viewModel.selectedImage
 						cameraDataModel.thumbnailImage = nil
-						/*wordCard.pictureID = UUID()
-						wordCard.pictureLocalPath = "pictures/\(wordCard.pictureID.uuidString).jpg"
-						wordCard.pictureType = .photoPicker
-						wordCard.photo = UIImage(data: viewModel.selectedImageData!)*/
 						var newCard = WordCard()
 						newCard = wordCard
 						newCard.pictureID = UUID()
 						newCard.pictureLocalPath = "pictures/\(newCard.pictureID.uuidString).jpg"
 						newCard.pictureType = .photoPicker
 						newCard.photo = UIImage(data: viewModel.selectedImageData!)
-						updateStoryByUserSequence(newWordCard: newCard)
+						
+						withAnimation {
+							updateStoryByUserSequence(newWordCard: newCard)
+						}
 					}
 				})
 				.onReceive(cameraDataModel.capturedImageDone, perform: {result in
-					selectedChangedPhoto = cameraDataModel.thumbnailImage
-					/*wordCard.pictureID = UUID()
-					wordCard.pictureLocalPath = "pictures/\(wordCard.pictureID.uuidString).jpg"
-					wordCard.pictureType = .camera
-					wordCard.photo = UIImage(data: cameraDataModel.thumbnailImageData!)*/
+					//selectedChangedPhoto = cameraDataModel.thumbnailImage
+					
 					var newCard = WordCard()
 					newCard.pictureID = UUID()
 					newCard.pictureLocalPath = "pictures/\(newCard.pictureID.uuidString).jpg"
 					newCard.pictureType = .camera
 					newCard.photo = UIImage(data: cameraDataModel.thumbnailImageData!)
-					updateStoryByUserSequence(newWordCard: newCard)
+					withAnimation {
+						updateStoryByUserSequence(newWordCard: newCard)
+					}
 				})
 				.onReceive(pictureOptionsModel.pictureSelected, perform: { result in
-					/*wordCard.pictureID = result.id
-					wordCard.pictureLocalPath = result.localPicturePath
-					wordCard.pictureType = result.pictureType
-					wordCard.photo = result.image*/
-					selectedChangedPhoto = nil
+					//selectedChangedPhoto = nil
 					if result.pictureType == .icon {
 						viewModel.selectedImage = nil
 						cameraDataModel.thumbnailImage = nil
@@ -92,16 +86,13 @@ struct APictureCardView: View {
 					newCard.pictureLocalPath = result.localPicturePath
 					newCard.pictureType = result.pictureType
 					newCard.photo = result.image
-					updateStoryByUserSequence(newWordCard: newCard)
+					withAnimation {
+						updateStoryByUserSequence(newWordCard: newCard)
+					}
 				})
 				.onReceive(iconOptionsModel.pictureSelected, perform: { result in
 					print("[debug] APictureCardView, .onReceive:iconOptionsModel.pictureSelected")
-					/*wordCard.pictureID = result.id
-					wordCard.pictureLocalPath = result.localPicturePath
-					wordCard.pictureType = result.pictureType
-					wordCard.photo = result.image
-					wordCard.iconURL = result.iconURL*/
-					selectedChangedPhoto = nil
+					//selectedChangedPhoto = nil
 					if result.pictureType == .icon {
 						viewModel.selectedImage = nil
 						cameraDataModel.thumbnailImage = nil
@@ -117,7 +108,9 @@ struct APictureCardView: View {
 					newCard.pictureType = result.pictureType
 					newCard.photo = result.image
 					newCard.iconURL = result.iconURL
-					updateStoryByUserSequence(newWordCard: newCard)
+					withAnimation {
+						updateStoryByUserSequence(newWordCard: newCard)
+					}
 				})
 		}
 		.overlay(content: {
@@ -201,13 +194,14 @@ struct APictureCardView: View {
 	
 	@ViewBuilder
 	private func pictureContainer() -> some View {
-		if selectedChangedPhoto != nil {
+		/*if selectedChangedPhoto != nil {
 			selectedChangedPhoto!
 				.resizable()
 				.scaledToFill()
 		} else {
 			displayImageFromFile()
-		}
+		}*/
+		displayImageFromFile()
 	}
 	
 	@ViewBuilder

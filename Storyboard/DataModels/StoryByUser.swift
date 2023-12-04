@@ -20,6 +20,6 @@ struct WordCard: Identifiable, Equatable {
 	var pictureID = UUID()
 	var pictureType: PictureSource = .icon
 	var pictureLocalPath = ""
-	var photo:UIImage? //to hold the selected photopicker image or camera captured image for resizing before saving them
+	var photo:UIImage? //to hold the selected photopicker image or camera captured image for resizing before saving them and display them before they are saved into disk.
 	var iconURL = ""
 }
