@@ -14,7 +14,7 @@ struct APictureCardView: View {
 	@Environment(\.colorScheme) var colorScheme
 	@Environment(\.managedObjectContext) private var manageContext
 	
-	@State var wordCard:WordCard = WordCard()
+	var wordCard:WordCard
 	var picWidth:CGFloat = 200
 	var picHeight:CGFloat = 200
 	@Binding var storyViewMode:StoryViewMode
@@ -46,29 +46,37 @@ struct APictureCardView: View {
 					if result == true && viewModel.selectToUse == true {
 						selectedChangedPhoto = viewModel.selectedImage
 						cameraDataModel.thumbnailImage = nil
-						//sourceType = .photoPicker
-						wordCard.pictureID = UUID()
+						/*wordCard.pictureID = UUID()
 						wordCard.pictureLocalPath = "pictures/\(wordCard.pictureID.uuidString).jpg"
 						wordCard.pictureType = .photoPicker
-						wordCard.photo = UIImage(data: viewModel.selectedImageData!)
-						
-						updateStoryByUserSequence()
+						wordCard.photo = UIImage(data: viewModel.selectedImageData!)*/
+						var newCard = WordCard()
+						newCard = wordCard
+						newCard.pictureID = UUID()
+						newCard.pictureLocalPath = "pictures/\(newCard.pictureID.uuidString).jpg"
+						newCard.pictureType = .photoPicker
+						newCard.photo = UIImage(data: viewModel.selectedImageData!)
+						updateStoryByUserSequence(newWordCard: newCard)
 					}
 				})
 				.onReceive(cameraDataModel.capturedImageDone, perform: {result in
 					selectedChangedPhoto = cameraDataModel.thumbnailImage
-					wordCard.pictureID = UUID()
+					/*wordCard.pictureID = UUID()
 					wordCard.pictureLocalPath = "pictures/\(wordCard.pictureID.uuidString).jpg"
 					wordCard.pictureType = .camera
-					wordCard.photo = UIImage(data: cameraDataModel.thumbnailImageData!)
-					
-					updateStoryByUserSequence()
+					wordCard.photo = UIImage(data: cameraDataModel.thumbnailImageData!)*/
+					var newCard = WordCard()
+					newCard.pictureID = UUID()
+					newCard.pictureLocalPath = "pictures/\(newCard.pictureID.uuidString).jpg"
+					newCard.pictureType = .camera
+					newCard.photo = UIImage(data: cameraDataModel.thumbnailImageData!)
+					updateStoryByUserSequence(newWordCard: newCard)
 				})
 				.onReceive(pictureOptionsModel.pictureSelected, perform: { result in
-					wordCard.pictureID = result.id
+					/*wordCard.pictureID = result.id
 					wordCard.pictureLocalPath = result.localPicturePath
 					wordCard.pictureType = result.pictureType
-					wordCard.photo = result.image
+					wordCard.photo = result.image*/
 					selectedChangedPhoto = nil
 					if result.pictureType == .icon {
 						viewModel.selectedImage = nil
@@ -78,15 +86,21 @@ struct APictureCardView: View {
 					} else if result.pictureType == .camera {
 						viewModel.selectedImage = nil
 					}
-					updateStoryByUserSequence()
+					
+					var newCard = WordCard()
+					newCard.pictureID = result.id
+					newCard.pictureLocalPath = result.localPicturePath
+					newCard.pictureType = result.pictureType
+					newCard.photo = result.image
+					updateStoryByUserSequence(newWordCard: newCard)
 				})
 				.onReceive(iconOptionsModel.pictureSelected, perform: { result in
 					print("[debug] APictureCardView, .onReceive:iconOptionsModel.pictureSelected")
-					wordCard.pictureID = result.id
+					/*wordCard.pictureID = result.id
 					wordCard.pictureLocalPath = result.localPicturePath
 					wordCard.pictureType = result.pictureType
 					wordCard.photo = result.image
-					wordCard.iconURL = result.iconURL
+					wordCard.iconURL = result.iconURL*/
 					selectedChangedPhoto = nil
 					if result.pictureType == .icon {
 						viewModel.selectedImage = nil
@@ -96,7 +110,14 @@ struct APictureCardView: View {
 					} else if result.pictureType == .camera {
 						viewModel.selectedImage = nil
 					}
-					updateStoryByUserSequence()
+					
+					var newCard = WordCard()
+					newCard.pictureID = result.id
+					newCard.pictureLocalPath = result.localPicturePath
+					newCard.pictureType = result.pictureType
+					newCard.photo = result.image
+					newCard.iconURL = result.iconURL
+					updateStoryByUserSequence(newWordCard: newCard)
 				})
 		}
 		.overlay(content: {
@@ -222,29 +243,69 @@ struct APictureCardView: View {
 			}
 			
 		} else {
-			AsyncImage(url: URL(string: wordCard.iconURL)) { phase in
-				if let image = phase.image {
-					image
+			if wordCard.pictureType == .camera || wordCard.pictureType == .photoPicker {
+				if wordCard.photo != nil {
+					//for photopicker and camera capturing live
+					Image(uiImage: wordCard.photo!)
 						.resizable()
-						.scaledToFit()
-						.padding()
-						.overlay(alignment: .center, content: {
-							if sequencer.isPictureMissing(remoteURL: wordCard.iconURL) {
-								Text("No Icon").bold()
-							}
-						})
+						.scaledToFill()
 						.onAppear(perform: {
-							print("[debug] APictureCardView, displayImageFromFile, AsyncImage.onAppear, word \(wordCard.word) \(wordCard.pictureLocalPath)")
+							print("[debug] APictureCardView, displayImageFromFile, wordCard.photo.onAppear (fileExists \(wordCard.word)) \(wordCard.pictureLocalPath)")
 						})
-				} else if phase.error != nil {
-					Text("There was an error loading the image.")
+						.onChange(of: wordCard, perform: { wordCard in
+							print("[debug] APictureCardView, displayImageFromFile, wordCard.photo.onChange (fileExists \(wordCard.word)) \(wordCard.pictureLocalPath)")
+						})
 				} else {
-					ProgressView()
-						.onAppear(perform: {
-							print("[debug] APictureCardView, displayImageFromFile, AsyncImage-ProgressView() word \(wordCard.word) \(wordCard.pictureLocalPath)")
-						})
+					AsyncImage(url: URL(string: wordCard.iconURL)) { phase in
+						if let image = phase.image {
+							image
+								.resizable()
+								.scaledToFit()
+								.padding()
+								.overlay(alignment: .center, content: {
+									if sequencer.isPictureMissing(remoteURL: wordCard.iconURL) {
+										Text("No Icon").bold()
+									}
+								})
+								.onAppear(perform: {
+									print("[debug] APictureCardView, displayImageFromFile, AsyncImage.onAppear, word \(wordCard.word) \(wordCard.pictureLocalPath)")
+								})
+						} else if phase.error != nil {
+							Text("There was an error loading the image.")
+						} else {
+							ProgressView()
+								.onAppear(perform: {
+									print("[debug] APictureCardView, displayImageFromFile, AsyncImage-ProgressView() word \(wordCard.word) \(wordCard.pictureLocalPath)")
+								})
+						}
+					}
+				}
+			} else {
+				AsyncImage(url: URL(string: wordCard.iconURL)) { phase in
+					if let image = phase.image {
+						image
+							.resizable()
+							.scaledToFit()
+							.padding()
+							.overlay(alignment: .center, content: {
+								if sequencer.isPictureMissing(remoteURL: wordCard.iconURL) {
+									Text("No Icon").bold()
+								}
+							})
+							.onAppear(perform: {
+								print("[debug] APictureCardView, displayImageFromFile, AsyncImage.onAppear, word \(wordCard.word) \(wordCard.pictureLocalPath)")
+							})
+					} else if phase.error != nil {
+						Text("There was an error loading the image.")
+					} else {
+						ProgressView()
+							.onAppear(perform: {
+								print("[debug] APictureCardView, displayImageFromFile, AsyncImage-ProgressView() word \(wordCard.word) \(wordCard.pictureLocalPath)")
+							})
+					}
 				}
 			}
+			
 		}
 	}
 	
@@ -463,11 +524,50 @@ struct APictureCardView: View {
 		return pictureURL.path()
 	}
 	
-	private func updateStoryByUserSequence() {
+	private func updateStoryByUserSequence(newWordCard: WordCard) {
+		for(index, wordCardItem) in sequencer.theStoryByUser.visualizedSequence.enumerated() {
+			if wordCardItem.word == self.wordCard.word {
+				print("[debug] APictureCardView, updateStoryByUserSequence, index \(index)")
+				sequencer.theStoryByUser.visualizedSequence[index].pictureID = newWordCard.pictureID
+				sequencer.theStoryByUser.visualizedSequence[index].pictureLocalPath = newWordCard.pictureLocalPath
+				sequencer.theStoryByUser.visualizedSequence[index].pictureType = newWordCard.pictureType
+				sequencer.theStoryByUser.visualizedSequence[index].photo = newWordCard.photo
+				if sequencer.theStoryByUser.visualizedSequence[index].pictureType == PictureSource.icon {
+					sequencer.theStoryByUser.visualizedSequence[index].iconURL = newWordCard.iconURL
+				}
+			}
+		}
+		
+		/*let findWordCards = sequencer.theStoryByUser.visualizedSequence.filter({$0.word == wordCard.word})
+		if findWordCards.count > 0 {
+			
+			for wordCardItem in findWordCards {
+				let findWordCardIndex = sequencer.theStoryByUser.visualizedSequence.firstIndex(where: {$0.id == wordCardItem.id}) ?? -1
+				
+				/**
+				 wordCard.pictureID = result.id
+				 wordCard.pictureLocalPath = result.localPicturePath
+				 wordCard.pictureType = result.pictureType
+				 wordCard.photo = result.image
+				 */
+				wordCardItem.pictureID = self.wordCard.pictureID
+				wordCardItem.pictureLocalPath = self.wordCard.pictureLocalPath
+				wordCardItem.pictureType = self.wordCard.pictureType
+				wordCardItem.photo = self.wordCard.photo
+				if wordCardItem.pictureType == PictureSource.icon.rawValue {
+					wordCardItem.iconURL = self.wordCard.iconURL
+				}
+				sequencer.theStoryByUser.visualizedSequence[findWordCardIndex]
+			}
+		}*/
+		
+		
+		/*
 		let findCardIndex = sequencer.theStoryByUser.visualizedSequence.firstIndex(where: {$0.word == wordCard.word}) ?? -1
 		if findCardIndex > -1 {
 			sequencer.theStoryByUser.visualizedSequence[findCardIndex] = wordCard
 		}
+		 */
 	}
 }
 
