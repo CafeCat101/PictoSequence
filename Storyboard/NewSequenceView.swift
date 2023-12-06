@@ -56,7 +56,7 @@ struct NewSequenceView: View {
 							.padding(5)
 							.scrollContentBackground(.hidden)
 							.background(Color.brown.opacity(0.3))
-							.frame(maxHeight: 105)
+							.frame(maxHeight: 205)
 							.cornerRadius(10)
 						
 					}

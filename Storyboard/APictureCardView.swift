@@ -30,6 +30,8 @@ struct APictureCardView: View {
 	@State private var showChangePictureView = false
 	@StateObject private var pictureOptionsModel = PictureOptionsByWord()
 	@StateObject private var iconOptionsModel = PictureOptionsByWord()
+	@State private var showUpdateTheSameWordAlert = false
+	@State private var newCard:WordCard = WordCard()
 	
 	
 	var body: some View {
@@ -44,34 +46,27 @@ struct APictureCardView: View {
 				.onReceive(viewModel.transferableDone, perform: { result in
 					print("[debug] APictureCardView, onRecieve viewModel.transferableDone \(viewModel.selectToUse)")
 					if result == true && viewModel.selectToUse == true {
-						//selectedChangedPhoto = viewModel.selectedImage
 						cameraDataModel.thumbnailImage = nil
-						var newCard = WordCard()
+						newCard = WordCard()
 						newCard = wordCard
 						newCard.pictureID = UUID()
 						newCard.pictureLocalPath = "pictures/\(newCard.pictureID.uuidString).jpg"
 						newCard.pictureType = .photoPicker
 						newCard.photo = UIImage(data: viewModel.selectedImageData!)
 						
-						withAnimation {
-							updateStoryByUserSequence(newWordCard: newCard)
-						}
+						onRecieveDataToAlert()
 					}
 				})
 				.onReceive(cameraDataModel.capturedImageDone, perform: {result in
-					//selectedChangedPhoto = cameraDataModel.thumbnailImage
-					
-					var newCard = WordCard()
+					newCard = WordCard()
 					newCard.pictureID = UUID()
 					newCard.pictureLocalPath = "pictures/\(newCard.pictureID.uuidString).jpg"
 					newCard.pictureType = .camera
 					newCard.photo = UIImage(data: cameraDataModel.thumbnailImageData!)
-					withAnimation {
-						updateStoryByUserSequence(newWordCard: newCard)
-					}
+					
+					onRecieveDataToAlert()
 				})
 				.onReceive(pictureOptionsModel.pictureSelected, perform: { result in
-					//selectedChangedPhoto = nil
 					if result.pictureType == .icon {
 						viewModel.selectedImage = nil
 						cameraDataModel.thumbnailImage = nil
@@ -81,18 +76,16 @@ struct APictureCardView: View {
 						viewModel.selectedImage = nil
 					}
 					
-					var newCard = WordCard()
+					newCard = WordCard()
 					newCard.pictureID = result.id
 					newCard.pictureLocalPath = result.localPicturePath
 					newCard.pictureType = result.pictureType
 					newCard.photo = result.image
-					withAnimation {
-						updateStoryByUserSequence(newWordCard: newCard)
-					}
+					
+					onRecieveDataToAlert()
 				})
 				.onReceive(iconOptionsModel.pictureSelected, perform: { result in
 					print("[debug] APictureCardView, .onReceive:iconOptionsModel.pictureSelected")
-					//selectedChangedPhoto = nil
 					if result.pictureType == .icon {
 						viewModel.selectedImage = nil
 						cameraDataModel.thumbnailImage = nil
@@ -102,15 +95,14 @@ struct APictureCardView: View {
 						viewModel.selectedImage = nil
 					}
 					
-					var newCard = WordCard()
+					newCard = WordCard()
 					newCard.pictureID = result.id
 					newCard.pictureLocalPath = result.localPicturePath
 					newCard.pictureType = result.pictureType
 					newCard.photo = result.image
 					newCard.iconURL = result.iconURL
-					withAnimation {
-						updateStoryByUserSequence(newWordCard: newCard)
-					}
+					
+					onRecieveDataToAlert()
 				})
 		}
 		.overlay(content: {
@@ -162,15 +154,29 @@ struct APictureCardView: View {
 			}
 		}))
 		.photosPicker(isPresented: $showPhotoPicker ,selection: $viewModel.imageSelection, matching: .any(of: [.images, .livePhotos]))
-		.fullScreenCover(isPresented: $showCaptureView, content: {
-			CameraView(model:cameraDataModel, showCaptureView: $showCaptureView, viewModel: viewModel)
-		})
-		.sheet(isPresented: $showChangePictureView, content: {
-			ChangePictureView(wordCard: wordCard, showChangePictureView: $showChangePictureView, pictureOptionsModel: pictureOptionsModel, iconOoptionsModel: iconOptionsModel)
-		})
-		.onAppear(perform: {
-			//setMySavedPictures()
-			//setAllIconOptions()
+		.fullScreenCover(
+			isPresented: $showCaptureView, content: {
+				CameraView(model:cameraDataModel, showCaptureView: $showCaptureView, viewModel: viewModel)
+			})
+		.sheet(
+			isPresented: $showChangePictureView, content: {
+				ChangePictureView(wordCard: wordCard, showChangePictureView: $showChangePictureView, pictureOptionsModel: pictureOptionsModel, iconOoptionsModel: iconOptionsModel)
+			})
+		.alert("Change Picture", isPresented: $showUpdateTheSameWordAlert, actions: {
+			Button("Yes", action:{
+				withAnimation {
+					updateStoryByUserSequence(newWordCard: newCard, allTheSameWords: true)
+				}
+				showUpdateTheSameWordAlert = false
+			})
+			Button("No, only this", action:{
+				withAnimation {
+					updateStoryByUserSequence(newWordCard: newCard, allTheSameWords: false)
+				}
+				showUpdateTheSameWordAlert = false
+			})
+		}, message: {
+			Text("Do you want to apply the changes to all the words \"\(wordCard.word)\" in this sentence?")
 		})
 	}
 	
@@ -518,50 +524,58 @@ struct APictureCardView: View {
 		return pictureURL.path()
 	}
 	
-	private func updateStoryByUserSequence(newWordCard: WordCard) {
-		for(index, wordCardItem) in sequencer.theStoryByUser.visualizedSequence.enumerated() {
-			if wordCardItem.word == self.wordCard.word {
-				print("[debug] APictureCardView, updateStoryByUserSequence, index \(index)")
-				sequencer.theStoryByUser.visualizedSequence[index].pictureID = newWordCard.pictureID
-				sequencer.theStoryByUser.visualizedSequence[index].pictureLocalPath = newWordCard.pictureLocalPath
-				sequencer.theStoryByUser.visualizedSequence[index].pictureType = newWordCard.pictureType
-				sequencer.theStoryByUser.visualizedSequence[index].photo = newWordCard.photo
-				if sequencer.theStoryByUser.visualizedSequence[index].pictureType == PictureSource.icon {
-					sequencer.theStoryByUser.visualizedSequence[index].iconURL = newWordCard.iconURL
+	private func updateStoryByUserSequence(newWordCard: WordCard, allTheSameWords: Bool) {
+		if allTheSameWords {
+			for(index, wordCardItem) in sequencer.theStoryByUser.visualizedSequence.enumerated() {
+				if wordCardItem.word == self.wordCard.word {
+					print("[debug] APictureCardView, updateStoryByUserSequence, index \(index)")
+					sequencer.theStoryByUser.visualizedSequence[index].pictureID = newWordCard.pictureID
+					sequencer.theStoryByUser.visualizedSequence[index].pictureLocalPath = newWordCard.pictureLocalPath
+					sequencer.theStoryByUser.visualizedSequence[index].pictureType = newWordCard.pictureType
+					sequencer.theStoryByUser.visualizedSequence[index].photo = newWordCard.photo
+					if sequencer.theStoryByUser.visualizedSequence[index].pictureType == PictureSource.icon {
+						sequencer.theStoryByUser.visualizedSequence[index].iconURL = newWordCard.iconURL
+					}
+				}
+			}
+		} else {
+			let wordCardIndex = sequencer.theStoryByUser.visualizedSequence.firstIndex(where: {$0.cardOrder == wordCard.cardOrder}) ?? -1
+			if wordCardIndex > -1 {
+				print("[debug] APictureCardView, updateStoryByUserSequence, wordCardIndex \(wordCardIndex)")
+				sequencer.theStoryByUser.visualizedSequence[wordCardIndex].pictureID = newWordCard.pictureID
+				sequencer.theStoryByUser.visualizedSequence[wordCardIndex].pictureLocalPath = newWordCard.pictureLocalPath
+				sequencer.theStoryByUser.visualizedSequence[wordCardIndex].pictureType = newWordCard.pictureType
+				sequencer.theStoryByUser.visualizedSequence[wordCardIndex].photo = newWordCard.photo
+				if sequencer.theStoryByUser.visualizedSequence[wordCardIndex].pictureType == PictureSource.icon {
+					sequencer.theStoryByUser.visualizedSequence[wordCardIndex].iconURL = newWordCard.iconURL
 				}
 			}
 		}
 		
-		/*let findWordCards = sequencer.theStoryByUser.visualizedSequence.filter({$0.word == wordCard.word})
-		if findWordCards.count > 0 {
-			
-			for wordCardItem in findWordCards {
-				let findWordCardIndex = sequencer.theStoryByUser.visualizedSequence.firstIndex(where: {$0.id == wordCardItem.id}) ?? -1
-				
-				/**
-				 wordCard.pictureID = result.id
-				 wordCard.pictureLocalPath = result.localPicturePath
-				 wordCard.pictureType = result.pictureType
-				 wordCard.photo = result.image
-				 */
-				wordCardItem.pictureID = self.wordCard.pictureID
-				wordCardItem.pictureLocalPath = self.wordCard.pictureLocalPath
-				wordCardItem.pictureType = self.wordCard.pictureType
-				wordCardItem.photo = self.wordCard.photo
-				if wordCardItem.pictureType == PictureSource.icon.rawValue {
-					wordCardItem.iconURL = self.wordCard.iconURL
-				}
-				sequencer.theStoryByUser.visualizedSequence[findWordCardIndex]
-			}
-		}*/
-		
-		
-		/*
-		let findCardIndex = sequencer.theStoryByUser.visualizedSequence.firstIndex(where: {$0.word == wordCard.word}) ?? -1
-		if findCardIndex > -1 {
-			sequencer.theStoryByUser.visualizedSequence[findCardIndex] = wordCard
+		if showPic == false {
+			showPic = true
 		}
-		 */
+	}
+	
+	private func askApplyChangestoAllTheSameWords() -> Bool {
+		let findSameWords = sequencer.theStoryByUser.visualizedSequence.filter({$0.word == wordCard.word})
+		if findSameWords.count == 1 {
+			return false
+		} else {
+			return true
+		}
+	}
+	
+	private func onRecieveDataToAlert() {
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+			if askApplyChangestoAllTheSameWords() {
+				showUpdateTheSameWordAlert = true
+			} else {
+				withAnimation {
+					updateStoryByUserSequence(newWordCard: newCard, allTheSameWords: false)
+				}
+			}
+		}
 	}
 }
 

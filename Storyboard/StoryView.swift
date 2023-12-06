@@ -57,49 +57,7 @@ struct StoryView: View {
 								}
 								Spacer()
 							}
-							
 							.padding()
-				
-							
-							/*LazyVGrid(columns: columns) {
-								ForEach( allWords() , id: \.self) { item in
-									VStack {
-										/*Text(item.word)
-										 .font(.headline)
-										 .padding()*/
-										APictureView(word: item.word,urlStr: item.picture, picWidth: reader.size.width/3, picHeight: reader.size.width/3)
-									}
-									.background {
-										RoundedRectangle(cornerRadius: 10)
-											.foregroundColor(.green)
-											.opacity(0.3)
-									}
-									.padding([.bottom,.trailing],5)
-									/*VStack {
-									 Text(item.words[0].word)
-									 .font(.headline)
-									 .padding()
-									 }
-									 .background {
-									 RoundedRectangle(cornerRadius: 10)
-									 .foregroundColor(.green)
-									 .opacity(0.3)
-									 }
-									 .padding([.bottom,.trailing],5)*/
-									/*VStack {
-									 if index % 2 == 0 {
-									 Text("story card \(index + 1)")
-									 .font(.headline)
-									 .padding()
-									 .background(Color.green)
-									 .cornerRadius(10)
-									 } else {
-									 EmptyView()
-									 }
-									 }.padding([.bottom,.trailing],5)*/
-								}
-							}
-							.padding()*/
 						}
 						.onAppear(perform: {
 							let picSize = reader1.size.width/2
