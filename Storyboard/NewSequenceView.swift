@@ -25,28 +25,29 @@ struct NewSequenceView: View {
 			
 			VStack {
 				HStack {
-					Label(
-						title: { Text("Back to list") },
-						icon: { Image(systemName: "chevron.backward") }
-					)
-					.font(.title)
-					.labelStyle(.iconOnly)
-					.onTapGesture {
+					Spacer()
+					Text("New Sentence")
+						.font(.title)
+					Spacer()
+				}
+				.overlay(alignment: .topLeading, content: {
+					Button(action: {
 						if previewSequence == false {
 							showAddNewSequence = false
 						} else {
 							previewSequence = false
 						}
-						
-					}
-					Spacer()
-					Text("New Sequence")
+					}, label: {
+						Label(
+							title: { Text("Back to list") },
+							icon: { Image(systemName: "chevron.backward") }
+						)
 						.font(.title)
-					Spacer()
-					
-					
-					
-				}
+						.labelStyle(.iconOnly)
+					})
+					.frame(width:46, height: 46)
+				})
+				.frame(height:46)
 				.padding(15)
 		
 				if previewSequence == false {
@@ -93,7 +94,8 @@ struct NewSequenceView: View {
 										icon: { Image(systemName: "bolt.circle.fill") }
 									).labelStyle(.iconOnly)
 								} else {
-									SpinnerView(iconColor: .black, spinnerColor: .green, iconSystemImage: "stop.fill")
+									ProgressView().padding([.trailing], 5)
+									//SpinnerView(iconColor: .black, spinnerColor: .green, iconSystemImage: "stop.fill")
 								}
 								Text("Generate Sequence").bold()
 							}

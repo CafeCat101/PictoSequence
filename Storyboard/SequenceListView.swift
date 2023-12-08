@@ -23,45 +23,51 @@ struct SequenceListView: View {
 			animation: .default)
 	private var sentences: FetchedResults<Sentences>
 	
+	@State private var tappedSentenceID:String = ""
+	
 	var body: some View {
-		VStack {
+		VStack(spacing:0) {
 			HStack {
 				Spacer()
-				Text("Sentences")
-					.font(.title)
-				Spacer()
-			}
-			.padding(15)
-			
-			HStack {
+				Button(action: {
+					showAddNewSequence = true
+				}, label: {
+					Label(
+						title: { Text("Search") },
+						icon: { Image(systemName: "magnifyingglass") }
+					)
+					.labelStyle(.iconOnly)
+					.font(.title2)
+					.foregroundColor(Color("testColor2"))
+				}).padding([.trailing],15)
+					
 				Button(action: {
 					showAddNewSequence = true
 				}, label: {
 					Label(
 						title: { Text("Add new") },
 						icon: { Image(systemName: "plus.circle.fill") }
-					).labelStyle(.iconOnly).foregroundColor(Color("testColor2"))
-						.font(.title2)
+					)
+					.labelStyle(.iconOnly)
+					.font(.title2)
+					.foregroundColor(Color("testColor2"))
 				})
-				TextEditor(text: $text)
-					.clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 10)))
+				/*TextEditor(text: $text)
+				 .clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 10)))*/
 			}
-			.frame(height: 35)
 			.padding([.leading,.trailing,.top], 15)
 			
+			HStack {
+				Spacer()
+				Text("Sentences")
+					.font(.largeTitle)
+				Spacer()
+			}
 			if sentences.count > 0 {
 				List {
-					/*ListItemView(textLine: "Do you want to eat pasta or potato?")
-						.onTapGesture {
-							showStoryboard = true
-						}
-					ListItemView(textLine: "Will go to supermarket then go home.")
-						.onTapGesture {
-							showStoryboard = true
-						}*/
 					ForEach(sentences) { sentence in
-						ListItemView(showEditSequence: $showEditSequence, textLine: sentence.user_question ?? "")
-							.onTapGesture {
+						ListItemView(showEditSequence: $showEditSequence, showStoryboard: $showStoryboard, textLine: sentence.user_question ?? "", tappedSentenceID: $tappedSentenceID, sentenceID: sentence.id ?? "")
+							/*.onTapGesture {
 								do {
 									let fetchWords = NSFetchRequest<Words>(entityName: "Words")
 									fetchWords.predicate = NSPredicate(format: "sentenceID = %@", sentence.id ?? "")
@@ -103,6 +109,9 @@ struct SequenceListView: View {
 									
 								}
 							}
+							.onTapGesture {
+								tappedSentenceID = sentence.id ?? ""
+							}*/
 					}/*.onDelete(perform: deleteASentence)*/
 				}
 				.modifier(myListStyle())
@@ -129,19 +138,6 @@ struct SequenceListView: View {
 		.onAppear(perform: {
 			//print("[deubg] pictureURL \(FileManager.picturesDirectoryURL.path())")
 		})
-		/*.onAppear(perform: {
-			do {
-				let fetchDanglingWords = NSFetchRequest<Words>(entityName: "Words")
-				fetchDanglingWords.predicate = NSPredicate(format: "sentenceID == nil")
-				let danglingWords = try viewContext.fetch(fetchDanglingWords)
-				print("[debug] SequenceListView, onAppear, danglingWords.count \(danglingWords.count)")
-				for theWord in danglingWords {
-					print(theWord.word ?? "")
-				}
-			} catch {
-				
-			}
-		})*/
 	}
 	
 	struct myListStyle: ViewModifier {

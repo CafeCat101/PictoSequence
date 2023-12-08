@@ -19,7 +19,7 @@ struct ShowStoryView: View {
 	
 	var body: some View {
 		VStack {
-			HStack {
+			/*HStack {
 				Label(
 					title: { Text("Back to List") },
 					icon: { Image(systemName: "list.bullet.rectangle") }
@@ -30,7 +30,32 @@ struct ShowStoryView: View {
 				}
 				Spacer()
 			}
-			.padding([.trailing,.leading], 15)
+			.padding([.trailing,.leading], 15)*/
+			
+			
+			HStack {
+				Button(action: {
+					showStoryboard = false
+				}, label: {
+					Label(
+						title: { Text("Back to the List") },
+						icon: { Image(systemName: "chevron.backward") }
+					)
+				})
+				Spacer()
+				/*Button(action: {
+					
+				}, label: {
+					Label("Edit", systemImage: "square.and.pencil.circle")
+						.labelStyle(.iconOnly)
+						.font(.system(size:32))
+				})*/
+			}
+			.foregroundColor(Color("testColor2"))
+			.padding([.leading,.top,.trailing], 15)
+			.padding([.bottom], 5)
+			
+			
 			Spacer()
 			StoryView(storyViewMode: $storyViewMode)
 			Spacer()
@@ -47,6 +72,7 @@ struct ShowStoryView: View {
 			Image(colorScheme == .light ? "vellum_sketchbook_paper" : "balck_canvas_bg4").resizable()
 				.aspectRatio(contentMode: .fill)
 				.edgesIgnoringSafeArea(.all))
+		.ignoresSafeArea(edges: .bottom)
 	}
 }
 

@@ -13,63 +13,100 @@ struct ListItemView: View {
 	@Environment(\.managedObjectContext) private var managedContext
 	
 	@Binding var showEditSequence:Bool
+	@Binding var showStoryboard:Bool
 	var textLine:String = "Sequence"
+	//var showActionsMenu = false
+	@Binding var tappedSentenceID:String
+	var sentenceID:String = ""
+	
+	@State private var animateActionsMenu = false
 	
 	var body: some View {
-		VStack {
-			Text("\(textLine)")
-		}
-		.swipeActions {
-			Button("Edit") {
-				print("edit!")
-				let fetchRequest = NSFetchRequest<Sentences>(entityName: "Sentences")
-				fetchRequest.predicate = NSPredicate(format: "user_question == %@", textLine)
-				
-				do {
-					let sentences = try managedContext.fetch(fetchRequest)
-					let sentenceID = sentences.first?.id
-					
-					let fetchWords = NSFetchRequest<Words>(entityName: "Words")
-					fetchWords.predicate = NSPredicate(format: "sentenceID = %@", sentenceID ?? "")
-					fetchWords.sortDescriptors = [NSSortDescriptor(keyPath: \Words.order, ascending: true)]
-					let allWords = try managedContext.fetch(fetchWords)
-					if allWords.count > 0 {
-						sequencer.theStoryByUser = StoryByUser()
-						sequencer.theStoryByUser.sentence = sentences.first?.user_question ?? ""
-						for wordItem in allWords {
-							var addWordCard = WordCard()
-							addWordCard.word = wordItem.word ?? ""
-							addWordCard.cardOrder = Int(wordItem.order)
-							print("\(String(describing: wordItem.word)) \(String(describing: wordItem.picID))")
-							let fetchPictures = NSFetchRequest<Pictures>(entityName: "Pictures")
-							fetchPictures.predicate = NSPredicate(format: "id = %@", wordItem.picID ?? "")
-							fetchPictures.fetchLimit = 1
-							let usePic = try managedContext.fetch(fetchPictures)
-							if usePic.count > 0 {
-								addWordCard.pictureID = UUID(uuidString: usePic.first?.id ?? "") ?? UUID()
-								if usePic.first?.type == PictureSource.icon.rawValue {
-									addWordCard.pictureType = .icon
-								} else if usePic.first?.type == PictureSource.photoPicker.rawValue {
-									addWordCard.pictureType = .photoPicker
-								} else if usePic.first?.type == PictureSource.camera.rawValue {
-									addWordCard.pictureType = .camera
-								}
-								addWordCard.iconURL = usePic.first?.iconURL ?? ""
-								addWordCard.pictureLocalPath = usePic.first?.pictureLocalPath ?? ""
-							}
-							sequencer.theStoryByUser.visualizedSequence.append(addWordCard)
-						}
-						showEditSequence = true
-					} else {
-						//error
-						print("[debug] fetchWords with \(textLine) has no item")
+		VStack(alignment: .leading) {
+			if sentenceID != tappedSentenceID {
+				Button(action: {
+					tappedSentenceID = sentenceID
+				}, label: {
+					HStack {
+						Text("\(textLine)")//.fontWeight(showActionsMenu ? .bold : .regular)
+						Spacer()
 					}
-				} catch {
-					
+				})
+			} else {
+				HStack {
+					Text("\(textLine)")//.fontWeight(showActionsMenu ? .bold : .regular)
+					Spacer()
 				}
 			}
-			.tint(.green)
 			
+			if sentenceID == tappedSentenceID {
+				HStack {
+					Label("Show Story", systemImage: "eye.square").labelStyle(.iconOnly).font(.system(size:46))
+						.onTapGesture {
+							do {
+								let fetchWords = NSFetchRequest<Words>(entityName: "Words")
+								fetchWords.predicate = NSPredicate(format: "sentenceID = %@", sentenceID)
+								fetchWords.sortDescriptors = [NSSortDescriptor(keyPath: \Words.order, ascending: true)]
+								let allWords = try managedContext.fetch(fetchWords)
+								if allWords.count > 0 {
+									sequencer.theStoryByUser = StoryByUser()
+									sequencer.theStoryByUser.sentence = textLine
+									for wordItem in allWords {
+										var addWordCard = WordCard()
+										addWordCard.word = wordItem.word ?? ""
+										addWordCard.cardOrder = Int(wordItem.order)
+										print("\(String(describing: wordItem.word)) \(String(describing: wordItem.picID))")
+										let fetchPictures = NSFetchRequest<Pictures>(entityName: "Pictures")
+										fetchPictures.predicate = NSPredicate(format: "id = %@", wordItem.picID ?? "")
+										fetchPictures.fetchLimit = 1
+										let usePic = try managedContext.fetch(fetchPictures)
+										if usePic.count > 0 {
+											addWordCard.pictureID = UUID(uuidString: usePic.first?.id ?? "") ?? UUID()
+											if usePic.first?.type == PictureSource.icon.rawValue {
+												addWordCard.pictureType = .icon
+											} else if usePic.first?.type == PictureSource.photoPicker.rawValue {
+												addWordCard.pictureType = .photoPicker
+											} else if usePic.first?.type == PictureSource.camera.rawValue {
+												addWordCard.pictureType = .camera
+											}
+											addWordCard.iconURL = usePic.first?.iconURL ?? ""
+											addWordCard.pictureLocalPath = usePic.first?.pictureLocalPath ?? ""
+										}
+										
+										sequencer.theStoryByUser.visualizedSequence.append(addWordCard)
+									}
+									showStoryboard = true
+								} else {
+									//error
+									print("[debug] fetchWords with sentenceID\(sentenceID) has no item")
+								}
+							} catch {
+								
+							}
+						}
+					Spacer()
+					Label("Mark as frequent", systemImage: "star.square").labelStyle(.iconOnly).font(.system(size:46))
+					Spacer()
+					Label("Edit", systemImage: "square.and.pencil.circle").labelStyle(.iconOnly).font(.system(size:46))
+						.onTapGesture {
+							editSentence()
+						}
+					Spacer()
+				}
+				//.animation(Animation.easeIn(duration: 0.8), value: animateActionsMenu)
+				.padding([.top], 5)
+				.opacity(animateActionsMenu ? 1.0 : 0.0)
+				.onAppear(perform: {
+					withAnimation(Animation.easeIn(duration: 0.5)) {
+						animateActionsMenu = true
+					}
+				})
+				.onDisappear(perform: {
+					animateActionsMenu = false
+				})
+			}
+		}
+		.swipeActions {
 			Button("Delete") {
 				print("delete!")
 				withAnimation {
@@ -107,9 +144,62 @@ struct ListItemView: View {
 				
 			}
 			.tint(.red)
+			Button("Edit") {
+				editSentence()
+			}
+			.tint(.green)
 		}
 		.foregroundColor(Color("testColor2"))
 		.listRowBackground(Color.clear)
+	}
+	
+	private func editSentence() {
+		print("[debug] ListItem, editSentence: \(textLine)")
+		let fetchRequest = NSFetchRequest<Sentences>(entityName: "Sentences")
+		fetchRequest.predicate = NSPredicate(format: "user_question == %@", textLine)
+		
+		do {
+			let sentences = try managedContext.fetch(fetchRequest)
+			let sentenceID = sentences.first?.id
+			
+			let fetchWords = NSFetchRequest<Words>(entityName: "Words")
+			fetchWords.predicate = NSPredicate(format: "sentenceID = %@", sentenceID ?? "")
+			fetchWords.sortDescriptors = [NSSortDescriptor(keyPath: \Words.order, ascending: true)]
+			let allWords = try managedContext.fetch(fetchWords)
+			if allWords.count > 0 {
+				sequencer.theStoryByUser = StoryByUser()
+				sequencer.theStoryByUser.sentence = sentences.first?.user_question ?? ""
+				for wordItem in allWords {
+					var addWordCard = WordCard()
+					addWordCard.word = wordItem.word ?? ""
+					addWordCard.cardOrder = Int(wordItem.order)
+					print("\(String(describing: wordItem.word)) \(String(describing: wordItem.picID))")
+					let fetchPictures = NSFetchRequest<Pictures>(entityName: "Pictures")
+					fetchPictures.predicate = NSPredicate(format: "id = %@", wordItem.picID ?? "")
+					fetchPictures.fetchLimit = 1
+					let usePic = try managedContext.fetch(fetchPictures)
+					if usePic.count > 0 {
+						addWordCard.pictureID = UUID(uuidString: usePic.first?.id ?? "") ?? UUID()
+						if usePic.first?.type == PictureSource.icon.rawValue {
+							addWordCard.pictureType = .icon
+						} else if usePic.first?.type == PictureSource.photoPicker.rawValue {
+							addWordCard.pictureType = .photoPicker
+						} else if usePic.first?.type == PictureSource.camera.rawValue {
+							addWordCard.pictureType = .camera
+						}
+						addWordCard.iconURL = usePic.first?.iconURL ?? ""
+						addWordCard.pictureLocalPath = usePic.first?.pictureLocalPath ?? ""
+					}
+					sequencer.theStoryByUser.visualizedSequence.append(addWordCard)
+				}
+				showEditSequence = true
+			} else {
+				//error
+				print("[debug] fetchWords with \(textLine) has no item")
+			}
+		} catch {
+			
+		}
 	}
 	
 	private func clearDuplicatedIconRecord() {
@@ -145,6 +235,8 @@ struct ListItemView: View {
 	}
 }
 
-#Preview {
-	ListItemView(showEditSequence: .constant(false))
-}
+/*
+ #Preview {
+ ListItemView(showEditSequence: .constant(false))
+ }
+ */
