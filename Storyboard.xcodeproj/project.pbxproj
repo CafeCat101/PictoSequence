@@ -24,6 +24,7 @@
 		C8680B662ACFFF3500198CCA /* StoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8680B652ACFFF3500198CCA /* StoryView.swift */; };
 		C8680B682AD0007400198CCA /* StoryByAI.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8680B672AD0007400198CCA /* StoryByAI.swift */; };
 		C8680B6A2AD2BF2A00198CCA /* APictureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8680B692AD2BF2A00198CCA /* APictureView.swift */; };
+		C88773F22B242D760028F727 /* SwiftUIX in Frameworks */ = {isa = PBXBuildFile; productRef = C88773F12B242D760028F727 /* SwiftUIX */; };
 		C89D5E712AD69EDD00083549 /* PictureModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C89D5E702AD69EDD00083549 /* PictureModel.swift */; };
 		C89D5E732AD7FC9E00083549 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C89D5E722AD7FC9E00083549 /* LaunchScreen.storyboard */; };
 		C89D5E7A2ADBCFEB00083549 /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C89D5E792ADBCFEB00083549 /* CameraView.swift */; };
@@ -74,6 +75,7 @@
 		C8680B652ACFFF3500198CCA /* StoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryView.swift; sourceTree = "<group>"; };
 		C8680B672AD0007400198CCA /* StoryByAI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryByAI.swift; sourceTree = "<group>"; };
 		C8680B692AD2BF2A00198CCA /* APictureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APictureView.swift; sourceTree = "<group>"; };
+		C88773F42B242E3C0028F727 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		C89D5E702AD69EDD00083549 /* PictureModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureModel.swift; sourceTree = "<group>"; };
 		C89D5E722AD7FC9E00083549 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C89D5E782ADBCA3700083549 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -111,6 +113,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C88773F22B242D760028F727 /* SwiftUIX in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -125,6 +128,7 @@
 				C89D5E722AD7FC9E00083549 /* LaunchScreen.storyboard */,
 				C85267EF2AC4316F00047B27 /* Storyboard */,
 				C85267EE2AC4316F00047B27 /* Products */,
+				C88773F32B242E3C0028F727 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -219,6 +223,14 @@
 			path = Types;
 			sourceTree = "<group>";
 		};
+		C88773F32B242E3C0028F727 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C88773F42B242E3C0028F727 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -235,6 +247,9 @@
 			dependencies = (
 			);
 			name = Storyboard;
+			packageProductDependencies = (
+				C88773F12B242D760028F727 /* SwiftUIX */,
+			);
 			productName = Storyboard;
 			productReference = C85267ED2AC4316F00047B27 /* Storyboard.app */;
 			productType = "com.apple.product-type.application";
@@ -263,6 +278,9 @@
 				Base,
 			);
 			mainGroup = C85267E42AC4316F00047B27;
+			packageReferences = (
+				C88773F02B242D760028F727 /* XCRemoteSwiftPackageReference "SwiftUIX" */,
+			);
 			productRefGroup = C85267EE2AC4316F00047B27 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -560,6 +578,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C88773F02B242D760028F727 /* XCRemoteSwiftPackageReference "SwiftUIX" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SwiftUIX/SwiftUIX";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C88773F12B242D760028F727 /* SwiftUIX */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C88773F02B242D760028F727 /* XCRemoteSwiftPackageReference "SwiftUIX" */;
+			productName = SwiftUIX;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		C8B8A5872AE3AE2200490EF4 /* Main.xcdatamodeld */ = {

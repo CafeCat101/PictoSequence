@@ -38,7 +38,7 @@ struct ShowStoryView: View {
 					showStoryboard = false
 				}, label: {
 					Label(
-						title: { Text("Back to the List") },
+						title: { Text("Back to the List").font(.title) },
 						icon: { Image(systemName: "chevron.backward") }
 					)
 				})
