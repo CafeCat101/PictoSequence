@@ -88,6 +88,7 @@ struct SequenceListView: View {
 					.padding([.leading,.trailing], 15)
 					.onChange(of: searchText, perform: { newText in
 						print("[debug] SequenceListView, search, onChange \(newText)")
+						performSearch()
 					})
 			}
 			
@@ -118,6 +119,7 @@ struct SequenceListView: View {
 			ShowStoryView(showStoryboard: $showStoryboard)
 		})
 		.onAppear(perform: {
+			
 			//print("[deubg] pictureURL \(FileManager.picturesDirectoryURL.path())")
 		})
 	}
@@ -156,6 +158,18 @@ struct SequenceListView: View {
 				fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
 			}
 		}
+	}
+	
+	private func performSearch() {
+		let predicate:NSPredicate?
+		if searchText.isEmpty == false {
+			predicate = NSPredicate(format: "user_question CONTAINS[c] %@", searchText)
+			//let sentencePredicate = NSPredicate(format: "user_question CONTAINS[d] %@", searchText)
+			//predicate = NSCompoundPredicate(orPredicateWithSubpredicates: [sentencePredicate])
+		} else {
+			predicate = nil
+		}
+		sentences.nsPredicate = predicate
 	}
 }
 

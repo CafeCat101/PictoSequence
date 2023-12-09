@@ -28,6 +28,7 @@ struct PreviewStoryView: View {
 			Text(sequencer.theStoryByUser.sentence)
 				.font(.title2)
 				.bold()
+				.padding([.leading,.trailing], 15)
 			StoryView(storyViewMode: $storyViewMode)
 				.background {
 					RoundedRectangle(cornerRadius: 10)
