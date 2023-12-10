@@ -33,11 +33,9 @@ struct NewSequenceView: View {
 								title: { Text("Back to new sentence") },
 								icon: { Image(systemName: "chevron.backward") }
 							)
-							.font(.title2)
-							.bold()
+							.font(.title)
 							.labelStyle(.iconOnly)
 						})
-						.frame(width:46, height: 46)
 					}
 					Spacer()
 					Button(action: {
@@ -48,12 +46,10 @@ struct NewSequenceView: View {
 							title: { Text("Back to list") },
 							icon: { Image(systemName: "xmark.circle") }
 						)
-						.font(.title2)
-						.bold()
+						.font(.title)
 						.labelStyle(.iconOnly)
 					})
-					.frame(width:46, height: 46)
-				}.padding([.leading,.trailing,.top], 15)
+				}.padding([.top,.leading,.trailing], 15)
 				
 				HStack {
 					Spacer()

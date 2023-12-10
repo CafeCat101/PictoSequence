@@ -19,25 +19,26 @@ struct EditSequenceView: View {
 		VStack {
 			HStack {
 				Spacer()
-				Text("Edit Sentence")
-					.font(.title)
-				Spacer()
-			}
-			.overlay(alignment: .topLeading, content: {
 				Button(action: {
 					showEditSequence = false
 				}, label: {
 					Label(
 						title: { Text("Back to list") },
-						icon: { Image(systemName: "chevron.backward") }
+						icon: { Image(systemName: "xmark.circle") }
 					)
 					.font(.title)
 					.labelStyle(.iconOnly)
 				})
-				.frame(width:46, height: 46)
-			})
-			.frame(height:46)
-			.padding(15)
+				//.frame(width:46, height: 46)
+			}.padding([.leading,.trailing,.top], 15)
+			
+			HStack {
+				Spacer()
+				Text("Edit Sentence")
+					.font(.title)
+					.bold()
+				Spacer()
+			}.padding([.bottom], 15)
 			
 			PreviewStoryView(showSequenceActionView: $showEditSequence, showStoryboard: $showStoryboard, storyViewMode: $storyViewMode)
 		}

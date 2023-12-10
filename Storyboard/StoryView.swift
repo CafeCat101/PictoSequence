@@ -40,6 +40,7 @@ struct StoryView: View {
 												APictureCardView(wordCard: item, picWidth: reader1.size.width/2, picHeight: reader1.size.width/2, storyViewMode: $storyViewMode)
 												//APictureView(word: item.word,urlStr: item.iconURL, picWidth: reader1.size.width/3, picHeight: reader1.size.width/3)
 											}
+											.padding([.top], (item.cardOrder == 1 && storyViewMode == .showSentence) ? 80 : 0)
 											.padding([.bottom,.trailing],5)
 										}
 									}

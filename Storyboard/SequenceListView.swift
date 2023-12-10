@@ -109,7 +109,9 @@ struct SequenceListView: View {
 		.background(Image(colorScheme == .light ? "vellum_sketchbook_paper" : "balck_canvas_bg4").resizable()
 			.aspectRatio(contentMode: .fill)
 			.edgesIgnoringSafeArea(.all))
-		.fullScreenCover(isPresented: $showAddNewSequence, content: {
+		.fullScreenCover(isPresented: $showAddNewSequence, onDismiss: {
+			tappedSentenceID = ""
+		},content: {
 			NewSequenceView(showAddNewSequence: $showAddNewSequence, showStoryboard: $showStoryboard)
 		})
 		.fullScreenCover(isPresented: $showEditSequence, content: {

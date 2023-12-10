@@ -301,6 +301,9 @@ struct PreviewStoryView: View {
 			fetchRequest.predicate = NSPredicate(format: "user_question = %@", sequencer.theStoryByUser.sentence)
 			let existedSentences = try manageContext.fetch(fetchRequest)
 			if existedSentences.count > 0 {
+				existedSentences.first?.change_date = Date()
+				try manageContext.save()
+				
 				for wordCard in sequencer.theStoryByUser.visualizedSequence {
 					let fetchEditWords = NSFetchRequest<Words>(entityName: "Words")
 					fetchEditWords.predicate = NSPredicate(format: "sentenceID = %@ AND word = %@", existedSentences.first?.id ?? "", wordCard.word)

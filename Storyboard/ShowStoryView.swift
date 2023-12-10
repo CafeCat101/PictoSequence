@@ -20,28 +20,16 @@ struct ShowStoryView: View {
 	var body: some View {
 		VStack {
 			/*HStack {
-				Label(
-					title: { Text("Back to List") },
-					icon: { Image(systemName: "list.bullet.rectangle") }
-				)
-				.labelStyle(.iconOnly)
-				.onTapGesture {
-					showStoryboard = false
-				}
-				Spacer()
-			}
-			.padding([.trailing,.leading], 15)*/
-			
-			
-			HStack {
 				Button(action: {
 					showStoryboard = false
 				}, label: {
 					Label(
-						title: { Text("Back to the List").font(.title) },
+						title: { Text("Back to the List") },
 						icon: { Image(systemName: "chevron.backward") }
 					)
+					.font(.title)
 				})
+				.frame(height: 46)
 				Spacer()
 				/*Button(action: {
 					
@@ -53,11 +41,26 @@ struct ShowStoryView: View {
 			}
 			.foregroundColor(Color("testColor2"))
 			.padding([.leading,.top,.trailing], 15)
-			.padding([.bottom], 5)
+			.padding([.bottom], 5)*/
 			
 			
 			Spacer()
 			StoryView(storyViewMode: $storyViewMode)
+				.overlay(alignment: .topLeading, content: {
+					Button(action: {
+						showStoryboard = false
+					}, label: {
+						Label(
+							title: { Text("Back to the List") },
+							icon: { Image(systemName: "chevron.backward") }
+						)
+						.font(.title)
+						.labelStyle(.iconOnly)
+					})
+					.foregroundColor(Color("testColor2"))
+					.frame(width: 46, height: 46)
+					.padding([.top], 30)
+				})
 			Spacer()
 		}
 		/*.background(
@@ -72,7 +75,7 @@ struct ShowStoryView: View {
 			Image(colorScheme == .light ? "vellum_sketchbook_paper" : "balck_canvas_bg4").resizable()
 				.aspectRatio(contentMode: .fill)
 				.edgesIgnoringSafeArea(.all))
-		.ignoresSafeArea(edges: .bottom)
+		.ignoresSafeArea(edges: [.bottom,.top])
 	}
 }
 
