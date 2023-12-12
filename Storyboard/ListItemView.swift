@@ -21,6 +21,8 @@ struct ListItemView: View {
 	
 	@State private var animateActionsMenu = false
 	
+	@Binding var showTestSheet:Bool
+	
 	var body: some View {
 		VStack(alignment: .leading) {
 			if sentenceID != tappedSentenceID {
@@ -86,6 +88,9 @@ struct ListItemView: View {
 						}
 					Spacer()
 					Label("Mark as frequent", systemImage: "star.square").labelStyle(.iconOnly).font(.system(size:46))
+						.onTapGesture {
+							showTestSheet = true
+						}
 					Spacer()
 					Label("Edit", systemImage: "square.and.pencil.circle").labelStyle(.iconOnly).font(.system(size:46))
 						.onTapGesture {
@@ -95,12 +100,21 @@ struct ListItemView: View {
 				}
 				//.animation(Animation.easeIn(duration: 0.8), value: animateActionsMenu)
 				.padding([.top], 5)
-				.opacity(animateActionsMenu ? 1.0 : 0.0)
-				.onAppear(perform: {
+				.opacity(sentenceID == tappedSentenceID ? 1.0 : 0.0)
+				.onChange(of: tappedSentenceID, perform: { newValue in
+					if newValue == sentenceID {
+						withAnimation(Animation.easeIn(duration: 0.5)) {
+							animateActionsMenu = true
+						}
+					}
+									
+				})
+				/*.onAppear(perform: {
+					print("[debug] ListItemView.onAppear animateActionMenu \(animateActionsMenu)")
 					withAnimation(Animation.easeIn(duration: 0.5)) {
 						animateActionsMenu = true
 					}
-				})
+				})*/
 				.onDisappear(perform: {
 					animateActionsMenu = false
 				})

@@ -14,6 +14,7 @@ struct EditSequenceView: View {
 	
 	@Binding var showEditSequence:Bool
 	@Binding var showStoryboard:Bool
+	@Binding var tappedSentenceID:String
 	
 	var body: some View {
 		VStack {
@@ -40,7 +41,7 @@ struct EditSequenceView: View {
 				Spacer()
 			}.padding([.bottom], 15)
 			
-			PreviewStoryView(showSequenceActionView: $showEditSequence, showStoryboard: $showStoryboard, storyViewMode: $storyViewMode)
+			PreviewStoryView(showSequenceActionView: $showEditSequence, showStoryboard: $showStoryboard, storyViewMode: $storyViewMode, tappedSentenceID: $tappedSentenceID)
 		}
 		.foregroundColor(Color("testColor2"))
 		.background(
@@ -49,7 +50,7 @@ struct EditSequenceView: View {
 				.edgesIgnoringSafeArea(.all))
 	}
 }
-
+/*
 #Preview {
 	EditSequenceView(showEditSequence: .constant(false), showStoryboard: .constant(false))
-}
+}*/

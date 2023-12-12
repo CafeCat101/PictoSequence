@@ -12,12 +12,12 @@ struct PreviewStoryView: View {
 	@EnvironmentObject var sequencer:Sequencer
 	@Environment(\.colorScheme) var colorScheme
 	@Environment(\.managedObjectContext) private var manageContext
-	let fetchRequest = NSFetchRequest<Sentences>(entityName: "Sentences")
 	
 	//var previewSentence:String = ""
 	@Binding var showSequenceActionView:Bool
 	@Binding var showStoryboard:Bool
 	@Binding var storyViewMode:StoryViewMode
+	@Binding var tappedSentenceID:String
 	//var editMode = false
 	
 	@State private var showSaveErrorAlert = false
@@ -91,11 +91,13 @@ struct PreviewStoryView: View {
 	
 	
 	private func saveSequence(showStoryNow: Bool) async {
+		var newSentenceID = ""
 		do {
+			let fetchRequest = NSFetchRequest<Sentences>(entityName: "Sentences")
 			fetchRequest.predicate = NSPredicate(format: "user_question = %@", sequencer.theStoryByUser.sentence)
 			let existedSentences = try manageContext.fetch(fetchRequest)
 			if existedSentences.count == 0 {
-				let newSentenceID = UUID().uuidString
+				newSentenceID = UUID().uuidString
 				let newItem = Sentences(context: manageContext)
 				newItem.user_question = sequencer.theStoryByUser.sentence
 				newItem.id = newSentenceID
@@ -140,63 +142,6 @@ struct PreviewStoryView: View {
 							}
 						}
 					}
-					
-					//**************************
-					/*
-					let fetchWords = NSFetchRequest<Words>(entityName: "Words")
-					fetchWords.predicate = NSPredicate(format: "word = %@", wordCard.word)
-					fetchWords.sortDescriptors = [NSSortDescriptor(keyPath: \Words.wordChanged, ascending: false)]
-					fetchWords.fetchLimit = 1
-					
-					//find picture used for this word
-					let lastWordUsed = try manageContext.fetch(fetchWords)
-					
-					let addWord = Words(context: manageContext)
-					addWord.sentenceID = newID
-					addWord.word = wordCard.word
-					print("[debug] PreviewStoryView, sentenceID \(newID)")
-					addWord.wordChanged = Date()
-					addWord.order = Int16(wordCard.cardOrder)
-					if lastWordUsed.count > 0 {
-						//use the same picture
-						addWord.picID = lastWordUsed.first?.picID
-						try manageContext.save()
-					} else {
-						//add new word and add new picture item
-						addWord.picID = wordCard.pictureID.uuidString
-						let newPic = Pictures(context: manageContext)
-						newPic.id = wordCard.pictureID.uuidString
-						newPic.type = wordCard.pictureType.rawValue
-						newPic.pictureLocalPath = wordCard.pictureLocalPath
-						newPic.iconURL = wordCard.iconURL
-						try manageContext.save()
-						
-						//after have added the word with pic, it's safe to delete the same word without sentenceID
-						let fetchWordsWithoutSentenceID = NSFetchRequest<Words>(entityName: "Words")
-						fetchWordsWithoutSentenceID.predicate = NSPredicate(format: "(word == %@) AND (sentenceID == nil)", wordCard.word)
-						do {
-							let wordWithoutSentence = try manageContext.fetch(fetchWordsWithoutSentenceID)
-							for danglingWord in wordWithoutSentence {
-								manageContext.delete(danglingWord)
-							}
-							try manageContext.save()
-						} catch let error as NSError {
-							print("Could not fetch. \(error), \(error.userInfo)")
-						}
-						
-						//save image to disk
-						var isDirectory = ObjCBool(true)
-						if FileManager.default.fileExists(atPath: FileManager.picturesDirectoryURL!.path, isDirectory: &isDirectory) == true {
-							if wordCard.pictureType == .photoPicker || wordCard.pictureType == .camera {
-								let resizedImage = resizeImage(image: wordCard.photo!, maxDimension: 1000)
-								saveImageToDisk(saveImage: resizedImage, imageFileName: wordCard.pictureID.uuidString, asJPG: true)
-							} else if wordCard.pictureType == .icon {
-								try await downloadIcon(remoteIconURL: wordCard.iconURL, iconURL: wordCard.pictureLocalPath)
-							}
-						}
-						
-					}
-					*/
 				}
 				
 				print("[debug] PreviewStoryView, AI sentence \(sequencer.theStoryByAI.sentence)")
@@ -219,6 +164,8 @@ struct PreviewStoryView: View {
 			let nsError = error as NSError
 			fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
 		}
+		
+		tappedSentenceID = newSentenceID
 	}
 	
 	private func resizeImage(image: UIImage, maxDimension: CGFloat) -> UIImage {
@@ -298,6 +245,7 @@ struct PreviewStoryView: View {
 	
 	private func editSequence(showStoryNow: Bool) async {
 		do {
+			let fetchRequest = NSFetchRequest<Sentences>(entityName: "Sentences")
 			fetchRequest.predicate = NSPredicate(format: "user_question = %@", sequencer.theStoryByUser.sentence)
 			let existedSentences = try manageContext.fetch(fetchRequest)
 			if existedSentences.count > 0 {

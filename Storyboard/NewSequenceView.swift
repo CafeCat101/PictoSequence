@@ -20,6 +20,7 @@ struct NewSequenceView: View {
 
 	@Binding var showAddNewSequence:Bool
 	@Binding var showStoryboard:Bool
+	@Binding var tappedSentenceID:String
 	
     var body: some View {
 			
@@ -122,7 +123,7 @@ struct NewSequenceView: View {
 						}
 					}
 				} else {
-					PreviewStoryView(showSequenceActionView: $showAddNewSequence, showStoryboard: $showStoryboard, storyViewMode: $storyViewMode)
+					PreviewStoryView(showSequenceActionView: $showAddNewSequence, showStoryboard: $showStoryboard, storyViewMode: $storyViewMode, tappedSentenceID: $tappedSentenceID)
 				}
 				
 				Spacer()

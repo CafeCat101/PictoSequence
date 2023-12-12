@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C8311AA62B27510900E55069 /* TestSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8311AA52B27510900E55069 /* TestSheet.swift */; };
 		C85267F12AC4316F00047B27 /* StoryboardApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C85267F02AC4316F00047B27 /* StoryboardApp.swift */; };
 		C85267F32AC4316F00047B27 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C85267F22AC4316F00047B27 /* ContentView.swift */; };
 		C85267F52AC4317000047B27 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C85267F42AC4317000047B27 /* Assets.xcassets */; };
@@ -57,6 +58,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C8311AA52B27510900E55069 /* TestSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSheet.swift; sourceTree = "<group>"; };
 		C85267ED2AC4316F00047B27 /* Storyboard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Storyboard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C85267F02AC4316F00047B27 /* StoryboardApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryboardApp.swift; sourceTree = "<group>"; };
 		C85267F22AC4316F00047B27 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -123,12 +125,11 @@
 		C85267E42AC4316F00047B27 = {
 			isa = PBXGroup;
 			children = (
-				C8B8A5872AE3AE2200490EF4 /* Main.xcdatamodeld */,
-				C8B8A58A2AE3B3D400490EF4 /* PersistenceController.swift */,
-				C89D5E722AD7FC9E00083549 /* LaunchScreen.storyboard */,
-				C85267EF2AC4316F00047B27 /* Storyboard */,
-				C85267EE2AC4316F00047B27 /* Products */,
 				C88773F32B242E3C0028F727 /* Frameworks */,
+				C89D5E722AD7FC9E00083549 /* LaunchScreen.storyboard */,
+				C8B8A5872AE3AE2200490EF4 /* Main.xcdatamodeld */,
+				C85267EE2AC4316F00047B27 /* Products */,
+				C85267EF2AC4316F00047B27 /* Storyboard */,
 			);
 			sourceTree = "<group>";
 		};
@@ -144,14 +145,21 @@
 			isa = PBXGroup;
 			children = (
 				C89D5E782ADBCA3700083549 /* Info.plist */,
+				C8B8A5DC2B0CB45B00490EF4 /* AllSavedPictureView.swift */,
+				C8B8A5D22AF6149000490EF4 /* APictureCardView.swift */,
 				C8680B692AD2BF2A00198CCA /* APictureView.swift */,
 				C89D5E792ADBCFEB00083549 /* CameraView.swift */,
+				C8B8A5DA2B0CB43E00490EF4 /* ChangePictureAllIconsView.swift */,
+				C8B8A5D82B0CAEDE00490EF4 /* ChangePictureView.swift */,
 				C85267F22AC4316F00047B27 /* ContentView.swift */,
+				C8B8A5CE2AE659D700490EF4 /* EditSequenceView.swift */,
 				C85267FE2AC433A300047B27 /* ListItemView.swift */,
 				C8680B332AC6BF6300198CCA /* NewSequenceView.swift */,
+				C8B8A58A2AE3B3D400490EF4 /* PersistenceController.swift */,
 				C89D5E852ADBD71D00083549 /* PhotoCollectionView.swift */,
 				C89D5E872ADBD74400083549 /* PhotoItemView.swift */,
 				C89D5E8B2ADBD7AA00083549 /* PhotoView.swift */,
+				C8B8A5CC2AE3FA7600490EF4 /* PreviewStoryView.swift */,
 				C8680B312AC6BA1100198CCA /* SequenceListView.swift */,
 				C85268002AC445F700047B27 /* ShowStoryView.swift */,
 				C8680B632ACFD98000198CCA /* SpinnerView.swift */,
@@ -164,12 +172,7 @@
 				C8680B372AC95D0400198CCA /* Models */,
 				C85267F62AC4317000047B27 /* Preview Content */,
 				C8680B3F2AC9C0BD00198CCA /* Types */,
-				C8B8A5CC2AE3FA7600490EF4 /* PreviewStoryView.swift */,
-				C8B8A5CE2AE659D700490EF4 /* EditSequenceView.swift */,
-				C8B8A5D22AF6149000490EF4 /* APictureCardView.swift */,
-				C8B8A5D82B0CAEDE00490EF4 /* ChangePictureView.swift */,
-				C8B8A5DA2B0CB43E00490EF4 /* ChangePictureAllIconsView.swift */,
-				C8B8A5DC2B0CB45B00490EF4 /* AllSavedPictureView.swift */,
+				C8311AA52B27510900E55069 /* TestSheet.swift */,
 			);
 			path = Storyboard;
 			sourceTree = "<group>";
@@ -327,6 +330,7 @@
 				C8680B662ACFFF3500198CCA /* StoryView.swift in Sources */,
 				C8680B342AC6BF6300198CCA /* NewSequenceView.swift in Sources */,
 				C89D5E8E2ADBD7E100083549 /* ThumbnailView.swift in Sources */,
+				C8311AA62B27510900E55069 /* TestSheet.swift in Sources */,
 				C89D5E902ADBD82200083549 /* CachedImageManager.swift in Sources */,
 				C8680B472ACA5CCF00198CCA /* SequencerResponseError.swift in Sources */,
 				C89D5E942ADD2F3A00083549 /* PictureSource.swift in Sources */,

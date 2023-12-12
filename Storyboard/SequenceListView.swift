@@ -26,6 +26,8 @@ struct SequenceListView: View {
 	@State private var tappedSentenceID:String = ""
 	@State private var showSearchable = false
 	
+	@State private var showTestSheet = false
+	
 	var body: some View {
 		VStack(spacing:0) {
 			if showSearchable == false {
@@ -83,6 +85,8 @@ struct SequenceListView: View {
 						withAnimation {
 							showSearchable = false
 						}
+						searchText = ""
+						performSearch()
 					}
 					.focused($showSearchable)
 					.padding([.leading,.trailing], 15)
@@ -95,12 +99,17 @@ struct SequenceListView: View {
 			if sentences.count > 0 {
 				List {
 					ForEach(sentences) { sentence in
-						ListItemView(showEditSequence: $showEditSequence, showStoryboard: $showStoryboard, textLine: sentence.user_question ?? "", tappedSentenceID: $tappedSentenceID, sentenceID: sentence.id ?? "")
+						ListItemView(showEditSequence: $showEditSequence, showStoryboard: $showStoryboard, textLine: sentence.user_question ?? "", tappedSentenceID: $tappedSentenceID, sentenceID: sentence.id ?? "", showTestSheet:$showTestSheet)
 					}/*.onDelete(perform: deleteASentence)*/
 				}
 				.scrollContentBackground(.hidden)
 				.listStyle(.plain)
 				.padding([.top], 5)
+			} else {
+				HStack {
+					Text("None Found").bold().foregroundColor(Color("StatusMessage"))
+					Spacer()
+				}.padding([.leading,.trailing], 15)
 			}
 			
 			Spacer()
@@ -109,20 +118,38 @@ struct SequenceListView: View {
 		.background(Image(colorScheme == .light ? "vellum_sketchbook_paper" : "balck_canvas_bg4").resizable()
 			.aspectRatio(contentMode: .fill)
 			.edgesIgnoringSafeArea(.all))
-		.fullScreenCover(isPresented: $showAddNewSequence, onDismiss: {
-			tappedSentenceID = ""
-		},content: {
-			NewSequenceView(showAddNewSequence: $showAddNewSequence, showStoryboard: $showStoryboard)
+		.fullScreenCover(isPresented: $showAddNewSequence,content: {
+			NewSequenceView(showAddNewSequence: $showAddNewSequence, showStoryboard: $showStoryboard, tappedSentenceID: $tappedSentenceID)
 		})
-		.fullScreenCover(isPresented: $showEditSequence, content: {
-			EditSequenceView(showEditSequence: $showEditSequence, showStoryboard: $showStoryboard)
+		.fullScreenCover(isPresented: $showEditSequence, onDismiss: {
+			print("[debug] SequenceListView, EditSequenceView.onDismiss, searchText:\(searchText), tappedSentenceID: \(tappedSentenceID)")
+			if searchText.isEmpty == false {
+				performSearch()
+			}
+		}, content: {
+			EditSequenceView(showEditSequence: $showEditSequence, showStoryboard: $showStoryboard, tappedSentenceID: $tappedSentenceID)
 		})
-		.fullScreenCover(isPresented: $showStoryboard, content: {
+		.fullScreenCover(isPresented: $showStoryboard, onDismiss: {
+			if searchText.isEmpty == false {
+				performSearch()
+			}
+		}, content: {
 			ShowStoryView(showStoryboard: $showStoryboard)
 		})
+		.fullScreenCover(isPresented: $showTestSheet, content: {
+			TestSheet(showTestSheet: $showTestSheet)
+		})
 		.onAppear(perform: {
-			
+			print("[debug] SequenceListView, onAppear, searchText:\(searchText)")
 			//print("[deubg] pictureURL \(FileManager.picturesDirectoryURL.path())")
+			/*do {
+				let fetchRequest = NSFetchRequest<Sentences>(entityName: "Sentences")
+				fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Sentences.change_date, ascending: false)]
+				sentences = try viewContext.fetch(fetchRequest)
+			} catch {
+				
+			}*/
+			
 		})
 	}
 	
