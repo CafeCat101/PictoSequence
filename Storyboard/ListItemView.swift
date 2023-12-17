@@ -15,7 +15,6 @@ struct ListItemView: View {
 	@Binding var showEditSequence:Bool
 	@Binding var showStoryboard:Bool
 	var textLine:String = "Sequence"
-	//var showActionsMenu = false
 	@Binding var tappedSentenceID:String
 	var sentenceID:String = ""
 	
@@ -93,27 +92,19 @@ struct ListItemView: View {
 						}
 					Spacer()
 				}
-				//.animation(Animation.easeIn(duration: 0.8), value: animateActionsMenu)
-				.padding([.top], 5)
-				.opacity(sentenceID == tappedSentenceID ? 1.0 : 0.0)
-				.onChange(of: tappedSentenceID, perform: { newValue in
-					if newValue == sentenceID {
-						withAnimation(Animation.easeIn(duration: 0.5)) {
-							animateActionsMenu = true
-						}
-					}
-									
-				})
-				/*.onAppear(perform: {
+				.opacity(animateActionsMenu ? 1.0 : 0.0)
+				.onAppear(perform: {
 					print("[debug] ListItemView.onAppear animateActionMenu \(animateActionsMenu)")
 					withAnimation(Animation.easeIn(duration: 0.5)) {
 						animateActionsMenu = true
 					}
-				})*/
+				})
 				.onDisappear(perform: {
 					animateActionsMenu = false
 				})
 			}
+			
+			
 		}
 		.swipeActions {
 			Button("Delete") {

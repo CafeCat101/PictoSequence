@@ -6,11 +6,13 @@
 //
 
 import Foundation
+import Combine
 
 class Sequencer: ObservableObject {
 	var theStoryByAI:StoryByAI = StoryByAI()
 	@Published var theStoryByUser:StoryByUser = StoryByUser()
 	private var picturePlaceHolderDefault = "https://static.thenounproject.com/png/1768759-200.png"
+	var updateSequenceListNow = PassthroughSubject<String, Never>()
 	
 	func generateNewSequence(sentence: String) async throws -> StoryByUser? {
 		//Task {

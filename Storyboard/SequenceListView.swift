@@ -118,6 +118,9 @@ struct SequenceListView: View {
 				List {
 					ForEach(sentences) { sentence in
 						ListItemView(showEditSequence: $showEditSequence, showStoryboard: $showStoryboard, textLine: sentence.user_question ?? "", tappedSentenceID: $tappedSentenceID, sentenceID: sentence.id ?? "")
+						if isLastSentence(sentenceID: sentence.id ?? "") {
+							Spacer().frame(height: 100).listRowBackground(Color.clear).listRowSeparator(.hidden)
+						}
 					}/*.onDelete(perform: deleteASentence)*/
 				}
 				/*.simultaneousGesture(DragGesture().onChanged({ _ in
@@ -139,6 +142,11 @@ struct SequenceListView: View {
 			
 			Spacer()
 		}
+		.onReceive(sequencer.updateSequenceListNow, perform: { updatedSentenceID in
+			if updatedSentenceID.isEmpty == false {
+				updateSentenceList()
+			}
+		})
 		.ignoresSafeArea(edges: .bottom)
 		.background(Image(colorScheme == .light ? "vellum_sketchbook_paper" : "balck_canvas_bg4").resizable()
 			.aspectRatio(contentMode: .fill)
@@ -219,8 +227,14 @@ struct SequenceListView: View {
 		} catch {
 			
 		}
-		
-		
+	}
+	
+	private func isLastSentence(sentenceID:String) -> Bool {
+		if sentenceID == sentences.last?.id {
+			return true
+		} else {
+			return false
+		}
 	}
 }
 

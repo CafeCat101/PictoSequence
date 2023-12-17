@@ -153,6 +153,8 @@ struct PreviewStoryView: View {
 				showSequenceActionView = false
 				if showStoryNow {
 					showStoryboard = true
+				} else {
+					sequencer.updateSequenceListNow.send(newSentenceID)
 				}
 			} else {
 				showSaveErrorAlert = true
@@ -340,6 +342,8 @@ struct PreviewStoryView: View {
 				showSequenceActionView = false
 				if showStoryNow {
 					showStoryboard = true
+				} else {
+					sequencer.updateSequenceListNow.send(tappedSentenceID)
 				}
 			} else {
 				showSaveErrorAlert = true
