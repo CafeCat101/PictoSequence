@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C8311AA62B27510900E55069 /* TestSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8311AA52B27510900E55069 /* TestSheet.swift */; };
 		C85267F12AC4316F00047B27 /* StoryboardApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C85267F02AC4316F00047B27 /* StoryboardApp.swift */; };
 		C85267F32AC4316F00047B27 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C85267F22AC4316F00047B27 /* ContentView.swift */; };
 		C85267F52AC4317000047B27 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C85267F42AC4317000047B27 /* Assets.xcassets */; };
@@ -58,7 +57,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		C8311AA52B27510900E55069 /* TestSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSheet.swift; sourceTree = "<group>"; };
 		C85267ED2AC4316F00047B27 /* Storyboard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Storyboard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C85267F02AC4316F00047B27 /* StoryboardApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryboardApp.swift; sourceTree = "<group>"; };
 		C85267F22AC4316F00047B27 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -172,7 +170,6 @@
 				C8680B372AC95D0400198CCA /* Models */,
 				C85267F62AC4317000047B27 /* Preview Content */,
 				C8680B3F2AC9C0BD00198CCA /* Types */,
-				C8311AA52B27510900E55069 /* TestSheet.swift */,
 			);
 			path = Storyboard;
 			sourceTree = "<group>";
@@ -330,7 +327,6 @@
 				C8680B662ACFFF3500198CCA /* StoryView.swift in Sources */,
 				C8680B342AC6BF6300198CCA /* NewSequenceView.swift in Sources */,
 				C89D5E8E2ADBD7E100083549 /* ThumbnailView.swift in Sources */,
-				C8311AA62B27510900E55069 /* TestSheet.swift in Sources */,
 				C89D5E902ADBD82200083549 /* CachedImageManager.swift in Sources */,
 				C8680B472ACA5CCF00198CCA /* SequencerResponseError.swift in Sources */,
 				C89D5E942ADD2F3A00083549 /* PictureSource.swift in Sources */,

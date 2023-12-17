@@ -21,8 +21,6 @@ struct ListItemView: View {
 	
 	@State private var animateActionsMenu = false
 	
-	@Binding var showTestSheet:Bool
-	
 	var body: some View {
 		VStack(alignment: .leading) {
 			if sentenceID != tappedSentenceID {
@@ -88,9 +86,6 @@ struct ListItemView: View {
 						}
 					Spacer()
 					Label("Mark as frequent", systemImage: "star.square").labelStyle(.iconOnly).font(.system(size:46))
-						.onTapGesture {
-							showTestSheet = true
-						}
 					Spacer()
 					Label("Edit", systemImage: "square.and.pencil.circle").labelStyle(.iconOnly).font(.system(size:46))
 						.onTapGesture {

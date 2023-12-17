@@ -19,31 +19,6 @@ struct ShowStoryView: View {
 	
 	var body: some View {
 		VStack {
-			/*HStack {
-				Button(action: {
-					showStoryboard = false
-				}, label: {
-					Label(
-						title: { Text("Back to the List") },
-						icon: { Image(systemName: "chevron.backward") }
-					)
-					.font(.title)
-				})
-				.frame(height: 46)
-				Spacer()
-				/*Button(action: {
-					
-				}, label: {
-					Label("Edit", systemImage: "square.and.pencil.circle")
-						.labelStyle(.iconOnly)
-						.font(.system(size:32))
-				})*/
-			}
-			.foregroundColor(Color("testColor2"))
-			.padding([.leading,.top,.trailing], 15)
-			.padding([.bottom], 5)*/
-			
-			
 			Spacer()
 			StoryView(storyViewMode: $storyViewMode)
 				.overlay(alignment: .topLeading, content: {

@@ -13,11 +13,12 @@ struct SequenceListView: View {
 	@Environment(\.colorScheme) var colorScheme
 	@EnvironmentObject var sequencer:Sequencer
 	@Environment(\.managedObjectContext) private var viewContext
-	@FetchRequest(
+	/*@FetchRequest(
 		sortDescriptors: [NSSortDescriptor(keyPath: \Sentences.change_date, ascending: false)],
 			animation: .default)
-	private var sentences: FetchedResults<Sentences>
+	private var sentences: FetchedResults<Sentences>*/
 	
+	@State private var sentences:[Sentences] = []
 	@State private var searchText = ""
 	@State private var isEditing = false
 	@State private var showStoryboard = false
@@ -25,8 +26,7 @@ struct SequenceListView: View {
 	@State private var showEditSequence = false
 	@State private var tappedSentenceID:String = ""
 	@State private var showSearchable = false
-	
-	@State private var showTestSheet = false
+	@State private var searchableFocused = false
 	
 	var body: some View {
 		VStack(spacing:0) {
@@ -37,7 +37,7 @@ struct SequenceListView: View {
 						withAnimation {
 							showSearchable = true
 						}
-						
+						searchableFocused = true
 					}, label: {
 						Label(
 							title: { Text("Search") },
@@ -76,32 +76,57 @@ struct SequenceListView: View {
 						.bold()
 					Spacer()
 				}
-				SearchBar("Search",text: $searchText, isEditing: $isEditing, onCommit: {
-					print("[debug] SequenceListView, search, onSubmit \(searchText)")
-				})
-					.showsCancelButton(true)
-					.onCancel {
+				HStack(spacing: 0) {
+					SearchBar("Search",text: $searchText, isEditing: $isEditing, onCommit: {
+						print("[debug] SequenceListView, search, onSubmit \(searchText)")
+					})
+					
+						.showsCancelButton(false)
+						/*.onCancel {
+							print("Canceled!")
+							withAnimation {
+								showSearchable = false
+							}
+							searchText = ""
+							//performSearch()
+							updateSentenceList()
+						}*/
+						.focused($searchableFocused)
+						.padding([.leading], 15)
+						.onChange(of: searchText, perform: { newText in
+							print("[debug] SequenceListView, search, onChange \(newText)")
+							//performSearch()
+							updateSentenceList()
+						})
+					
+					Button("Cancel", action: {
 						print("Canceled!")
 						withAnimation {
 							showSearchable = false
 						}
+						searchableFocused = false
 						searchText = ""
-						performSearch()
-					}
-					.focused($showSearchable)
-					.padding([.leading,.trailing], 15)
-					.onChange(of: searchText, perform: { newText in
-						print("[debug] SequenceListView, search, onChange \(newText)")
-						performSearch()
+						updateSentenceList()
+						
 					})
+					.padding([.trailing], 15)
+				}
+				
 			}
 			
 			if sentences.count > 0 {
 				List {
 					ForEach(sentences) { sentence in
-						ListItemView(showEditSequence: $showEditSequence, showStoryboard: $showStoryboard, textLine: sentence.user_question ?? "", tappedSentenceID: $tappedSentenceID, sentenceID: sentence.id ?? "", showTestSheet:$showTestSheet)
+						ListItemView(showEditSequence: $showEditSequence, showStoryboard: $showStoryboard, textLine: sentence.user_question ?? "", tappedSentenceID: $tappedSentenceID, sentenceID: sentence.id ?? "")
 					}/*.onDelete(perform: deleteASentence)*/
 				}
+				/*.simultaneousGesture(DragGesture().onChanged({ _ in
+						// if keyboard is opened then hide it
+					print("[debug] SequenceListView, list scrolling")
+					searchableFocused = false
+					print("[debug] SequenceListView, searchableFocused \(searchableFocused)")
+				}))*/
+				.scrollDismissesKeyboard(.immediately)
 				.scrollContentBackground(.hidden)
 				.listStyle(.plain)
 				.padding([.top], 5)
@@ -121,35 +146,16 @@ struct SequenceListView: View {
 		.fullScreenCover(isPresented: $showAddNewSequence,content: {
 			NewSequenceView(showAddNewSequence: $showAddNewSequence, showStoryboard: $showStoryboard, tappedSentenceID: $tappedSentenceID)
 		})
-		.fullScreenCover(isPresented: $showEditSequence, onDismiss: {
-			print("[debug] SequenceListView, EditSequenceView.onDismiss, searchText:\(searchText), tappedSentenceID: \(tappedSentenceID)")
-			if searchText.isEmpty == false {
-				performSearch()
-			}
-		}, content: {
+		.fullScreenCover(isPresented: $showEditSequence, content: {
 			EditSequenceView(showEditSequence: $showEditSequence, showStoryboard: $showStoryboard, tappedSentenceID: $tappedSentenceID)
 		})
-		.fullScreenCover(isPresented: $showStoryboard, onDismiss: {
-			if searchText.isEmpty == false {
-				performSearch()
-			}
-		}, content: {
+		.fullScreenCover(isPresented: $showStoryboard, content: {
 			ShowStoryView(showStoryboard: $showStoryboard)
-		})
-		.fullScreenCover(isPresented: $showTestSheet, content: {
-			TestSheet(showTestSheet: $showTestSheet)
 		})
 		.onAppear(perform: {
 			print("[debug] SequenceListView, onAppear, searchText:\(searchText)")
 			//print("[deubg] pictureURL \(FileManager.picturesDirectoryURL.path())")
-			/*do {
-				let fetchRequest = NSFetchRequest<Sentences>(entityName: "Sentences")
-				fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Sentences.change_date, ascending: false)]
-				sentences = try viewContext.fetch(fetchRequest)
-			} catch {
-				
-			}*/
-			
+			updateSentenceList()
 		})
 	}
 	
@@ -189,7 +195,7 @@ struct SequenceListView: View {
 		}
 	}
 	
-	private func performSearch() {
+	/*private func performSearch() {
 		let predicate:NSPredicate?
 		if searchText.isEmpty == false {
 			predicate = NSPredicate(format: "user_question CONTAINS[c] %@", searchText)
@@ -199,6 +205,22 @@ struct SequenceListView: View {
 			predicate = nil
 		}
 		sentences.nsPredicate = predicate
+	}*/
+	
+	private func updateSentenceList() {
+		do {
+			let fetchRequest = NSFetchRequest<Sentences>(entityName: "Sentences")
+			if searchText.isEmpty == false {
+				fetchRequest.predicate = NSPredicate(format: "user_question CONTAINS[c] %@", searchText)
+			}
+			fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Sentences.change_date, ascending: false)]
+			sentences = try viewContext.fetch(fetchRequest)
+			print("[debug] SequenceListView, updateSentenceList(), sentenceCount \(sentences.count), searchText:\(searchText)")
+		} catch {
+			
+		}
+		
+		
 	}
 }
 
