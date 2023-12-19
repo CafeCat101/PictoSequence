@@ -85,6 +85,24 @@ class Sequencer: ObservableObject {
 				userStory.visualizedSequence.append(addWord)
 			}
 		}
+		
+		//fix the pictureId if there are same words in the sentence
+		var trackPictureID: [String: String] = [:]
+		userStory.visualizedSequence = userStory.visualizedSequence.map { elem in
+			let sameWords = userStory.visualizedSequence.filter({$0.word == elem.word})
+			if sameWords.count > 1 {
+				if trackPictureID.contains(where: {$0.key == elem.word}) {
+					var copyWord = elem
+					copyWord.pictureID = UUID(uuidString: trackPictureID[elem.word] ?? "") ?? UUID()
+					return copyWord
+				} else {
+					trackPictureID[elem.word] = elem.pictureID.uuidString
+					return elem
+				}
+			} else {
+				return elem
+			}
+		}
 		return userStory
 	}
 	

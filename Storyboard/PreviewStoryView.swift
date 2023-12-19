@@ -256,7 +256,7 @@ struct PreviewStoryView: View {
 				
 				for wordCard in sequencer.theStoryByUser.visualizedSequence {
 					let fetchEditWords = NSFetchRequest<Words>(entityName: "Words")
-					fetchEditWords.predicate = NSPredicate(format: "sentenceID = %@ AND word = %@", existedSentences.first?.id ?? "", wordCard.word)
+					fetchEditWords.predicate = NSPredicate(format: "sentenceID = %@ AND word = %@ AND order = %i", existedSentences.first?.id ?? "", wordCard.word,    wordCard.cardOrder)
 					let findWord = try manageContext.fetch(fetchEditWords)
 					if findWord.count > 0 {
 						if findWord.first?.picID != wordCard.pictureID.uuidString {
